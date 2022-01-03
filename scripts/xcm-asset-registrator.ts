@@ -1,11 +1,7 @@
 // Import
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import {u8aToHex, hexToU8a} from '@polkadot/util';
-import {encodeAddress, decodeAddress} from '@polkadot/util-crypto'
-import { formatBalance } from "@polkadot/util";
-import { BN } from "@polkadot/util";
 
-import type { SubmittableExtrinsic } from "@polkadot/api/promise/types";
 import {blake2AsHex, xxhashAsU8a, blake2AsU8a} from '@polkadot/util-crypto';
 import yargs from 'yargs';
 import { Keyring } from "@polkadot/api";

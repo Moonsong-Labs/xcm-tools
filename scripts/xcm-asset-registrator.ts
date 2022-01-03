@@ -1,12 +1,12 @@
 // Import
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import {u8aToHex} from '@polkadot/util';
+import {u8aToHex, hexToU8a} from '@polkadot/util';
 import {encodeAddress, decodeAddress} from '@polkadot/util-crypto'
 import { formatBalance } from "@polkadot/util";
 import { BN } from "@polkadot/util";
 
 import type { SubmittableExtrinsic } from "@polkadot/api/promise/types";
-import {blake2AsHex} from '@polkadot/util-crypto';
+import {blake2AsHex, xxhashAsU8a, blake2AsU8a} from '@polkadot/util-crypto';
 import yargs from 'yargs';
 import { Keyring } from "@polkadot/api";
 import { MultiLocation } from '@polkadot/types/interfaces';
@@ -21,6 +21,7 @@ const args = yargs.options({
     'existential-deposit': {type: 'number', demandOption: false, alias: 'ed'},
     'sufficient': {type: 'boolean', demandOption: false, alias: 'suf'},
     'account-priv-key': {type: 'string', demandOption: false, alias: 'account'},
+    'revert-code': {type: 'boolean', demandOption: false, alias: 'revert'},
     'send-preimage-hash': {type: 'boolean', demandOption: false, alias: 'h'},
     'send-proposal-as': {choices: ['democracy', 'council-external'], demandOption: false, alias: 's'},
     'collective-threshold': {type: 'number', demandOption: false, alias: 'c'},
@@ -41,10 +42,8 @@ async function main () {
         symbol: args["symbol"],
         decimals: args["decimals"],
         isFrozen: false,
-      };
+    };
     
-    console.log(assetMetadata)
-
     const registerTxs = [];
     const asset: MultiLocation = api.createType("MultiLocation", JSON.parse(args["asset"]));
 
@@ -60,10 +59,28 @@ async function main () {
     ))
 
     registerTxs.push(
-    api.tx.assetManager.setAssetUnitsPerSecond(
-        assetId,
-        args["units-per-second"]
+        api.tx.assetManager.setAssetUnitsPerSecond(
+            assetId,
+            args["units-per-second"]
     ));
+
+    if (args["revert-code"]) {
+        // This is to push to the evm the revert code
+        let palletEncoder = new TextEncoder().encode("EVM");
+        let palletHash = xxhashAsU8a(palletEncoder, 128);
+        let storageEncoder = new TextEncoder().encode("AccountCodes");
+        let storageHash = xxhashAsU8a(storageEncoder, 128);
+        let assetAddress = new Uint8Array([ ...hexToU8a("0xFFFFFFFF"), ...hexToU8a(assetId)]);
+        let addressHash = blake2AsU8a(assetAddress, 128);
+        let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
+
+        registerTxs.push(
+            api.tx.system.setStorage([[
+                u8aToHex(concatKey),
+                "0x1460006000fd"
+            ]]
+        ));
+    }
 
     const batchTx = api.tx.utility.batchAll(registerTxs);
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");

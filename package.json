@@ -6,7 +6,8 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "register-asset": "ts-node 'scripts/xcm-asset-registrator.ts'"
+    "register-asset": "ts-node 'scripts/xcm-asset-registrator.ts'",
+    "initialize-xcm": "ts-node 'scripts/xcm-initializer.ts'"
   },
   "dependencies": {
     "@polkadot/api": "^6.12.1",

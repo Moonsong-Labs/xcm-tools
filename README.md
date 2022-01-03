@@ -26,3 +26,20 @@ The script accepts these inputs fields:
 
 ### Example to note Pre-Image and propose through council
 `yarn register-asset -w ws://127.0.0.1:34102  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "Parent" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
+
+## xcm-initializer script
+The script accepts these inputs fields:
+- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
+- `--default-xcm-version or -d`, optional, provides the new default xcm version we want to set
+- `--xtokens-address or --xt`, optional, if provided, it will set the revert code at that address.
+- `--xcm-transactor-address or --xcmt`, optional, if provided, it will set the revert code at that address.
+- `--account-priv-key or -a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+
+### Example to note Pre-Image and propose
+`yarn initialize-xcm -w ws://127.0.0.1:34102  --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
+
+### Example to note Pre-Image and propose through council
+`yarn initialize-xcm -w ws://127.0.0.1:34102  --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`

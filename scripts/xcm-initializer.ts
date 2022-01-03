@@ -10,7 +10,7 @@ const args = yargs.options({
     'ws-provider': {type: 'string', demandOption: true, alias: 'w'},
     'xtokens-address': {type: 'string', demandOption: false, alias: 'xt'},
     'xcm-transactor-address': {type: 'string', demandOption: false, alias: 'xcmt'},
-    'default-xcm-version': {type: 'number', demandOption: true, alias: 'd'},
+    'default-xcm-version': {type: 'number', demandOption: false, alias: 'd'},
     'account-priv-key': {type: 'string', demandOption: false, alias: 'account'},
     'send-preimage-hash': {type: 'boolean', demandOption: false, alias: 'h'},
     'send-proposal-as': {choices: ['democracy', 'council-external'], demandOption: false, alias: 's'},
@@ -29,10 +29,12 @@ async function main () {
     
     const initializeTxs = [];
 
-    initializeTxs.push(
-    api.tx.polkadotXcm.forceDefaultXcmVersion(
-        args["default-xcm-version"]
-    ))
+    if (args["default-xcm-version"]) {
+        initializeTxs.push(
+        api.tx.polkadotXcm.forceDefaultXcmVersion(
+            args["default-xcm-version"]
+        ))
+    }
 
     if (args["xtokens-address"]) {
         // This is to push to the evm the revert code

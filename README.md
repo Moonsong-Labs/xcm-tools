@@ -63,4 +63,21 @@ The script accepts these inputs fields:
 ### Example to note Pre-Image and propose through council
 `yarn hrmp-manipulator --wp ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action accept --target-para-id 2003 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true  -s council-external -c 2`
 
+## xcm-transactor-info-setter script
+The script accepts these inputs fields:
+- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
+- `--destination or --d`, the MultiLocation identifier of the destination for which to set the transact info
+- `--fee-per-weight or --fw`, the amount of fee the destination will charge per weight
+- `--extra-weight or --ew`, the amount of extra weight that sending the transact xcm message involves
+- `--account-priv-key or -a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+
+### Example to note Pre-Image and propose
+`yarn set-transact-info -w ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-weight 8 --extra-weight 3000000000 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
+
+### Example to note Pre-Image and propose through council
+`yarn set-transact-info -w ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-weight 8 --extra-weight 3000000000 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
+
 

@@ -68,18 +68,18 @@ async function main () {
     // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
     let para_address = u8aToHex((new Uint8Array([ ...new TextEncoder().encode("para"), ...selfParaId.toU8a()]))).padEnd(66, "0");
 
-    const batchTx =  api.tx.polkadotXcm.send(
+    const batchTx =  relayApi.tx.xcmPallet.send(
         { V1: { parents: new BN(1), interior: "Here"} },
         { V2: [
             { WithdrawAsset: [
-                { id: { Concrete: { parents: new BN(1), interior: "Here"} },
+                { id: { Concrete: { parents: new BN(0), interior: "Here"} },
                   fun: { Fungible: new BN(1000000000000) }
                 }
             ]
             },
             { BuyExecution:  {
                 fees:
-                    { id: { Concrete: { parents: new BN(1), interior: "Here"} },
+                    { id: { Concrete: { parents: new BN(0), interior: "Here"} },
                     fun: { Fungible: new BN(1000000000000) }
                     },
                 weightLimit: {Limited: new BN(4000000000)}
@@ -87,16 +87,16 @@ async function main () {
             },
             { Transact:  {
                 originType: "Native",
-                requireWeightAtMost: new BN(1000000000000),
+                requireWeightAtMost: new BN(1000000000),
                 call: relayCall
                 }
             },
-            { DepositAsset:  {
+ /*           { DepositAsset:  {
                 assets: {Wild: "All"},
                 max_assets: 1,
                 beneficiary: { parents: new BN(0), interior: { X1: { AccountId32: { network: "Any", id: para_address } } }}
                 }
-            },
+            },*/
             ]
         });
 

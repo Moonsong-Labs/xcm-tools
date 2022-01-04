@@ -9,7 +9,8 @@
     "register-asset": "ts-node 'scripts/xcm-asset-registrator.ts'",
     "initialize-xcm": "ts-node 'scripts/xcm-initializer.ts'",
     "hrmp-manipulator": "ts-node 'scripts/hrmp-channel-manipulator.ts'",
-    "set-transact-info": "ts-node 'scripts/xcm-transactor-info-setter.ts'"
+    "set-transact-info": "ts-node 'scripts/xcm-transactor-info-setter.ts'",
+    "register-derivative-index": "ts-node 'scripts/xcm-derivative-index-registrar.ts'"
   },
   "dependencies": {
     "@polkadot/api": "^6.12.1",

@@ -63,6 +63,8 @@ The script accepts these inputs fields:
 ### Example to note Pre-Image and propose through council
 `yarn hrmp-manipulator --wp ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action accept --target-para-id 2003 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true  -s council-external -c 2`
 
+`yarn hrmp-manipulator --wp ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action open --target-para-id 2003 --mc 8 --mms 512 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
+
 ## xcm-transactor-info-setter script
 The script accepts these inputs fields:
 - `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
@@ -97,3 +99,22 @@ The script accepts these inputs fields:
 `yarn register-derivative-index -w ws://127.0.0.1:34102  --index  0 --owner "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s council-external -c 2`
 
 
+## statemint-hrmp-relay-proposal-generator script
+The script accepts these inputs fields:
+- `--statemint-ws-provider or -ws`, which specifies the statemint websocket provider
+- `--relay-ws-provider or --wr`, which specifies the relay websocket -provider
+- `--target-para-id or -p`, The target paraId to which the proposal from statemint will be sent.
+- `--max-capacity or --mc`, The max capacity in messages that the channel supports.
+- `--max-message-size or --mms`, The max message size that the channel supports.
+- `--send-deposit-from or -s`, where the deposit of KSM to statemint sovereign account will be made.  one of "sovereign" or "external-account".
+- `--external--account or -e`, Optional, only for "external-account" choices in the previous argument. The account from which we will send the KSM
+- `--account-priv-key or -a`, which specifies the account that will submit the preimage
+- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
+
+### Example to note Pre-Image with external account
+
+` yarn statemint-hrmp-propose --ws wss://statemine-rpc.polkadot.io  --relay-ws-provider wss://kusama-rpc.polkadot.io --target-para-id 2000 --mc 1000 --mms 102400 --send-deposit-from "external-account" --external-account 0x6d6f646c70792f74727372790000000000000000000000000000000000000000  --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h false`
+
+### Example to note Pre-Image with sovereign
+
+` yarn statemint-hrmp-propose --ws wss://statemine-rpc.polkadot.io  --relay-ws-provider wss://kusama-rpc.polkadot.io --target-para-id 2000 --mc 1000 --mms 102400 --send-deposit-from "sovereign"  --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h false`

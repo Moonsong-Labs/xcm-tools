@@ -6,6 +6,12 @@ From this directory
 `yarn install`
 
 ## register-asset script
+Scipt that allows to register an asset in a moonbeam runtime. It particulary does three things:
+
+- Registers the asset
+- Sets the asset units per second to be charged
+- Sets the revert code in the asset precompile
+
 The script accepts these inputs fields:
 - `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
 - `--asset or -a`, the MultiLocation identifier of the asset to be registered
@@ -28,6 +34,12 @@ The script accepts these inputs fields:
 `yarn register-asset -w ws://127.0.0.1:34102  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "Parent" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
 
 ## xcm-initializer script
+Scipt that allows to initialize xcm in a moonbeam runtime. It particularly does:
+
+- Sets the default xcm version to be used if we dont know the version supported by the other end
+- Sets the revert code in the xtokens precomipe
+- Sets the revert code in the xcm-transactor precompile
+
 The script accepts these inputs fields:
 - `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
 - `--default-xcm-version or -d`, optional, provides the new default xcm version we want to set
@@ -45,6 +57,8 @@ The script accepts these inputs fields:
 `yarn initialize-xcm -w ws://127.0.0.1:34102  --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
 
 ## hrmp-manipulator script
+Scipt that allows to initiate an HRMP action in the relay from the parachain. In particular, the script allows to open a channel, accept an existing open channel request, cancel an existing open channel request, or closing an existing HRMP channel.
+
 The script accepts these inputs fields:
 - `--parachain-ws-provider or --wp`, which specifies the parachain websocket provider to which we will be issuing our requests
 - `--relay-ws-provider or --wr`, which specifies the relay websocket provider to which we will be issuing our requests
@@ -66,6 +80,11 @@ The script accepts these inputs fields:
 `yarn hrmp-manipulator --wp ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action open --target-para-id 2003 --mc 8 --mms 512 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
 
 ## xcm-transactor-info-setter script
+Scipt that allows to set the transactor info in the xcm-transactor pallet. For a given chain, this allows to set:
+
+- The amount of extra weight involved in the transact operations
+- The amount of fee the chain charges per weight unit.
+
 The script accepts these inputs fields:
 - `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
 - `--destination or --d`, the MultiLocation identifier of the destination for which to set the transact info
@@ -83,6 +102,8 @@ The script accepts these inputs fields:
 `yarn set-transact-info -w ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-weight 8 --extra-weight 3000000000 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
 
 ## xcm-derivative-index-registrator script
+Scipt that allows to register a parachain account for a derivative index usage in a sovereign account. This will allows the parachain account to issue transact commands to a derivative index of the sovereign account
+
 The script accepts these inputs fields:
 - `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
 - `--owner or --o`, the parachain account that will own the derivative index
@@ -100,6 +121,8 @@ The script accepts these inputs fields:
 
 
 ## statemint-hrmp-relay-proposal-generator script
+Scipt that allows to build and send the relay call necessary to make statemine accept an already open channel request target-para-id -> statemine and open a new one in the opposite direction. This is meant to be proposed/executed in the relay.
+
 The script accepts these inputs fields:
 - `--statemint-ws-provider or -ws`, which specifies the statemint websocket provider
 - `--relay-ws-provider or --wr`, which specifies the relay websocket -provider

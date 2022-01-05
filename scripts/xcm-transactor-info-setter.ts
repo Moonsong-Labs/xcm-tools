@@ -18,7 +18,7 @@ const args = yargs.options({
     'collective-threshold': {type: 'number', demandOption: false, alias: 'c'},
   }).argv;
  
-const PROPOSAL_AMOUNT = 1000000000000000000000n
+const PROPOSAL_AMOUNT = 10000000000000000000n
 // Construct
 const wsProvider = new WsProvider(args['ws-provider']);
 
@@ -57,19 +57,19 @@ async function main () {
         await api.tx.democracy
         .notePreimage(encodedProposal)
         .signAndSend(account, { nonce: nonce++ });
+    }
 
-        if (args["send-proposal-as"] == 'democracy') {
-            await api.tx.democracy
-            .propose(encodedHash, PROPOSAL_AMOUNT)
-            .signAndSend(account, { nonce: nonce++ });
-        }
-        else if (args["send-proposal-as"] == 'council-external') {
-            let external =  api.tx.democracy.externalProposeMajority(encodedHash)
-            
-            await api.tx.councilCollective
-            .propose(collectiveThreshold, external, external.length)
-            .signAndSend(account, { nonce: nonce++ });
-        }
+    if (args["send-proposal-as"] == 'democracy') {
+        await api.tx.democracy
+        .propose(encodedHash, PROPOSAL_AMOUNT)
+        .signAndSend(account, { nonce: nonce++ });
+    }
+    else if (args["send-proposal-as"] == 'council-external') {
+        let external =  api.tx.democracy.externalProposeMajority(encodedHash)
+        
+        await api.tx.councilCollective
+        .propose(collectiveThreshold, external, external.length)
+        .signAndSend(account, { nonce: nonce++ });
     }
 }
 

@@ -21,7 +21,7 @@ const args = yargs.options({
     'collective-threshold': {type: 'number', demandOption: false, alias: 'c'},
   }).argv;
  
-const PROPOSAL_AMOUNT = 1000000000000000000000n
+const PROPOSAL_AMOUNT = 10000000000000000000n
 // Construct
 const wsProvider = new WsProvider(args['parachain-ws-provider']);
 const relayProvider = new WsProvider(args['relay-ws-provider']);

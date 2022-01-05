@@ -12,14 +12,17 @@ const args = yargs.options({
     'statemint-ws-provider': {type: 'string', demandOption: true, alias: 'ws'},
     'relay-ws-provider': {type: 'string', demandOption: true, alias: 'wr'},
     'target-para-id': {type: 'number', demandOption: true, alias: 'p'},
-    'send-deposit-from': {choices: ['sovereign', 'external-account'], demandOption: true, alias: 's'},
+    'send-deposit-from': {choices: ['sovereign', 'external-account'], demandOption: true, alias: 'sdf'},
     'external-account': {type: 'string', demandOption: false, alias: 'ea'},
     'max-capacity': {type: 'number', demandOption: true, alias: 'mc'},
     'max-message-size': {type: 'number', demandOption: true, alias: 'mms'},
     'account-priv-key': {type: 'string', demandOption: true, alias: 'account'},
     'send-preimage-hash': {type: 'boolean', demandOption: true, alias: 'h'},
+    'send-proposal-as': {choices: ['democracy', 'sudo'], demandOption: false, alias: 's'},
   }).argv;
  
+const PROPOSAL_AMOUNT = 10000000000000n
+
 // Construct
 const statemintProvider = new WsProvider(args['statemint-ws-provider']);
 const relayProvider = new WsProvider(args['relay-ws-provider']);
@@ -84,6 +87,8 @@ async function main () {
     // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
     let statemintAddress = u8aToHex((new Uint8Array([ ...new TextEncoder().encode("para"), ...statemintParaId.toU8a()]))).padEnd(66, "0");
 
+    console.log(statemintAddress)
+
     console.log(depositSendingAddress)
 
     let relayProposalCall = relayApi.tx.utility.batchAll ( [
@@ -122,6 +127,17 @@ async function main () {
         await relayApi.tx.democracy
         .notePreimage(encodedProposal)
         .signAndSend(account, { nonce: nonce++ });
+    }
+
+    if (args["send-proposal-as"] == 'democracy') {
+        await relayApi.tx.democracy
+        .propose(encodedHash, PROPOSAL_AMOUNT)
+        .signAndSend(account, { nonce: nonce++ });
+    }
+    else if (args["send-proposal-as"] == 'sudo') {
+        await relayApi.tx.sudo.sudo(
+            relayProposalCall
+        ).signAndSend(account);   
     }
 }
 

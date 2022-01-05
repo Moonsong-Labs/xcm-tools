@@ -113,8 +113,12 @@ The script accepts these inputs fields:
 
 ### Example to note Pre-Image with external account
 
-` yarn statemint-hrmp-propose --ws wss://statemine-rpc.polkadot.io  --relay-ws-provider wss://kusama-rpc.polkadot.io --target-para-id 2000 --mc 1000 --mms 102400 --send-deposit-from "external-account" --external-account 0x6d6f646c70792f74727372790000000000000000000000000000000000000000  --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h false`
+` yarn statemint-hrmp-propose --ws wss://statemine-rpc.polkadot.io  --relay-ws-provider wss://kusama-rpc.polkadot.io --target-para-id 2000 --mc 1000 --mms 102400 --send-deposit-from "external-account" --external-account 0x6d6f646c70792f74727372790000000000000000000000000000000000000000  --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true`
 
 ### Example to note Pre-Image with sovereign
 
-` yarn statemint-hrmp-propose --ws wss://statemine-rpc.polkadot.io  --relay-ws-provider wss://kusama-rpc.polkadot.io --target-para-id 2000 --mc 1000 --mms 102400 --send-deposit-from "sovereign"  --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h false`
+` yarn statemint-hrmp-propose --ws wss://statemine-rpc.polkadot.io  --relay-ws-provider wss://kusama-rpc.polkadot.io --target-para-id 2000 --mc 1000 --mms 102400 --send-deposit-from "sovereign"  --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true`
+
+### Example to send sudo as call with external account
+
+` yarn statemint-hrmp-propose --ws wss://statemine-rpc.polkadot.io  --relay-ws-provider wss://kusama-rpc.polkadot.io --target-para-id 2000 --mc 1000 --mms 102400 --send-deposit-from "external-account" --external-account 0x6d6f646c70792f74727372790000000000000000000000000000000000000000  --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h false -s sudo`

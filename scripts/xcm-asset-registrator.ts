@@ -12,8 +12,8 @@ const args = yargs.options({
     'asset': {type: 'string', demandOption: true, alias: 'a'},
     'units-per-second': {type: 'string', demandOption: true, alias: 'u'},
     'name': {type: 'string', demandOption: true, alias: 'n'},
-    'symbol': {type: 'string', demandOption: false, alias: 'sym'},
-    'decimals': {type: 'string', demandOption: false, alias: 'd'},
+    'symbol': {type: 'string', demandOption: true, alias: 'sym'},
+    'decimals': {type: 'string', demandOption: true, alias: 'd'},
     'existential-deposit': {type: 'number', demandOption: false, alias: 'ed'},
     'sufficient': {type: 'boolean', demandOption: false, alias: 'suf'},
     'account-priv-key': {type: 'string', demandOption: false, alias: 'account'},
@@ -51,7 +51,8 @@ async function main () {
         sourceLocation,
         assetMetadata,
         args["existential-deposit"],
-        args["sufficient"]
+        // This needs to be uncommented for runtime 1200
+    //    args["sufficient"]
     ))
 
     registerTxs.push(

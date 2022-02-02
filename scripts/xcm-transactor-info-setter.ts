@@ -12,6 +12,9 @@ const args = yargs.options({
     'destination': {type: 'string', demandOption: true, alias: 'd'},
     'fee-per-weight': {type: 'string', demandOption: true, alias: 'fw'},
     'extra-weight': {type: 'number', demandOption: true, alias: 'ew'},
+    'register-index': {type: 'boolean', demandOption: false, alias: 'ri'},
+    'index': {type: 'number', demandOption: false, alias: 'i'},
+    'owner': {type: 'string', demandOption: false, alias: 'o'},
     'account-priv-key': {type: 'string', demandOption: false, alias: 'account'},
     'send-preimage-hash': {type: 'boolean', demandOption: false, alias: 'h'},
     'send-proposal-as': {choices: ['democracy', 'council-external'], demandOption: false, alias: 's'},
@@ -42,6 +45,12 @@ async function main () {
         0
     ))
 
+    transactInfoSetTxs.push(
+    api.tx.xcmTransactor.register(
+        args["owner"],
+        args["index"],
+    ))
+        
     const batchTx = api.tx.utility.batchAll(transactInfoSetTxs);
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;

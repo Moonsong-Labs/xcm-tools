@@ -51,13 +51,12 @@ async function main () {
         sourceLocation,
         assetMetadata,
         args["existential-deposit"],
-        // This needs to be uncommented for runtime 1200
-    //    args["sufficient"]
+        args["sufficient"]
     ))
 
     registerTxs.push(
         api.tx.assetManager.setAssetUnitsPerSecond(
-            assetId,
+            sourceLocation,
             args["units-per-second"]
     ));
 

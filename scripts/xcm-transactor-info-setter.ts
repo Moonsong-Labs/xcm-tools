@@ -10,8 +10,9 @@ import { MultiLocation } from '@polkadot/types/interfaces';
 const args = yargs.options({
     'ws-provider': {type: 'string', demandOption: true, alias: 'w'},
     'destination': {type: 'string', demandOption: true, alias: 'd'},
-    'fee-per-weight': {type: 'string', demandOption: true, alias: 'fw'},
+    'fee-per-second': {type: 'string', demandOption: true, alias: 'fs'},
     'extra-weight': {type: 'number', demandOption: true, alias: 'ew'},
+    'max-weight': {type: 'number', demandOption: true, alias: 'mw'},
     'register-index': {type: 'boolean', demandOption: false, alias: 'ri'},
     'index': {type: 'number', demandOption: false, alias: 'i'},
     'owner': {type: 'string', demandOption: false, alias: 'o'},
@@ -39,17 +40,17 @@ async function main () {
     api.tx.xcmTransactor.setTransactInfo(
         vestionedDest,
         args["extra-weight"],
-        0,
-        0,
-        args["fee-per-weight"],
-        0
+        args["fee-per-second"],
+        args["max-weight"],
     ))
 
-    transactInfoSetTxs.push(
-    api.tx.xcmTransactor.register(
-        args["owner"],
-        args["index"],
-    ))
+    if (args["register-index"]) {
+        transactInfoSetTxs.push(
+        api.tx.xcmTransactor.register(
+            args["owner"],
+            args["index"],
+        ))
+    }
         
     const batchTx = api.tx.utility.batchAll(transactInfoSetTxs);
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");

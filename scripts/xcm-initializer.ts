@@ -10,6 +10,7 @@ const args = yargs.options({
     'ws-provider': {type: 'string', demandOption: true, alias: 'w'},
     'xtokens-address': {type: 'string', demandOption: false, alias: 'xt'},
     'xcm-transactor-address': {type: 'string', demandOption: false, alias: 'xcmt'},
+    'relay-encoder-address': {type: 'string', demandOption: false, alias: 're'},
     'default-xcm-version': {type: 'number', demandOption: false, alias: 'd'},
     'account-priv-key': {type: 'string', demandOption: false, alias: 'account'},
     'send-preimage-hash': {type: 'boolean', demandOption: false, alias: 'h'},
@@ -65,6 +66,26 @@ async function main () {
         let assetAddress = hexToU8a(args["xcm-transactor-address"]);
         let addressHash = blake2AsU8a(assetAddress, 128);
         let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
+
+        initializeTxs.push(
+            api.tx.system.setStorage([[
+                u8aToHex(concatKey),
+                "0x1460006000fd"
+            ]]
+        ));
+    }
+
+    if (args["relay-encoder-address"]) {
+        // This is to push to the evm the revert code
+        let palletEncoder = new TextEncoder().encode("EVM");
+        let palletHash = xxhashAsU8a(palletEncoder, 128);
+        let storageEncoder = new TextEncoder().encode("AccountCodes");
+        let storageHash = xxhashAsU8a(storageEncoder, 128);
+        let assetAddress = hexToU8a(args["xtokens-address"]);
+        let addressHash = blake2AsU8a(assetAddress, 128);
+        let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
+
+        console.log(u8aToHex(concatKey))
 
         initializeTxs.push(
             api.tx.system.setStorage([[

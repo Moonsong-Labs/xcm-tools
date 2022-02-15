@@ -57,6 +57,7 @@ The script accepts these inputs fields:
 - `--default-xcm-version or -d`, optional, provides the new default XCM version we want to set
 - `--xtokens-address or --xt`, optional, if provided, it will set the revert code at that address.
 - `--xcm-transactor-address or --xcmt`, optional, if provided, it will set the revert code at that address.
+- `--relay-encoder-address or --re`, optional, if provided, it will set the revert code at that address.
 - `--account-priv-key or -a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council

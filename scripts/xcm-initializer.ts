@@ -81,7 +81,7 @@ async function main () {
         let palletHash = xxhashAsU8a(palletEncoder, 128);
         let storageEncoder = new TextEncoder().encode("AccountCodes");
         let storageHash = xxhashAsU8a(storageEncoder, 128);
-        let assetAddress = hexToU8a(args["xtokens-address"]);
+        let assetAddress = hexToU8a(args["relay-encoder-address"]);
         let addressHash = blake2AsU8a(assetAddress, 128);
         let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
 

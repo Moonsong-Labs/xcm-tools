@@ -74,14 +74,14 @@ async function main () {
         { V2: [
             { WithdrawAsset: [
                 { id: { Concrete: { parents: new BN(0), interior: "Here"} },
-                  fun: { Fungible: new BN(500000000000) }
+                  fun: { Fungible: new BN(1000000000000) }
                 }
             ]
             },
             { BuyExecution:  {
                 fees:
                     { id: { Concrete: { parents: new BN(0), interior: "Here"} },
-                    fun: { Fungible: new BN(500000000000) }
+                    fun: { Fungible: new BN(1000000000000) }
                     },
                 weightLimit: {Limited: new BN(5000000000)}
                 }

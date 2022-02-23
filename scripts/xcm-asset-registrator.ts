@@ -10,7 +10,7 @@ import { MultiLocation } from '@polkadot/types/interfaces';
 const args = yargs.options({
     'ws-provider': {type: 'string', demandOption: true, alias: 'w'},
     'asset': {type: 'string', demandOption: true, alias: 'a'},
-    'units-per-second': {type: 'string', demandOption: true, alias: 'u'},
+    'units-per-second': {type: 'string', demandOption: false, alias: 'u'},
     'name': {type: 'string', demandOption: true, alias: 'n'},
     'symbol': {type: 'string', demandOption: true, alias: 'sym'},
     'decimals': {type: 'string', demandOption: true, alias: 'd'},
@@ -54,11 +54,13 @@ async function main () {
         args["sufficient"]
     ))
 
-    registerTxs.push(
-        api.tx.assetManager.setAssetUnitsPerSecond(
-            sourceLocation,
-            args["units-per-second"]
-    ));
+    if (args["units-per-second"]) {
+        registerTxs.push(
+            api.tx.assetManager.setAssetUnitsPerSecond(
+                sourceLocation,
+                args["units-per-second"]
+        ));
+    }
 
     if (args["revert-code"]) {
         // This is to push to the evm the revert code

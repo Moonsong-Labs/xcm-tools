@@ -33,3 +33,16 @@ Add RMRK to the asset pallet from parachain 1000. Also add the precompile to acc
 ```
 yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "GeneralIndex": 8 }]}}' -u 13000000000 --name "xcRMRK" --sym "xcRMRK" -d 10 --ed 1 --sufficient true --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 2 --revert-code true
 ```
+
+## 2022-02-18 \[Moonriver-1102\] Open HRMP channel request to Kintsugi
+
+Send a XCM message to the relay to make an open channel request to Kintsugi.
+```
+yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action open --max-capacity 1000 --max-message-size 102400 --target-para-id 2092 --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 3
+```
+
+## 2022-02-18 \[Moonriver-1102\] Accept HRMP channel from Kintsugi
+
+```
+yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action accept --target-para-id 2092 --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 2
+```

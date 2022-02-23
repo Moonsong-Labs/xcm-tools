@@ -39,6 +39,7 @@ The script accepts these inputs fields:
 
 `yarn register-asset -w ws://127.0.0.1:34102  --asset '{ "parents": 1, "interior": {"X1": { "Parachain": 1001 }}}' -u 13000000000 --name "xcBNC" --sym "xcBNC" -d 12 --ed 1 --sufficient true --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy --revert-code true`
 
+`yarn register-asset -w ws://127.0.0.1:34102 --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1002 }, { "GeneralKey": "0x000b" }]}}' --name "Kintsugi Wrapped BTC" --sym "xcKBTC" -d 8 --ed 1 --sufficient true --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy --revert-code true`
 
 ### Example to note Pre-Image and propose through council
 

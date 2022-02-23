@@ -47,7 +47,7 @@ yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.netwo
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action accept --target-para-id 2092 --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 2
 ```
 
-## 2022-01-18 \[Moonriver-1102\] Adding KINT Asset from Kintsugi
+## 2022-02-23 \[Moonriver-1102\] Adding KINT Asset from Kintsugi
 
 Add KINT to the asset pallet from parachain 2092. Also add the precompile to access it through EVM.
 

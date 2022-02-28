@@ -30,6 +30,7 @@ The script accepts these inputs fields:
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash    
 - `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Examples to note Pre-Image and propose
 
@@ -63,6 +64,8 @@ The script accepts these inputs fields:
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
+
 
 ### Example to note Pre-Image and propose
 
@@ -87,6 +90,7 @@ The script accepts these inputs fields:
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
 
@@ -114,6 +118,7 @@ The script accepts these inputs fields:
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
 `yarn set-transact-info --ws-provider ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second 8 --extra-weight 3000000000 --max-weight 20000000000 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as  democracy`
@@ -137,6 +142,7 @@ The script accepts these inputs fields:
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
 

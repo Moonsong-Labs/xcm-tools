@@ -70,7 +70,7 @@ async function main () {
     // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
     let para_address = u8aToHex((new Uint8Array([ ...new TextEncoder().encode("para"), ...selfParaId.toU8a()]))).padEnd(66, "0");
 
-    let toPropose =  api.tx.polkadotXcm.send(
+    const batchCall =  api.tx.polkadotXcm.send(
         { V1: { parents: new BN(1), interior: "Here"} },
         { V2: [
             { WithdrawAsset: [
@@ -104,10 +104,9 @@ async function main () {
             ]
         });
 
-    if (args['at-block']) {
-            const call = { Value: toPropose };
-            toPropose = api.tx.scheduler.schedule(args["at-block"], null, 0, call);
-    }
+    const toPropose = args['at-block'] ? 
+        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
+        batchCall;
 
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;

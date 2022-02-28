@@ -52,13 +52,18 @@ async function main () {
         ))
     }
         
-    const batchTx = api.tx.utility.batchAll(transactInfoSetTxs);
+    const batchCall = api.tx.utility.batchAll(transactInfoSetTxs);
+
+    const toPropose = args['at-block'] ? 
+        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
+        batchCall;
+
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;
     let nonce = BigInt(rawNonce.toString());
 
     // We just prepare the proposals
-    let encodedProposal = batchTx?.method.toHex() || "";
+    let encodedProposal = toPropose?.method.toHex() || "";
     let encodedHash = blake2AsHex(encodedProposal);
     console.log("Encoded proposal hash for complete is %s", encodedHash);
     console.log("Encoded length %d", encodedProposal.length);

@@ -6,6 +6,7 @@ import {blake2AsHex, xxhashAsU8a, blake2AsU8a} from '@polkadot/util-crypto';
 import yargs from 'yargs';
 import { Keyring } from "@polkadot/api";
 import { MultiLocation } from '@polkadot/types/interfaces';
+import type { SubmittableExtrinsic } from "@polkadot/api/promise/types";
 
 const args = yargs.options({
     'ws-provider': {type: 'string', demandOption: true, alias: 'w'},
@@ -21,6 +22,7 @@ const args = yargs.options({
     'send-preimage-hash': {type: 'boolean', demandOption: false, alias: 'h'},
     'send-proposal-as': {choices: ['democracy', 'council-external'], demandOption: false, alias: 's'},
     'collective-threshold': {type: 'number', demandOption: false, alias: 'c'},
+    'at-block': {type: 'number', demandOption: false},
   }).argv;
  
 const PROPOSAL_AMOUNT = 10000000000000000000n
@@ -80,13 +82,18 @@ async function main () {
         ));
     }
 
-    const batchTx = api.tx.utility.batchAll(registerTxs);
+    const batchCall = api.tx.utility.batchAll(registerTxs);
+
+    const toPropose = args['at-block'] ? 
+        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
+        batchCall;
+
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;
     let nonce = BigInt(rawNonce.toString());
 
     // We just prepare the proposals
-    let encodedProposal = batchTx?.method.toHex() || "";
+    let encodedProposal = toPropose?.method.toHex() || "";
     let encodedHash = blake2AsHex(encodedProposal);
     console.log("Encoded proposal hash for complete is %s", encodedHash);
     console.log("Encoded length %d", encodedProposal.length);

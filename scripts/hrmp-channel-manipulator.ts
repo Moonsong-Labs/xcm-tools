@@ -19,6 +19,7 @@ const args = yargs.options({
     'send-preimage-hash': {type: 'boolean', demandOption: false, alias: 'h'},
     'send-proposal-as': {choices: ['democracy', 'council-external'], demandOption: false, alias: 's'},
     'collective-threshold': {type: 'number', demandOption: false, alias: 'c'},
+    'at-block': {type: 'number', demandOption: false},
   }).argv;
  
 const PROPOSAL_AMOUNT = 10000000000000000000n
@@ -69,7 +70,7 @@ async function main () {
     // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
     let para_address = u8aToHex((new Uint8Array([ ...new TextEncoder().encode("para"), ...selfParaId.toU8a()]))).padEnd(66, "0");
 
-    const batchTx =  api.tx.polkadotXcm.send(
+    const batchCall =  api.tx.polkadotXcm.send(
         { V1: { parents: new BN(1), interior: "Here"} },
         { V2: [
             { WithdrawAsset: [
@@ -103,12 +104,16 @@ async function main () {
             ]
         });
 
+    const toPropose = args['at-block'] ? 
+        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
+        batchCall;
+
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;
     let nonce = BigInt(rawNonce.toString());
 
     // We just prepare the proposals
-    let encodedProposal = batchTx?.method.toHex() || "";
+    let encodedProposal = toPropose?.method.toHex() || "";
     let encodedHash = blake2AsHex(encodedProposal);
     console.log("Encoded proposal hash for complete is %s", encodedHash);
     console.log("Encoded length %d", encodedProposal.length);

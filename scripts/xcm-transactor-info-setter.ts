@@ -52,11 +52,12 @@ async function main () {
         ))
     }
         
-    let toPropose = api.tx.utility.batchAll(transactInfoSetTxs);
-    if (args['at-block']) {
-        const call = { Value: toPropose };
-        toPropose = api.tx.scheduler.schedule(args["at-block"], null, 0, call);
-    }
+    const batchCall = api.tx.utility.batchAll(transactInfoSetTxs);
+
+    const toPropose = args['at-block'] ? 
+        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
+        batchCall;
+
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;
     let nonce = BigInt(rawNonce.toString());

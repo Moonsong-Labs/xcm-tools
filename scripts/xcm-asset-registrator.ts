@@ -56,11 +56,13 @@ async function main () {
         args["sufficient"]
     ))
 
+    let numSupportedAssets =  ((await api.query.assetManager.supportedFeePaymentAssets()) as any).length;
     if (args["units-per-second"]) {
         registerTxs.push(
             api.tx.assetManager.setAssetUnitsPerSecond(
                 sourceLocation,
-                args["units-per-second"]
+                args["units-per-second"],
+                numSupportedAssets
         ));
     }
 

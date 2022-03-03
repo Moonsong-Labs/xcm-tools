@@ -82,5 +82,5 @@ yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.netwo
 Add KAR to the asset pallet from parachain 2000. Also add the precompile to access it through EVM.
 
 ```
-yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2000 }, { "GeneralKey": "0x0080" }]}}' -u 12350000000000 --name "Karura Native Token" --sym "xcKAR" -d 12 --ed 1 --sufficient true --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 3 --revert-code true
+yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2000 }, { "GeneralKey": "0x0080" }]}}' -u 12350000000000 --name "Karura" --sym "xcKAR" -d 12 --ed 1 --sufficient true --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 3 --revert-code true
 ```

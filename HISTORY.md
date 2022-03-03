@@ -63,21 +63,21 @@ Add KINT to the asset pallet from parachain 2092. Also add the precompile to acc
 yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2092 }, { "GeneralKey": "0x000b" }]}}' --name "Kintsugi Wrapped BTC" --sym "xcKBTC" -d 8 --ed 1 --sufficient true --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 3 --revert-code true
 ```
 
-## 2022-03-03 \[Moonriver-1102\] Open HRMP channel request to Acala
+## 2022-03-03 \[Moonriver-1300\] Open HRMP channel request to Acala
 
 Send a XCM message to the relay to make an open channel request to Karura.
 ```
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action open --max-capacity 1000 --max-message-size 102400 --target-para-id 2000 --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 3
 ```
 
-## 2022-03-03 \[Moonriver-1102\] Accept HRMP channel from Acala
+## 2022-03-03 \[Moonriver-1300\] Accept HRMP channel from Acala
 Send a XCM message to the relay to accept channel from Karura.
 
 ```
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action accept --target-para-id 2000 --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as council-external -c 3
 ```
 
-## 2022-03-03 \[Moonriver-1102\] Adding KAR Asset from Acala
+## 2022-03-03 \[Moonriver-1300\] Adding KAR Asset from Acala
 
 Add KAR to the asset pallet from parachain 2000. Also add the precompile to access it through EVM.
 

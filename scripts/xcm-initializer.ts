@@ -31,10 +31,13 @@ async function main () {
     const initializeTxs = [];
 
     if (args["default-xcm-version"]) {
-        initializeTxs.push(
-        api.tx.polkadotXcm.forceDefaultXcmVersion(
+        let forceDefaultVersionTx =  api.tx.polkadotXcm.forceDefaultXcmVersion(
             args["default-xcm-version"]
-        ))
+        );
+        initializeTxs.push(
+            forceDefaultVersionTx
+        )
+        console.log("Encoded proposal for setDefaultXcmVersion is %s", forceDefaultVersionTx.method.toHex() || "");
     }
 
     if (args["xtokens-address"]) {
@@ -47,14 +50,17 @@ async function main () {
         let addressHash = blake2AsU8a(assetAddress, 128);
         let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
 
-        console.log(u8aToHex(concatKey))
-
-        initializeTxs.push(
-            api.tx.system.setStorage([[
-                u8aToHex(concatKey),
-                "0x1460006000fd"
+        let setStorageXtokensTx = api.tx.system.setStorage(
+            [[
+            u8aToHex(concatKey),
+            "0x1460006000fd"
             ]]
-        ));
+        )
+        initializeTxs.push(
+            setStorageXtokensTx
+        );
+        console.log("Encoded proposal for setStorageXtokens is %s", setStorageXtokensTx.method.toHex() || "");
+
     }
 
     if (args["xcm-transactor-address"]) {
@@ -67,12 +73,18 @@ async function main () {
         let addressHash = blake2AsU8a(assetAddress, 128);
         let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
 
-        initializeTxs.push(
-            api.tx.system.setStorage([[
+        let setStorageXcmTransactorTx = api.tx.system.setStorage(
+            [[
                 u8aToHex(concatKey),
                 "0x1460006000fd"
             ]]
-        ));
+        )
+
+        initializeTxs.push(
+            setStorageXcmTransactorTx
+        );
+
+        console.log("Encoded proposal for setStorageXcmTransactor is %s", setStorageXcmTransactorTx.method.toHex() || "");
     }
 
     if (args["relay-encoder-address"]) {
@@ -85,14 +97,18 @@ async function main () {
         let addressHash = blake2AsU8a(assetAddress, 128);
         let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
 
-        console.log(u8aToHex(concatKey))
-
-        initializeTxs.push(
-            api.tx.system.setStorage([[
+        let setStorageRelayEncoderTx = api.tx.system.setStorage(
+            [[
                 u8aToHex(concatKey),
                 "0x1460006000fd"
             ]]
-        ));
+        )
+
+        initializeTxs.push(
+            setStorageRelayEncoderTx
+        );
+
+        console.log("Encoded proposal for setStorageRelayEncoder is %s", setStorageRelayEncoderTx.method.toHex() || "");
     }
 
     const batchCall = api.tx.utility.batchAll(initializeTxs);
@@ -108,7 +124,8 @@ async function main () {
     // We just prepare the proposals
     let encodedProposal = toPropose?.method.toHex() || "";
     let encodedHash = blake2AsHex(encodedProposal);
-    console.log("Encoded proposal hash for complete is %s", encodedHash);
+    console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
+    console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
     console.log("Encoded length %d", encodedProposal.length);
 
     if (args["send-preimage-hash"]) {

@@ -104,6 +104,8 @@ async function main () {
             ]
         });
 
+    console.log("Encoded proposal for PolkdotXcmSend is %s", batchCall.method.toHex() || "");
+
     const toPropose = args['at-block'] ? 
         api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
         batchCall;
@@ -115,7 +117,8 @@ async function main () {
     // We just prepare the proposals
     let encodedProposal = toPropose?.method.toHex() || "";
     let encodedHash = blake2AsHex(encodedProposal);
-    console.log("Encoded proposal hash for complete is %s", encodedHash);
+    console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
+    console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
     console.log("Encoded length %d", encodedProposal.length);
 
     if (args["send-preimage-hash"]) {

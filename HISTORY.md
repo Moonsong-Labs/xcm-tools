@@ -109,5 +109,5 @@ yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.netwo
 Add BNC to the asset pallet from parachain 2001. Also add the precompile to access it through EVM.
 
 ```
-yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2001 }, { "GeneralKey": "0x0001" }]}}' -u 35230000000000 --name "xcBNC" --sym "xcBNC" -d 12 --ed 1 --sufficient true --account-priv-key "<council_member_priv_key>" --send-preimage-hash true --send-proposal-as democracy --revert-code true
+yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2001 }, { "GeneralKey": "0x0001" }]}}' -u 35230000000000 --name "xcBNC" --sym "xcBNC" -d 12 --ed 1 --sufficient true --account-priv-key "<priv_key>" --send-preimage-hash true --send-proposal-as democracy --revert-code true
 ```

@@ -30,12 +30,20 @@ async function main () {
                 ex.method.args[0].downwardMessages.forEach((message) => {
                     // We recover all instructions
                     let instructions = paraApi.createType("XcmVersionedXcm", message.msg) as any;
-                     // We check whether the instruction is a ReserveAssetDeposited
-                     instructions.asV2.forEach((instruction) => {
-                        if (instruction.isReserveAssetDeposited) {
+                    if (instructions.isV1) {
+                        if (instructions.asV1.isReserveAssetDeposited) {
                             console.log("We have a ReserveAssetDeposited asset")
                         }
-                    });
+                    }
+                    else if (instructions.isV2) {
+                        instructions.asV2.forEach((instruction) => {
+                            if (instruction.isReserveAssetDeposited) {
+                                console.log("We have a ReserveAssetDeposited asset")
+                            }
+                        });
+                    }
+                     // We check whether the instruction is a ReserveAssetDeposited
+                     
                 });
             }
             else {

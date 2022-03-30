@@ -1,6 +1,7 @@
 // Import
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import yargs from 'yargs';
+import { ParaId } from '@polkadot/types/interfaces';
 
 const args = yargs.options({
     'para-ws-provider': {type: 'string', demandOption: true, alias: 'wr'},
@@ -34,16 +35,13 @@ async function main () {
                         if (instructions.asV1.isReserveAssetDeposited) {
                             console.log("We have a ReserveAssetDeposited asset")
                         }
+                        console.log(instructions.asV1.toHuman())
                     }
                     else if (instructions.isV2) {
                         instructions.asV2.forEach((instruction) => {
-                            if (instruction.isReserveAssetDeposited) {
-                                console.log("We have a ReserveAssetDeposited asset")
-                            }
+                            console.log(instruction.toHuman())
                         });
                     }
-                     // We check whether the instruction is a ReserveAssetDeposited
-                     
                 });
             }
             else {

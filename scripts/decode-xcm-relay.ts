@@ -1,6 +1,7 @@
 // Import
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import yargs from 'yargs';
+import { ParaId } from '@polkadot/types/interfaces';
 
 const args = yargs.options({
     'relay-ws-provider': {type: 'string', demandOption: true, alias: 'wr'},
@@ -33,10 +34,9 @@ async function main () {
                         let instructions = relayApi.createType("XcmVersionedXcm", message) as any;
 
                         // We check whether the instruction is a WithdrawAsset
+                        console.log("instructions are")
                         instructions.asV2.forEach((instruction) => {
-                            if (instruction.isWithdrawAsset) {
-                                console.log("We have a withdraw asset")
-                            }
+                            console.log(instruction.toHuman())
                         });
                     });
                 } 

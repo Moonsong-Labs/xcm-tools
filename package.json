@@ -12,7 +12,8 @@
     "set-transact-info": "ts-node 'scripts/xcm-transactor-info-setter.ts'",
     "register-derivative-index": "ts-node 'scripts/xcm-derivative-index-registrar.ts'",
     "statemint-hrmp-propose": "ts-node 'scripts/statemint-hrmp-relay-proposal-generator.ts'",
-    "xcm-decode": "ts-node 'scripts/decode-xcm.ts'"
+    "xcm-decode-relay": "ts-node 'scripts/decode-xcm-relay.ts'",
+    "xcm-decode-para": "ts-node 'scripts/decode-xcm-para.ts'"
   },
   "dependencies": {
     "@polkadot/api": "^7.10.1",

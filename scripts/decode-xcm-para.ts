@@ -33,20 +33,26 @@ async function main() {
                 // Go through each message
                 ex.method.args[0].downwardMessages.forEach((message) => {
                     // Print the Blake2 Hash of the message
-                    console.log(`Blake2 hash of message is: ${u8aToHex(blake2AsU8a(message))}\n`);
+                    console.log(
+                        `Blake2 hash of message is: ${u8aToHex(blake2AsU8a(message.msg))}\n`
+                    );
 
                     // We recover all instructions
                     let instructions = paraApi.createType('XcmVersionedXcm', message.msg) as any;
                     if (instructions.isV1) {
                         // Print V1 Message
                         console.log(instructions.asV1.toHuman());
+                        if (instructions.isDepositAsset) {
+                            console.log('Beneficiary Located At');
+                            console.log(instructions.toHuman().DepositAsset.beneficiary);
+                        }
                     } else if (instructions.isV2) {
                         instructions.asV2.forEach((instruction) => {
                             // Print V2 Message
                             console.log(instruction.toHuman());
                             if (instruction.isWithdrawAsset) {
                                 console.log('Withdraw Asset Located At');
-                                console.log(instruction.toHuman().WithdrawAsset[0].id);
+                                console.log(instruction.toHuman().WithdrawAsset[0].beneficiary);
                             }
                         });
                     }
@@ -60,32 +66,46 @@ async function main() {
                     if (paraId.eq(para)) {
                         // Go through each message
                         messages.forEach((message) => {
+                            // First byte is a format version that creates problme when decoding it as XcmVersionedXcm
+                            // We remove it
+
                             // Print the Blake2 Hash of the message
                             console.log(
                                 `Blake2 hash of message is: ${u8aToHex(
-                                    blake2AsU8a(message.data)
+                                    blake2AsU8a(message.data.slice(1))
                                 )}\n`
                             );
 
-                            // First byte is a format version that creates problme when decoding it as XcmVersionedXcm
-                            // We remove it
                             let instructions = paraApi.createType(
                                 'XcmVersionedXcm',
                                 message.data.slice(1)
                             ) as any;
 
-                            instructions.asV2.forEach((instruction) => {
-                                // Print V2 Message
-                                console.log(instruction.toHuman());
-                                if (instruction.isReserveAssetDeposited) {
-                                    console.log('Deposit Asset Located At');
-                                    console.log(instruction.toHuman().ReserveAssetDeposited[0].id);
+                            if (instructions.isV1) {
+                                // Print V1 Message
+                                console.log(instructions.asV1.toHuman());
+                                if (instructions.asV1.isReserveAssetDeposited) {
+                                    console.log('Reserve Asset Deposit:');
+                                    console.log(
+                                        instructions.asV1.toHuman().ReserveAssetDeposited.assets
+                                    );
                                 }
-                                if (instruction.isDepositAsset) {
-                                    console.log('Beneficiary Located At');
-                                    console.log(instruction.toHuman().DepositAsset.beneficiary);
-                                }
-                            });
+                            } else {
+                                instructions.asV2.forEach((instruction) => {
+                                    // Print V2 Message
+                                    console.log(instruction.toHuman());
+                                    if (instruction.isReserveAssetDeposited) {
+                                        console.log('Deposit Asset Located At');
+                                        console.log(
+                                            instruction.toHuman().ReserveAssetDeposited[0].id
+                                        );
+                                    }
+                                    if (instruction.isDepositAsset) {
+                                        console.log('Beneficiary Located At');
+                                        console.log(instruction.toHuman().DepositAsset.beneficiary);
+                                    }
+                                });
+                            }
                         });
                     }
                 });

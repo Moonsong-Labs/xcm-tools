@@ -1,6 +1,8 @@
 // Import
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import yargs from 'yargs';
+import { blake2AsU8a } from '@polkadot/util-crypto';
+import { u8aToHex } from '@polkadot/util';
 
 const args = yargs.options({
     'para-ws-provider': { type: 'string', demandOption: true, alias: 'wr' },
@@ -30,6 +32,9 @@ async function main() {
                 // Check downward messages (from relay chain to parachain)
                 // Go through each message
                 ex.method.args[0].downwardMessages.forEach((message) => {
+                    // Print the Blake2 Hash of the message
+                    console.log(`Blake2 hash of message is: ${u8aToHex(blake2AsU8a(message))}\n`);
+
                     // We recover all instructions
                     let instructions = paraApi.createType('XcmVersionedXcm', message.msg) as any;
                     if (instructions.isV1) {
@@ -55,6 +60,13 @@ async function main() {
                     if (paraId.eq(para)) {
                         // Go through each message
                         messages.forEach((message) => {
+                            // Print the Blake2 Hash of the message
+                            console.log(
+                                `Blake2 hash of message is: ${u8aToHex(
+                                    blake2AsU8a(message.data)
+                                )}\n`
+                            );
+
                             // First byte is a format version that creates problme when decoding it as XcmVersionedXcm
                             // We remove it
                             let instructions = paraApi.createType(

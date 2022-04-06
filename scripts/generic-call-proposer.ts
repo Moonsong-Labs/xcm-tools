@@ -35,7 +35,6 @@ async function main () {
         api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: extrinsic}) :
         extrinsic;
 
-    console.log(toPropose)
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;
     let nonce = BigInt(rawNonce.toString());

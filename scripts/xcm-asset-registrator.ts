@@ -25,13 +25,14 @@ const args = yargs.options({
     'at-block': {type: 'number', demandOption: false},
   }).argv;
  
-const PROPOSAL_AMOUNT = 10000000000000000000n
 // Construct
 const wsProvider = new WsProvider(args['ws-provider']);
 
 async function main () {
     const api = await ApiPromise.create({ provider: wsProvider });
     const collectiveThreshold = (args['collective-threshold']) ? args['collective-threshold'] :1;
+
+    const proposalAmount = await api.consts.democracy.minimumDeposit as any;
 
     const keyring = new Keyring({ type: "ethereum" });
 
@@ -122,7 +123,7 @@ async function main () {
 
     if (args["send-proposal-as"] == 'democracy') {
         await api.tx.democracy
-        .propose(encodedHash, PROPOSAL_AMOUNT)
+        .propose(encodedHash, proposalAmount)
         .signAndSend(account, { nonce: nonce++ });
     }
     else if (args["send-proposal-as"] == 'council-external') {

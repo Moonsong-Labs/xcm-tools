@@ -113,5 +113,8 @@ yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents
 ```
 
 ## 2022-04-06 \[Moonriver-1300\] Accept HRMP channel request from Bifrost
+
+Send a XCM message to the relay to accept channel from Bifrost.
+
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action accept --target-para-id 2001 --account-priv-key "<priv_key>" --send-preimage-hash true --send-proposal-as democracy
 

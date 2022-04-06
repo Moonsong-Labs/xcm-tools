@@ -37,22 +37,28 @@ async function main () {
     const destination: MultiLocation = api.createType("MultiLocation", JSON.parse(args["destination"]));
     const vestionedDest = { V1: destination };
 
-    transactInfoSetTxs.push(
-    api.tx.xcmTransactor.setTransactInfo(
+    let setTransactInfoTx =  api.tx.xcmTransactor.setTransactInfo(
         vestionedDest,
         args["extra-weight"],
         args["fee-per-second"],
         args["max-weight"],
-    ))
+    );
+    transactInfoSetTxs.push(
+        setTransactInfoTx
+    )
+    console.log("Encoded proposal for setTransactInfo is %s", setTransactInfoTx.method.toHex() || "");
 
+    let registerIndexTx =  api.tx.xcmTransactor.register(
+        args["owner"],
+        args["index"],
+    );
     if (args["register-index"]) {
         transactInfoSetTxs.push(
-        api.tx.xcmTransactor.register(
-            args["owner"],
-            args["index"],
-        ))
+            registerIndexTx
+        )
     }
-        
+    console.log("Encoded proposal for registerIndex is %s", registerIndexTx.method.toHex() || "");
+
     const batchCall = api.tx.utility.batchAll(transactInfoSetTxs);
 
     const toPropose = args['at-block'] ? 
@@ -66,7 +72,8 @@ async function main () {
     // We just prepare the proposals
     let encodedProposal = toPropose?.method.toHex() || "";
     let encodedHash = blake2AsHex(encodedProposal);
-    console.log("Encoded proposal hash for complete is %s", encodedHash);
+    console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
+    console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
     console.log("Encoded length %d", encodedProposal.length);
 
     if (args["send-preimage-hash"]) {

@@ -32,14 +32,13 @@ async function main () {
         // If several calls, we just push alltogether to batch
         for (let i = 0; i < args["generic-call"].length; i++) {
             let call = api.createType('Call', hexToU8a(args['generic-call'][i])) as any;
-            let extrinsic = api.createType('GenericExtrinsicV4', call) as any;
             Txs.push(call)
         }
     }
     else {
         // Else, we just push one
         let call = api.createType('Call', hexToU8a(args['generic-call'])) as any;
-        let extrinsic = api.createType('GenericExtrinsicV4', call) as any;
+        // let extrinsic = api.createType('GenericExtrinsicV4', call) as any;
         Txs.push(call)
     }
 

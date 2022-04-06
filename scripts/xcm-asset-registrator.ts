@@ -49,22 +49,31 @@ async function main () {
     const assetId = u8aToHex(api.registry.hash(asset.toU8a()).slice(0,16).reverse());
     const sourceLocation = { XCM: asset };
 
-    registerTxs.push(
-    api.tx.assetManager.registerAsset(
+    let registerTx =  api.tx.assetManager.registerAsset(
         sourceLocation,
         assetMetadata,
         args["existential-deposit"],
         args["sufficient"]
-    ))
+    );
+    registerTxs.push(
+        registerTx
+    )
+
+    console.log("Encoded proposal for registerAsset is %s", registerTx.method.toHex() || "");
 
     let numSupportedAssets =  ((await api.query.assetManager.supportedFeePaymentAssets()) as any).length;
     if (args["units-per-second"]) {
+        let setUnitsTx =  api.tx.assetManager.setAssetUnitsPerSecond(
+            sourceLocation,
+            args["units-per-second"],
+            numSupportedAssets
+        );
+
         registerTxs.push(
-            api.tx.assetManager.setAssetUnitsPerSecond(
-                sourceLocation,
-                args["units-per-second"],
-                numSupportedAssets
-        ));
+            setUnitsTx
+        );
+
+        console.log("Encoded proposal for setAssetUnitsPerSecond is %s", setUnitsTx.method.toHex() || "");
     }
 
     if (args["revert-code"]) {
@@ -77,12 +86,16 @@ async function main () {
         let addressHash = blake2AsU8a(assetAddress, 128);
         let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
 
+        let setRevertTx =  api.tx.system.setStorage([[
+            u8aToHex(concatKey),
+            "0x1460006000fd"
+        ]]);
+
         registerTxs.push(
-            api.tx.system.setStorage([[
-                u8aToHex(concatKey),
-                "0x1460006000fd"
-            ]]
-        ));
+            setRevertTx
+        );
+
+        console.log("Encoded proposal for setStorage is %s", setRevertTx.method.toHex() || "");
     }
 
     const batchCall = api.tx.utility.batchAll(registerTxs);
@@ -98,7 +111,8 @@ async function main () {
     // We just prepare the proposals
     let encodedProposal = toPropose?.method.toHex() || "";
     let encodedHash = blake2AsHex(encodedProposal);
-    console.log("Encoded proposal hash for complete is %s", encodedHash);
+    console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
+    console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
     console.log("Encoded length %d", encodedProposal.length);
 
     if (args["send-preimage-hash"]) {

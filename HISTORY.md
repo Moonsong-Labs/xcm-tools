@@ -1,5 +1,3 @@
-albertov19-bifrost-hrmp-and-asset
-
 # History of XCM-tools execution on Moonbeam networks
 
 ## 2022-01-06 \[Moonriver-1101\] default XCM version

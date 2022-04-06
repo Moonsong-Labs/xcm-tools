@@ -183,11 +183,11 @@ The script accepts these inputs fields:
 
 ## Generic Call script
 
-Script that allows to propose a generic Call to be executed in a chain
+Script that allows to propose one or several generic Calls to be executed in a chain. If several calls are provided, these are joint with batchAll from pallet-utility
 
 The script accepts these inputs fields:
 - `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
-- `--generic-call or --call`, the call (as hex string) that should be proposed through democracy
+- `--generic-call or --call`, the call (as hex string) that should be proposed through democracy. Can be passed many times, if we want to batch several together
 - `--account-priv-key or -a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
@@ -201,3 +201,7 @@ The script accepts these inputs fields:
 ### Example through council
 
 `yarn generic-call-propose -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as council-external --collective-threshold 2`
+
+### Example through democracy but batching 2 txs
+
+`yarn generic-call-propose -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as democracy`

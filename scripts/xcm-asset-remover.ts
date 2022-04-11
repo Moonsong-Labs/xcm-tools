@@ -41,38 +41,17 @@ async function main () {
         sufficients: assetDetails.sufficients,
         approvals: assetDetails.approvals,
     });
-    
-    registerTxs.push(
-    api.tx.assets.destroy(
-        assetId,
-        witness
-    ))
 
     let numSupportedAssets =  ((await api.query.assetManager.supportedFeePaymentAssets()) as any).length;
 
-    // This just removes the asset from supported assets. In the next runtime we can clean the rest of the data
-    // TODO: modify this script in the next runtime!
+    // This removes from every pallet, including the EVM side of things
     registerTxs.push(
-        api.tx.assetManager.removeSupportedAsset(
-            sourceLocation,
+        api.tx.assetManager.destroyForeignAsset(
+            assetId,
+            witness,
             numSupportedAssets
         )
     );
-
-    // This is to remove the evm the revert code
-    let palletEncoder = new TextEncoder().encode("EVM");
-    let palletHash = xxhashAsU8a(palletEncoder, 128);
-    let storageEncoder = new TextEncoder().encode("AccountCodes");
-    let storageHash = xxhashAsU8a(storageEncoder, 128);
-    let assetAddress = new Uint8Array([ ...hexToU8a("0xFFFFFFFF"), ...hexToU8a(assetId)]);
-    let addressHash = blake2AsU8a(assetAddress, 128);
-    let concatKey = new Uint8Array([ ...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
-
-    registerTxs.push(
-        api.tx.system.killStorage([
-            u8aToHex(concatKey),
-        ]
-    ));
 
     const batchCall = api.tx.utility.batchAll(registerTxs);
 

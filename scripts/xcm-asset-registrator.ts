@@ -49,7 +49,7 @@ async function main () {
     const sourceLocation = { XCM: asset };
 
     registerTxs.push(
-    api.tx.assetManager.registerAsset(
+    api.tx.assetManager.registerForeignAsset(
         sourceLocation,
         assetMetadata,
         args["existential-deposit"],

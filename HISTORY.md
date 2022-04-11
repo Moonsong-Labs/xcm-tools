@@ -118,3 +118,10 @@ Send a XCM message to the relay to accept channel from Bifrost.
 
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action accept --target-para-id 2001 --account-priv-key "<priv_key>" --send-preimage-hash true --send-proposal-as democracy
 
+## 2022-04-08 \[Moonriver-1300\] Adding aUSD Asset from Karura
+
+Add aUSD to the asset pallet from parachain 2000. Also add the precompile to access it through EVM.
+
+```
+yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2000 }, { "GeneralKey": "0x0081" }]}}' --name "Acala Dollar" --sym "xcAUSD" -d 12 --ed 1 --sufficient true --account-priv-key ${PRIV_KEY} --send-preimage-hash true --revert-code true
+```

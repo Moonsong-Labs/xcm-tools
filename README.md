@@ -46,6 +46,38 @@ The script accepts these inputs fields:
 
 `yarn register-asset -w ws://127.0.0.1:34102  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "Parent" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
 
+## Remove-asset script
+
+Script that allows to remove an asset in a Moonbeam runtime. It particulary does three things:
+
+- Removes the asset from pallet-assets
+- Removes asset-mapping in pallet-asset-manager
+- Removes the revert code in the asset precompile
+
+The script accepts these inputs fields:
+- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
+- `--asset or -a`, the MultiLocation identifier of the asset to be removed
+- `--account-priv-key or -a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash    
+- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
+
+### Examples to note Pre-Image and propose
+
+`yarn remove-asset -w ws://127.0.0.1:34102  --asset  '{ "parents": 1, "interior": "Here" }' --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
+
+`yarn remove-asset -w ws://127.0.0.1:34102  --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1001 }, { "GeneralIndex": 8 }]}}' --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
+
+`yarn remove-asset -w ws://127.0.0.1:34102 --asset '{ "parents": 1, "interior": {"X1": { "Parachain": 1001 }}}' --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
+
+`yarn remove-asset -w ws://127.0.0.1:34102 --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1002 }, { "GeneralKey": "0x000b" }]}}' --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true -s democracy`
+
+### Example to note Pre-Image and propose through council
+
+`yarn register-asset -w ws://127.0.0.1:34102  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "Parent" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
+
+
 ## XCM-initializer script
 
 Script that allows to initialize XCM in a Moonbeam runtime. It particularly does:

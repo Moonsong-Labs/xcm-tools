@@ -27,27 +27,30 @@ async function main () {
 
     const keyring = new Keyring({ type: "ethereum" });
 
-    let Txs = [];
+    let Tx;
     if (Array.isArray(args["generic-call"])) {
+        let Txs = [];
+
         // If several calls, we just push alltogether to batch
         for (let i = 0; i < args["generic-call"].length; i++) {
             let call = api.createType('Call', hexToU8a(args['generic-call'][i])) as any;
             Txs.push(call)
         }
+        const batchCall = api.tx.utility.batchAll(Txs);
+        Tx = batchCall;
     }
     else {
         // Else, we just push one
         let call = api.createType('Call', hexToU8a(args['generic-call'])) as any;
-        // let extrinsic = api.createType('GenericExtrinsicV4', call) as any;
-        Txs.push(call)
+        let extrinsic = api.createType('GenericExtrinsicV4', call) as any;
+        Tx = extrinsic
     }
 
-    const batchCall = api.tx.utility.batchAll(Txs);
-    console.log("Encoded proposal for batchAll is %s", batchCall.method.toHex() || "");
+    console.log("Encoded proposal for batchAll is %s", Tx.method.toHex() || "");
 
     const toPropose = args['at-block'] ? 
-        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
-        batchCall;
+        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: Tx}) :
+        Tx;
 
     const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
     const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;

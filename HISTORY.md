@@ -123,5 +123,13 @@ yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.netwo
 Add aUSD to the asset pallet from parachain 2000. Also add the precompile to access it through EVM.
 
 ```
-yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2000 }, { "GeneralKey": "0x0081" }]}}' --name "Acala Dollar" --sym "xcAUSD" -d 12 --ed 1 --sufficient true --account-priv-key ${PRIV_KEY} --send-preimage-hash true --revert-code true
+yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2000 }, { "GeneralKey": "0x0081" }]}}' --name "Acala Dollar" --sym "xcAUSD" -d 12 --ed 1 --sufficient true --account-priv-key "<priv_key>" --send-preimage-hash true --revert-code true
+```
+
+## 2022-04-13 \[Moonriver-1300\] Adds aUSD as Fee Token
+
+Add aUSD as a fee token to pay for XCM execution on Moonriver.
+
+```
+yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/ --call "0x690100010200411f0608008100ec019ccc120000000000000000000007000000" --account-priv-key "<priv_key>" --send-preimage-hash true
 ```

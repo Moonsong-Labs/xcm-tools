@@ -66,7 +66,7 @@ async function main () {
         let setUnitsTx =  api.tx.assetManager.setAssetUnitsPerSecond(
             sourceLocation,
             args["units-per-second"],
-            numSupportedAssets
+            numSupportedAssets + 10 //adds 10 to have an extra buffer
         );
 
         registerTxs.push(

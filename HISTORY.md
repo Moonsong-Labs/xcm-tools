@@ -120,7 +120,7 @@ Sends a batched proposal to Open/Accept HRMP channel to/from Shadow (Crust), it 
 yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/  --call "0x67000101000210000400000000070010a5d4e81300000000070010a5d4e8010700f2052a01060002286bee383c00dc070000e8030000009001000d0100040001010070617261e7070000000000000000000000000000000000000000000000000000" --call "0x67000101000210000400000000070010a5d4e81300000000070010a5d4e8010700f2052a01060002286bee183c01dc0700000d0100040001010070617261e7070000000000000000000000000000000000000000000000000000" --call "0x690000010100711f64437275737420536861646f77204e617469766520546f6b656e14786343534d0c000100000000000000000000000000000001" --call "0x690100010100711f0088d54781480400000000000000000005000000" --call "0x00050411011da53b775b270400e7e61ed5cbc5a146ea70f53d5a3306ce02aaf97049cf181abc7aca49466b2e4f57b79c214866260bffffffff519811215e05efa24830eebe9c43acd7181460006000fd" --account-priv-key $"<priv_key>" --send-preimage-hash true
 ```
 
-## 2022-04-08 \[Moonriver-1401\] Adding aUSD Asset from Karura
+## 2022-04-08 \[Moonriver-1300\] Adding aUSD Asset from Karura
 
 Add aUSD to the asset pallet from parachain 2000. Also add the precompile to access it through EVM.
 
@@ -128,11 +128,18 @@ Add aUSD to the asset pallet from parachain 2000. Also add the precompile to acc
 yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2000 }, { "GeneralKey": "0x0081" }]}}' --name "Acala Dollar" --sym "xcAUSD" -d 12 --ed 1 --sufficient true --account-priv-key "<priv_key>" --send-preimage-hash true --revert-code true
 ```
 
-## 2022-04-11 \[Moonriver-1401\] Accept HRMP channel request from Bifrost
+## 2022-04-11 \[Moonriver-1300\] Accept HRMP channel request from Bifrost
 
 Send a XCM message to the relay to accept channel from Bifrost.
 
 ```
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.moonriver.moonbeam.network --relay-ws-provider wss://kusama-rpc.polkadot.io --hrmp-action accept --target-para-id 2001 --account-priv-key "<priv_key>" --send-preimage-hash true
+```
 
+## 2022-04-13 \[Moonriver-1300\] Adds aUSD as Fee Token
+
+Add aUSD as a fee token to pay for XCM execution on Moonriver.
+
+```
+yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/ --call "0x690100010200411f0608008100ec019ccc120000000000000000000007000000" --account-priv-key "<priv_key>" --send-preimage-hash true
 ```

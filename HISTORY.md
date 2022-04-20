@@ -126,7 +126,7 @@ Add aUSD to the asset pallet from parachain 2000. Also add the precompile to acc
 yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X2": [ { "Parachain": 2000 }, { "GeneralKey": "0x0081" }]}}' --name "Acala Dollar" --sym "xcAUSD" -d 12 --ed 1 --sufficient true --account-priv-key $"<priv_key>" --send-preimage-hash true --revert-code true
 ```
 
-## 2022-04-17 \[Moonriver-1401\] Open/Accept HRMP channel request to/from Khala, Register PHA asset
+## 2022-04-20 \[Moonriver-1401\] Open/Accept HRMP channel request to/from Khala, Register PHA asset
 
 Sends a batched proposal to Open/Accept HRMP channel to/from Khala, it also register PHA as an XC-20
 

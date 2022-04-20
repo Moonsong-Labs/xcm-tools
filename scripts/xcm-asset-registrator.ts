@@ -100,6 +100,8 @@ async function main () {
 
     const batchCall = api.tx.utility.batchAll(registerTxs);
 
+    console.log("Encoded proposal for batchCall is %s", batchCall.method.toHex() || "");
+
     const toPropose = args['at-block'] ? 
         api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: batchCall}) :
         batchCall;

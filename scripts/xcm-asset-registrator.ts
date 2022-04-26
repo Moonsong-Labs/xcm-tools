@@ -49,7 +49,7 @@ async function main () {
     const assetId = u8aToHex(api.registry.hash(asset.toU8a()).slice(0,16).reverse());
     const sourceLocation = { XCM: asset };
 
-    let registerTx =  api.tx.assetManager.registerAsset(
+    let registerTx =  api.tx.assetManager.registerForeignAsset(
         sourceLocation,
         assetMetadata,
         args["existential-deposit"],

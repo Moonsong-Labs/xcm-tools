@@ -1,4 +1,4 @@
-# History of XCM-tools execution on Moonbeam networks
+# History of XCM-tools execution on Moonriver
 
 ## 2022-01-06 \[Moonriver-1101\] default XCM version
 
@@ -152,29 +152,9 @@ Sends a batched proposal to Open/Accept HRMP channel to/from Khala, it also regi
 yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/  --call "0x67000101000210000400000000070010a5d4e81300000000070010a5d4e8010700f2052a01060002286bee183c01d40700000d0100040001010070617261e7070000000000000000000000000000000000000000000000000000" --call "0x67000101000210000400000000070010a5d4e81300000000070010a5d4e8010700f2052a01060002286bee383c00d4070000e8030000009001000d0100040001010070617261e7070000000000000000000000000000000000000000000000000000" --call "0x690000010100511f2c5068616c6120546f6b656e1478635048410c000100000000000000000000000000000001" --call "0x690100010100511f00fc299eb7420000000000000000000011000000" --call "0x00050411011da53b775b270400e7e61ed5cbc5a146ea70f53d5a3306ce02aaf97049cf181a733349a86c9e5369cf9458d31b5d3301ffffffff8e6b63d9e447b6d4c45bda8af9dc9603181460006000fd" --account-priv-key  $"<priv_key>" --send-preimage-hash true
 ```
 
-## 2022-04-20 \[Moonbeam-1300\] Initialize XCM
-Initializes XCM in Moonbeam
-```
-yarn initialize-xcm --ws-provider wss://wss.api.moonbeam.network--default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "" --send-preimage-hash true
-```
-
-## 2022-04-20 \[Moonbeam-1300\] Register xcDOT and set asset units per second
-Registers xcDOT in Moonbeam
-
-```
-yarn register-asset -w wss://wss.api.moonriver.moonbeam.network --asset '{ "parents": 1, "interior": "Here" }' --units-per-second 11285231116 --name "xcDOT" --sym "xcDOT" --decimals 10 --ed 1 --sufficient true --account-priv-key "" --revert-code true --send-preimage-hash true
-```
-
 ## 2022-04-25 \[Moonriver-1401\] Set new transactInfo for release v0.9.19
 Sets new transact info after 0.9.19 release in Moonriver
 
 ```
 yarn set-transact-info --ws-provider wss://wss.api.moonriver.moonbeam.network  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second  41485177350 --extra-weight 3000000000 --max-weight 20000000000 --send-preimage-hash true --account-priv-key ""
-```
-
-## 2022-04-27 \[Moonbeam-1300\] Set new transactInfo for release v0.9.19 and register Lido
-Sets new transact info in Moonbeam after the 0.9.19 and registers the Lido address
-
-```
-yarn set-transact-info --ws-provider wss://wss.api.moonbeam.network  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second  120692776537 --extra-weight 3000000000 --max-weight 20000000000 --send-preimage-hash true --register-index true --owner "0xa4b43F9B0aef0b22365727e93E91c096a09ef091" --index 30 --account-priv-key ""
 ```

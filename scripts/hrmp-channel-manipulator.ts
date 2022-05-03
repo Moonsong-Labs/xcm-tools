@@ -71,19 +71,35 @@ async function main () {
     // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
     let para_address = u8aToHex((new Uint8Array([ ...new TextEncoder().encode("para"), ...selfParaId.toU8a()]))).padEnd(66, "0");
 
+    // get the chain information
+    const relayChainInfo = (await relayApi.registry.getChainProperties()) as any;
+    let feeAmount;
+    if (relayChainInfo['tokenDecimals'].toHuman()[0] == '12') {
+        // 1 KSM
+        feeAmount = new BN(1000000000000)
+    }
+    else if (relayChainInfo['tokenDecimals'].toHuman()[0] == '10') {
+        // 10 DOT
+        feeAmount = new BN(100000000000)       
+    }
+    else {
+        // We dont know what relay chain is this
+        throw new Error()
+    }
+
     const batchCall =  api.tx.polkadotXcm.send(
         { V1: { parents: new BN(1), interior: "Here"} },
         { V2: [
             { WithdrawAsset: [
                 { id: { Concrete: { parents: new BN(0), interior: "Here"} },
-                  fun: { Fungible: new BN(1000000000000) }
+                  fun: { Fungible: feeAmount }
                 }
             ]
             },
             { BuyExecution:  {
                 fees:
                     { id: { Concrete: { parents: new BN(0), interior: "Here"} },
-                    fun: { Fungible: new BN(1000000000000) }
+                    fun: { Fungible: feeAmount }
                     },
                 weightLimit: {Limited: new BN(5000000000)}
                 }

@@ -53,18 +53,18 @@ async function main () {
                   fun: { Fungible: new BN(1000000000000) }
                 }
             ]
-            },
+            },  
             { BuyExecution:  {
                 fees:
                     { id: { Concrete: { parents: new BN(0), interior: "Here"} },
                     fun: { Fungible: new BN(1000000000000) }
                     },
-                weightLimit: {Limited: new BN(5000000000)}
+                weightLimit: {Limited: new BN(6000000000)}
                 }
             },
             { Transact:  {
                 originType: "Native",
-                requireWeightAtMost: new BN(1000000000),
+                requireWeightAtMost: new BN(2000000000),
                 call: {
                     encoded: relayCall2
                    }

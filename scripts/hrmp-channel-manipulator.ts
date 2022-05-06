@@ -74,7 +74,7 @@ async function main () {
     // get the chain information
     let feeAmount;
     const genesisHash = (await relayApi.genesisHash) as any;
-    switch (genesisHash.toString()) {
+    switch (genesisHash.toString().toLowerCase()) {
         case '0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443':
             //Moonbase Alpha Relay - 1 UNIT
             feeAmount = new BN(1000000000000);

@@ -80,12 +80,12 @@ async function main () {
             feeAmount = new BN(1000000000000);
             break;
         case '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe':
-            // Kusama - 1 KSM
-            feeAmount = new BN(1000000000000);
+            // Kusama - 0.1 KSM
+            feeAmount = new BN(100000000000);
             break;
         case '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3':
-            // Polkadot - 10 DOT
-            feeAmount = new BN(100000000000);
+            // Polkadot - 1 DOT
+            feeAmount = new BN(10000000000);
             break;
         default:
             // We dont know what relay chain is this

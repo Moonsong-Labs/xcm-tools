@@ -75,7 +75,7 @@ async function main () {
     let feeAmount;
     // Get Decimals
     const relayChainInfo = (await relayApi.registry.getChainProperties()) as any;
-    switch (relayChainInfo['tokenDecimals'].toHuman()[0]) {
+    switch (relayChainInfo['tokenDecimals'].toHuman()?.[0]) {
         case '12':
             // Kusama - 0.1 KSM
             feeAmount = new BN(100000000000);
@@ -86,9 +86,11 @@ async function main () {
             break;
         default:
             const genesisHash = (await relayApi.genesisHash) as any;
-            if (genesisHash === '0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443') {
+            console.log(genesisHash.toString().toLowerCase());
+            if (genesisHash.toString().toLowerCase() === '0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443') {
                 //Moonbase Alpha Relay - 1 UNIT
-                feeAmount = new BN(1000000000000);   
+                feeAmount = new BN(1000000000000);
+                break; 
             }
 
             // We dont know what relay chain is this

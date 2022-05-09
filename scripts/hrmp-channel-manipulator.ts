@@ -72,19 +72,29 @@ async function main () {
     let para_address = u8aToHex((new Uint8Array([ ...new TextEncoder().encode("para"), ...selfParaId.toU8a()]))).padEnd(66, "0");
 
     // get the chain information
-    const relayChainInfo = (await relayApi.registry.getChainProperties()) as any;
     let feeAmount;
-    if (relayChainInfo['tokenDecimals'].toHuman()[0] == '12') {
-        // 1 KSM
-        feeAmount = new BN(1000000000000)
-    }
-    else if (relayChainInfo['tokenDecimals'].toHuman()[0] == '10') {
-        // 10 DOT
-        feeAmount = new BN(100000000000)       
-    }
-    else {
-        // We dont know what relay chain is this
-        throw new Error()
+    // Get Decimals
+    const relayChainInfo = (await relayApi.registry.getChainProperties()) as any;
+    switch (relayChainInfo['tokenDecimals'].toHuman()?.[0]) {
+        case '12':
+            // Kusama - 0.1 KSM
+            feeAmount = new BN(100000000000);
+            break;
+        case '10':
+            // Polkadot - 1 DOT
+            feeAmount = new BN(10000000000);
+            break;
+        default:
+            const genesisHash = (await relayApi.genesisHash) as any;
+            console.log(genesisHash.toString().toLowerCase());
+            if (genesisHash.toString().toLowerCase() === '0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443') {
+                //Moonbase Alpha Relay - 1 UNIT
+                feeAmount = new BN(1000000000000);
+                break; 
+            }
+
+            // We dont know what relay chain is this
+            throw new Error();
     }
 
     const batchCall =  api.tx.polkadotXcm.send(

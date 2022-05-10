@@ -153,6 +153,7 @@ yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/  --call "0x67
 ```
 
 ## 2022-04-25 \[Moonriver-1401\] Set new transactInfo for release v0.9.19
+
 Sets new transact info after 0.9.19 release in Moonriver
 
 ```

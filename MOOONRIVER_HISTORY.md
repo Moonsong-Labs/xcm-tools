@@ -160,7 +160,7 @@ yarn set-transact-info --ws-provider wss://wss.api.moonriver.moonbeam.network  -
 ```
 
 
-## 2022-05-XX \[Moonriver-1401\] Open/Accept HRMP channel request to/from Heiko, Register HKO asset
+## 2022-05-17 \[Moonriver-1401\] Open/Accept HRMP channel request to/from Heiko, Register HKO asset
 
 Sends a batched proposal to Open/Accept HRMP channel to/from Heiko, it also register HKO as an XC-20
 

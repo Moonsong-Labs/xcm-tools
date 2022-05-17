@@ -7,6 +7,7 @@
   "license": "ISC",
   "scripts": {
     "register-asset": "ts-node 'scripts/xcm-asset-registrator.ts'",
+    "relay-sudo-dos": "ts-node 'scripts/relay-DOS-sudo-xcm.ts'",
     "initialize-xcm": "ts-node 'scripts/xcm-initializer.ts'",
     "hrmp-manipulator": "ts-node 'scripts/hrmp-channel-manipulator.ts'",
     "set-transact-info": "ts-node 'scripts/xcm-transactor-info-setter.ts'",

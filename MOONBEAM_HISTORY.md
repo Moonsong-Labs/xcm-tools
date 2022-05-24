@@ -23,7 +23,7 @@ Sets new transact info in Moonbeam after the 0.9.19 and registers the Lido addre
 ```
 yarn set-transact-info --ws-provider wss://wss.api.moonbeam.network  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second  120692776537 --extra-weight 3000000000 --max-weight 20000000000 --send-preimage-hash true --register-index true --owner "0xa4b43F9B0aef0b22365727e93E91c096a09ef091" --index 30 --account-priv-key "<priv_key>"
 ```
-## 2022-05-09 \[Moonbeam-1401\] Open HRMP channel request to Statmint
+## 2022-05-09 \[Moonbeam-1401\] Open HRMP channel request to Statemint
 
 Sends a proposal to Open HRMP channel to Statemint
 
@@ -31,7 +31,7 @@ Sends a proposal to Open HRMP channel to Statemint
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.api.moonbeam.network/  --relay-ws-provider wss://rpc.polkadot.io --hrmp-action open --max-capacity 1000 --max-message-size 102400 --target-para-id 1000 --account-priv-key  --account-priv-key  "<priv_key>" --send-preimage-hash true
 ```
 
-## 2022-05-XX \[Moonbeam-1401\] Accept HRMP channel request from Statmint
+## 2022-05-XX \[Moonbeam-1502\] Accept HRMP channel request from Statemint
 
 Sends a proposal to Accept HRMP channel from Statemint
 

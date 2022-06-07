@@ -153,10 +153,20 @@ yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/  --call "0x67
 ```
 
 ## 2022-04-25 \[Moonriver-1401\] Set new transactInfo for release v0.9.19
+
 Sets new transact info after 0.9.19 release in Moonriver
 
 ```
 yarn set-transact-info --ws-provider wss://wss.api.moonriver.moonbeam.network  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second  41485177350 --extra-weight 3000000000 --max-weight 20000000000 --send-preimage-hash true --account-priv-key "<priv_key>"
+```
+
+=======
+## 2022-05-16 \[Moonriver-1502\] Open/Accept HRMP channel request to/from Calamari, Register KMA asset
+
+Sends a batched proposal to Open/Accept HRMP channel to/from Calamari, it also register KMA as an XC-20
+
+```
+yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/  --call "0x670001010002100004000000000700e876481713000000000700e8764817010700f2052a01060002286bee183c01240800000d0100040001010070617261e7070000000000000000000000000000000000000000000000000000" --call "0x670001010002100004000000000700e876481713000000000700e8764817010700f2052a01060002286bee383c0024080000e8030000009001000d0100040001010070617261e7070000000000000000000000000000000000000000000000000000" --call "0x1e020c69000001010091202043616c616d6172691478634b4d410c0001000000000000000000000000000000016901000101009120aba8cdcf29b9670000000000000000001300000000050411011da53b775b270400e7e61ed5cbc5a146ea70f53d5a3306ce02aaf97049cf181a9663dacd60a0781792df8466393c1106ffffffffa083189f870640b141ae1e882c2b5bad181460006000fd" --account-priv-key "<priv_key>" --send-preimage-hash true --send-proposal-as democracy
 ```
 
 ## 2022-05-24 \[Moonriver-1502\] Open/Accept HRMP channel request to/from Crab, Register CRAB asset

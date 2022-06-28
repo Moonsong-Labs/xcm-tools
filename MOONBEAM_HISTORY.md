@@ -31,7 +31,7 @@ Sends a proposal to Open HRMP channel to Statemint
 yarn hrmp-manipulator --parachain-ws-provider wss://wss.api.moonbeam.network/  --relay-ws-provider wss://rpc.polkadot.io --hrmp-action open --max-capacity 1000 --max-message-size 102400 --target-para-id 1000 --account-priv-key  --account-priv-key  "<priv_key>" --send-preimage-hash true
 ```
 
-## 2022-05-XX \[Moonbeam-1502\] Accept HRMP channel request from Statemint
+## 2022-06-24 \[Moonbeam-1504\] Accept HRMP channel request from Statemint
 
 Sends a proposal to Accept HRMP channel from Statemint
 

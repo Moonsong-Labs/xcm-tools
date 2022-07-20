@@ -213,8 +213,7 @@ Script that allows to calculate what the derivative address will be for a specif
 The script accepts these inputs fields:
 - `--parachain-ws-provider or --wr`, which specifies the websocket provider of the parachain in which the address should be calculated
 - `--multilocation or -m`, the multilocation for which we want to calculate the derivated address
-- `--length or -l`, the desired length for the resulting address
 
 ### Example
 
-`yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}' -l 20`
+`yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`

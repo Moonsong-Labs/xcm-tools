@@ -8,8 +8,7 @@ import '@moonbeam-network/api-augment/moonbase'
 import { XcmV1MultiLocation } from "@polkadot/types/lookup"
 const args = yargs.options({
     'parachain-ws-provider': {type: 'string', demandOption: true, alias: 'wp'},
-    'multilocation': {type: 'string', demandOption: true, alias: 'm'},
-    'length': {type: 'number', demandOption: true, alias: 'l'}
+    'multilocation': {type: 'string', demandOption: true, alias: 'm'}
   }).argv;
  
 // Construct
@@ -25,8 +24,11 @@ async function main () {
       ...multilocation.toU8a(),
     ]);
 
-    const DescendOriginAddress = u8aToHex(api.registry.hash(toHash).slice(0, args["length"]));
-    console.log("Address is %s", DescendOriginAddress)
+    const DescendOriginAddress32 = u8aToHex(api.registry.hash(toHash).slice(0, 32));
+    const DescendOriginAddress20 = u8aToHex(api.registry.hash(toHash).slice(0, 20));
+
+    console.log("32 byte address is %s", DescendOriginAddress32)
+    console.log("20 byte address is %s", DescendOriginAddress20)
 }
 
 

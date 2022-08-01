@@ -12,9 +12,11 @@
     "set-transact-info": "ts-node 'scripts/xcm-transactor-info-setter.ts'",
     "register-derivative-index": "ts-node 'scripts/xcm-derivative-index-registrar.ts'",
     "statemint-hrmp-propose": "ts-node 'scripts/statemint-hrmp-relay-proposal-generator.ts'",
-    "generic-call-propose": "ts-node 'scripts/generic-call-proposer.ts'"
+    "generic-call-propose": "ts-node 'scripts/generic-call-proposer.ts'",
+    "xcm-derivated-address-calculator": "ts-node 'scripts/xcm-derivated-address-calculator.ts'"
   },
   "dependencies": {
+    "@moonbeam-network/api-augment": "^0.1700.0",
     "@polkadot/api": "^7.10.1",
     "@polkadot/types": "^7.10.1",
     "@types/yargs": "^17.0.0",

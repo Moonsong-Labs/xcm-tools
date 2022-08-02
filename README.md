@@ -1,6 +1,6 @@
 # XCM-tools
 
-A set if scripts to help XCM initialization, asset registration and chanel set up
+A set of scripts to help XCM initialization, asset registration and chanel set up
 
 ## Install dependencies
 

@@ -1,20 +1,18 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
+import { hexToU8a } from "@polkadot/util";
 
-import { blake2AsHex, xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
+import { blake2AsHex } from "@polkadot/util-crypto";
 import yargs from "yargs";
 import { Keyring } from "@polkadot/api";
-import { MultiLocation } from "@polkadot/types/interfaces";
 
 const args = yargs.options({
   "ws-provider": { type: "string", demandOption: true, alias: "w" },
-  index: { type: "number", demandOption: true, alias: "i" },
-  owner: { type: "string", demandOption: true, alias: "o" },
+  "generic-call": { type: "string", demandOption: true, alias: "call" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
-    choices: ["democracy", "council-external"],
+    choices: ["democracy", "council-external", "sudo"],
     demandOption: false,
     alias: "s",
   },
@@ -30,21 +28,32 @@ async function main() {
   const collectiveThreshold = args["collective-threshold"] ? args["collective-threshold"] : 1;
 
   const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
+
   const keyring = new Keyring({ type: "ethereum" });
 
-  const registerIndexTxs = [];
+  let Tx;
+  if (Array.isArray(args["generic-call"])) {
+    let Txs = [];
 
-  let registerTx = api.tx.xcmTransactor.register(args["owner"], args["index"]);
+    // If several calls, we just push alltogether to batch
+    for (let i = 0; i < args["generic-call"].length; i++) {
+      let call = api.createType("Call", hexToU8a(args["generic-call"][i])) as any;
+      Txs.push(call);
+    }
+    const batchCall = api.tx.utility.batchAll(Txs);
+    Tx = batchCall;
+  } else {
+    // Else, we just push one
+    let call = api.createType("Call", hexToU8a(args["generic-call"])) as any;
+    let extrinsic = api.createType("GenericExtrinsicV4", call) as any;
+    Tx = extrinsic;
+  }
 
-  registerIndexTxs.push(registerTx);
-
-  console.log("Encoded proposal for xcmTransactorRegister is %s", registerTx.method.toHex() || "");
-
-  const batchCall = api.tx.utility.batchAll(registerIndexTxs);
+  console.log("Encoded proposal for batchAll is %s", Tx.method.toHex() || "");
 
   const toPropose = args["at-block"]
-    ? api.tx.scheduler.schedule(args["at-block"], null, 0, { Value: batchCall })
-    : batchCall;
+    ? api.tx.scheduler.schedule(args["at-block"], null, 0, { Value: Tx })
+    : Tx;
 
   const account = await keyring.addFromUri(args["account-priv-key"], null, "ethereum");
   const { nonce: rawNonce, data: balance } = (await api.query.system.account(
@@ -55,8 +64,7 @@ async function main() {
   // We just prepare the proposals
   let encodedProposal = toPropose?.method.toHex() || "";
   let encodedHash = blake2AsHex(encodedProposal);
-  console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
-  console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
+  console.log("Encoded proposal hash for complete is %s", encodedHash);
   console.log("Encoded length %d", encodedProposal.length);
 
   if (args["send-preimage-hash"]) {

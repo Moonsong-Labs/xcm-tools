@@ -1,6 +1,8 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import yargs from "yargs";
+import { decodeXCMGeneric } from "./decode-xcm-generic";
+
 import { blake2AsU8a } from "@polkadot/util-crypto";
 import { u8aToHex } from "@polkadot/util";
 
@@ -32,28 +34,8 @@ async function main() {
         // Check downward messages (from relay chain to parachain)
         // Go through each message
         ex.method.args[0].downwardMessages.forEach((message) => {
-          // Print the Blake2 Hash of the message
-          console.log(`Blake2 hash of message is: ${u8aToHex(blake2AsU8a(message.msg))}\n`);
-
           // We recover all instructions
-          let instructions = paraApi.createType("XcmVersionedXcm", message.msg) as any;
-          if (instructions.isV1) {
-            // Print V1 Message
-            console.log(instructions.asV1.toHuman());
-            if (instructions.isDepositAsset) {
-              console.log("Beneficiary Located At");
-              console.log(instructions.toHuman().DepositAsset.beneficiary);
-            }
-          } else if (instructions.isV2) {
-            instructions.asV2.forEach((instruction) => {
-              // Print V2 Message
-              console.log(instruction.toHuman());
-              if (instruction.isWithdrawAsset) {
-                console.log("Withdraw Asset Located At");
-                console.log(instruction.toHuman().WithdrawAsset[0].beneficiary);
-              }
-            });
-          }
+          decodeXCMGeneric(paraApi, message, 1); //Type 1 is DMP
         });
       } else {
         // Check hrmp messages (from parachain to parachain)
@@ -64,59 +46,8 @@ async function main() {
           if (paraId.eq(para)) {
             // Go through each message
             messages.forEach((message) => {
-              // First byte is a format version that creates problme when decoding it as XcmVersionedXcm
-              // We remove it
-
-              // Print the Blake2 Hash of the message
-              console.log(
-                `Blake2 hash of message is: ${u8aToHex(blake2AsU8a(message.data.slice(1)))}\n`
-              );
-
-              let instructions = paraApi.createType(
-                "XcmVersionedXcm",
-                message.data.slice(1)
-              ) as any;
-
-              if (instructions.isV1) {
-                // Print V1 Message
-                console.log(instructions.asV1.toHuman());
-                if (instructions.asV1.isReserveAssetDeposited) {
-                  console.log("Reserve Asset Deposit:");
-                  console.log(instructions.asV1.toHuman().ReserveAssetDeposited.assets);
-                }
-              } else {
-                instructions.asV2.forEach((instruction) => {
-                  // Print V2 Message
-                  if (instruction.isReserveAssetDeposited) {
-                    console.log("Deposit Asset Located At");
-                    console.log(instruction.toHuman().ReserveAssetDeposited[0].id);
-                    console.log("\n");
-                  } else if (instruction.isDepositAsset) {
-                    console.log("Beneficiary Located At");
-                    console.log(instruction.toHuman().DepositAsset.beneficiary);
-                    console.log("\n");
-                  } else if (instruction.isDescendOrigin) {
-                    console.log("Descend Origin:");
-                    console.log(instruction.toHuman().DescendOrigin);
-                    console.log("\n");
-                  } else if (instruction.isWithdrawAsset) {
-                    console.log("Withdraw Asset:");
-                    console.log(instruction.toHuman().WithdrawAsset);
-                    console.log(`Withdraw Asset Location:`);
-                    console.log(instruction.toHuman().WithdrawAsset[0].id.Concrete);
-                    console.log("\n");
-                  } else if (instruction.isBuyExecution) {
-                    console.log("Buy Execution:");
-                    console.log(instruction.toHuman().BuyExecution);
-                    console.log(`Buy Execution Fees Location:`);
-                    console.log(instruction.toHuman().BuyExecution.fees.id.Concrete);
-                    console.log("\n");
-                  } else {
-                    console.log(instruction.toHuman());
-                    console.log("\n");
-                  }
-                });
-              }
+              // We recover all instructions
+              decodeXCMGeneric(paraApi, message, 2); //Type 2 is HRMP
             });
           }
         });

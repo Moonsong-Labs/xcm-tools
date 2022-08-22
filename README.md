@@ -17,19 +17,19 @@ Script that allows to register an asset in a Moonbeam runtime. It particulary do
 - Sets the revert code in the asset precompile
 
 The script accepts these inputs fields:
-- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
-- `--asset or -a`, the MultiLocation identifier of the asset to be registered
-- `--units-per-second or -u`, optional, specifies how much we should charge per second of execution in the registered asset.
-- `--name or -n`, the name of the asset
-- `--symbol or --sym`, the symbol of the asset
-- `--decimals or -d`, the number of decimals of the asset
-- `--existential-deposit or --ed`, the existential deposit of the registered asset
-- `--sufficient or --suf`, boolean indicating whether the asset should exist without a provider reference
-- `--revert-code or --revert`, boolean specifying whether we want register the revert code in the evm
-- `--account-priv-key or -a`, which specifies the account that will submit the proposal
-- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash    
-- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
-- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--ws-provider` or `--w`, which specifies the websocket provider to which we will be issuing our requests
+- `--asset` or `-a`, the MultiLocation identifier of the asset to be registered
+- `--units-per-second` or `-u`, optional, specifies how much we should charge per second of execution in the registered asset.
+- `--name` or `-n`, the name of the asset
+- `--symbol` or `--sym`, the symbol of the asset
+- `--decimals` or `-d`, the number of decimals of the asset
+- `--existential-deposit` or `--ed`, the existential deposit of the registered asset
+- `--sufficient` or `--suf`, boolean indicating whether the asset should exist without a provider reference
+- `--revert-code` or `--revert`, boolean specifying whether we want register the revert code in the evm
+- `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash    
+- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Examples to note Pre-Image and propose
@@ -55,17 +55,16 @@ Script that allows to initialize XCM in a Moonbeam runtime. It particularly does
 - Sets the revert code in the XCM-transactor precompile
 
 The script accepts these inputs fields:
-- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
-- `--default-xcm-version or -d`, optional, provides the new default XCM version we want to set
-- `--xtokens-address or --xt`, optional, if provided, it will set the revert code at that address.
-- `--xcm-transactor-address or --xcmt`, optional, if provided, it will set the revert code at that address.
-- `--relay-encoder-address or --re`, optional, if provided, it will set the revert code at that address.
-- `--account-priv-key or -a`, which specifies the account that will submit the proposal
-- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
-- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--ws-provider` or `-w`, which specifies the websocket provider to which we will be issuing our requests
+- `--default-xcm-version` or `-d`, optional, provides the new default XCM version we want to set
+- `--xtokens-address` or `--xt`, optional, if provided, it will set the revert code at that address.
+- `--xcm-transactor-address` or `--xcmt`, optional, if provided, it will set the revert code at that address.
+- `--relay-encoder-address` or `--re`, optional, if provided, it will set the revert code at that address.
+- `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
-
 
 ### Example to note Pre-Image and propose
 
@@ -80,16 +79,16 @@ The script accepts these inputs fields:
 Script that allows to initiate an HRMP action in the relay from the parachain. In particular, the script allows to open a channel, accept an existing open channel request, cancel an existing open channel request, or closing an existing HRMP channel.
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider or --wp`, which specifies the parachain websocket provider to which we will be issuing our requests
-- `--relay-ws-provider or --wr`, which specifies the relay websocket provider to which we will be issuing our requests
-- `--hrmp-action or --hrmp`, one of "accept", "close", "cancel", or "open".
-- `--target-para-id or -p`, The target paraId with which we interact.
-- `--max-capacity or --mc`, Optional, only for "open". The max capacity in messages that the channel supports.
-- `--max-message-size or -mms`, Optional, only for "open". The max message size that the channel supports.
-- `--account-priv-key or -a`, which specifies the account that will submit the proposal
-- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
-- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--parachain-ws-provider` or `--wp`, which specifies the parachain websocket provider to which we will be issuing our requests
+- `--relay-ws-provider` or `--wr`, which specifies the relay websocket provider to which we will be issuing our requests
+- `--hrmp-action` or `--hrmp`, one of "accept", "close", "cancel", or "open".
+- `--target-para-id` or `-p`, The target paraId with which we interact.
+- `--max-capacity` or `--mc`, Optional, only for "open". The max capacity in messages that the channel supports.
+- `--max-message-size` or `-mms`, Optional, only for "open". The max message size that the channel supports.
+- `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -110,14 +109,14 @@ Script that allows to set the transactor info in the XCM-transactor pallet. For 
 - The amount of fee the chain charges per weight unit.
 
 The script accepts these inputs fields:
-- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
-- `--destination or --d`, the MultiLocation identifier of the destination for which to set the transact info
-- `--fee-per-weight or --fw`, the amount of fee the destination will charge per weight
-- `--extra-weight or --ew`, the amount of extra weight that sending the transact XCM message involves
-- `--account-priv-key or -a`, which specifies the account that will submit the proposal
-- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
-- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--ws-provider` or `-w`, which specifies the websocket provider to which we will be issuing our requests
+- `--destination` or `--d`, the MultiLocation identifier of the destination for which to set the transact info
+- `--fee-per-weight` or `--fw`, the amount of fee the destination will charge per weight
+- `--extra-weight` or `--ew`, the amount of extra weight that sending the transact XCM message involves
+- `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -135,13 +134,13 @@ The script accepts these inputs fields:
 Script that allows to register a parachain account for a derivative index usage in a sovereign account. This will allows the parachain account to issue transact commands to a derivative index of the sovereign account
 
 The script accepts these inputs fields:
-- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
-- `--owner or --o`, the parachain account that will own the derivative index
-- `--index or --i`, the index that the owner will own
-- `--account-priv-key or -a`, which specifies the account that will submit the proposal
-- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
-- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--ws-provider` or `-w`, which specifies the websocket provider to which we will be issuing our requests
+- `--owner` or `--o`, the parachain account that will own the derivative index
+- `--index` or `--i`, the index that the owner will own
+- `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -158,16 +157,16 @@ The script accepts these inputs fields:
 Script that allows to build and send the relay call necessary to make statemine accept an already open channel request target-para-id -> statemine and open a new one in the opposite direction. This is meant to be proposed/executed in the relay.
 
 The script accepts these inputs fields:
-- `--statemint-ws-provider or -ws`, which specifies the statemint websocket provider
-- `--relay-ws-provider or --wr`, which specifies the relay websocket -provider
-- `--target-para-id or -p`, The target paraId to which the proposal from statemint will be sent.
-- `--max-capacity or --mc`, The max capacity in messages that the channel supports.
-- `--max-message-size or --mms`, The max message size that the channel supports.
-- `--send-deposit-from or -s`, where the deposit of KSM to statemint sovereign account will be made.  one of "sovereign" or "external-account".
-- `--external--account or -e`, Optional, only for "external-account" choices in the previous argument. The account from which we will send the KSM
-- `--account-priv-key or -a`, which specifies the account that will submit the preimage
-- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as or -s`, Optional, whether we want to submit the proposal. Choices are "democracy" or "sudo"
+- `--statemint-ws-provider` or `-ws`, which specifies the statemint websocket provider
+- `--relay-ws-provider` or `--wr`, which specifies the relay websocket -provider
+- `--target-para-id` or `-p`, The target paraId to which the proposal from statemint will be sent.
+- `--max-capacity` or `--mc`, The max capacity in messages that the channel supports.
+- `--max-message-size` or `--mms`, The max message size that the channel supports.
+- `--send-deposit-from` or `-s`, where the deposit of KSM to statemint sovereign account will be made.  one of "sovereign" or "external-account".
+- `--external--account` or `-e`, Optional, only for "external-account" choices in the previous argument. The account from which we will send the KSM
+- `--account-priv-key` or `-a`, which specifies the account that will submit the preimage
+- `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as` or `-s`, Optional, whether we want to submit the proposal. Choices are "democracy" or "sudo"
 
 ### Example to note Pre-Image with external account
 
@@ -186,12 +185,12 @@ The script accepts these inputs fields:
 Script that allows to propose one or several generic Calls to be executed in a chain. If several calls are provided, these are joint with batchAll from pallet-utility
 
 The script accepts these inputs fields:
-- `--ws-provider or -w`, which specifies the websocket provider to which we will be issuing our requests
-- `--generic-call or --call`, the call (as hex string) that should be proposed through democracy. Can be passed many times, if we want to batch several together
-- `--account-priv-key or -a`, which specifies the account that will submit the proposal
-- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
-- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--ws-provider` or `-w`, which specifies the websocket provider to which we will be issuing our requests
+- `--generic-call` or `--call`, the call (as hex string) that should be proposed through democracy. Can be passed many times, if we want to batch several together
+- `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example through democracy
@@ -211,9 +210,49 @@ The script accepts these inputs fields:
 Script that allows to calculate what the derivative address will be for a specific multilocation in a given parachain
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider or --wr`, which specifies the websocket provider of the parachain in which the address should be calculated
-- `--multilocation or -m`, the multilocation for which we want to calculate the derivated address
+- `--parachain-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the address should be calculated
+- `--multilocation` or `-m`, the multilocation for which we want to calculate the derivated address
 
 ### Example
 
 `yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`
+
+## Decode XCM scripts
+
+A coumple of scripts that allow to decode XCM messages in the relay chain (`decode-xcm-relay`) and in any parachain (`decode-xcm-para`). This first iteration can be easily expanded to support and expand on more XCM instructions.
+
+The script accepts these inputs fields:
+- `--parachain-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the address should be calculated
+- `--multilocation` or `-m`, the multilocation for which we want to calculate the derivated address
+
+### Decode XCM Relay
+
+Script to specifically decode XCM messages sent to the relay chain via UMP.
+
+The script accepts these input fields:
+- `--relay-ws-provider` or `--wr`, which specifies the websocket provider of the relay chain in which the XCM will be decoded
+- `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
+- `--para-id` or `-p`, which specifies the parachain ID from which the XCM message was sent from
+
+For example:
+
+`yarn xcm-decode-relay --wr wss://kusama-rpc.polkadot.io --b 12034878 --p 2023`
+
+### Decode XCM Parachain
+
+Script to specifically decode XCM messages sent to parachains either via DMP or HRMP/XCMP
+
+The script accepts these input fields:
+- `--para-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the XCM will be decoded
+- `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
+- `--channel`, which specifies the type of channel (or transport method) the XCM is being delivered through. Valid options are `dmp` and `hrmp`/`xcmp` (although anything different than `dmp` defaults to `hrmp` or `xcmp`)
+- `--para-id` or `-p`, (optional if channel is hrmp/xcmp) which specifies the parachain ID from which the XCM message was sent from
+
+For example:
+
+`yarn xcm-decode-para --wr wss://wss.api.moonriver.moonbeam.network --b 2391172 --channel dmp`
+
+`yarn xcm-decode-para --wr wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
+
+
+

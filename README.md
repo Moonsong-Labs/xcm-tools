@@ -254,5 +254,14 @@ For example:
 
 `yarn xcm-decode-para --wr wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
 
+## Derivated Address Calculator script
 
+Script that allows to calculate what the derivative address will be for a specific multilocation in a given parachain
 
+The script accepts these inputs fields:
+- `--parachain-ws-provider or --wr`, which specifies the websocket provider of the parachain in which the address should be calculated
+- `--multilocation or -m`, the multilocation for which we want to calculate the derivated address
+
+### Example
+
+`yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`

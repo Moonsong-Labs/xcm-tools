@@ -122,17 +122,21 @@ async function main() {
     ),
   ]);
 
-  const account = await keyring.addFromUri(args["account-priv-key"], null, "sr25519");
-  const { nonce: rawNonce, data: balance } = (await relayApi.query.system.account(
-    account.address
-  )) as any;
-  let nonce = BigInt(rawNonce.toString());
-
   // We just prepare the proposals
   let encodedProposal = relayProposalCall?.method.toHex() || "";
   let encodedHash = blake2AsHex(encodedProposal);
   console.log("Encoded proposal hash for complete is %s", encodedHash);
   console.log("Encoded length %d", encodedProposal.length);
+
+  let account;
+  let nonce;
+  if (args["account-priv-key"]) {
+    account = await keyring.addFromUri(args["account-priv-key"], null, "ethereum");
+    const { nonce: rawNonce, data: balance } = (await relayApi.query.system.account(
+      account.address
+    )) as any;
+    nonce = BigInt(rawNonce.toString());
+  }
 
   if (args["send-preimage-hash"]) {
     await relayApi.tx.democracy

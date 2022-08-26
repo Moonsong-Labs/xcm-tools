@@ -43,26 +43,16 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
       // Print V2 Message
       if (instruction.isReserveAssetDeposited) {
         console.log("Deposit Asset Located At");
-        console.log(instruction.toHuman().ReserveAssetDeposited[0].id);
       } else if (instruction.isDepositAsset) {
         console.log("Beneficiary Located At");
-        console.log(instruction.toHuman().DepositAsset.beneficiary);
       } else if (instruction.isDescendOrigin) {
         console.log("Descend Origin:");
-        console.log(instruction.toHuman().DescendOrigin);
       } else if (instruction.isWithdrawAsset) {
         console.log("Withdraw Asset:");
-        console.log(instruction.toHuman().WithdrawAsset);
-        console.log(`Withdraw Asset Location:`);
-        console.log(instruction.toHuman().WithdrawAsset[0].id.Concrete);
       } else if (instruction.isBuyExecution) {
         console.log("Buy Execution:");
-        console.log(instruction.toHuman().BuyExecution);
-        console.log(`Buy Execution Fees Location:`);
-        console.log(instruction.toHuman().BuyExecution.fees.id.Concrete);
-      } else {
-        console.log(instruction.toHuman());
       }
+      console.log(instruction.toString());
       console.log("\n");
     });
   }

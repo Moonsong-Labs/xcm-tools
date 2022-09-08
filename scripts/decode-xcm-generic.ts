@@ -29,7 +29,6 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
   console.log(instructions.toHuman());
 
   if (instructions.isV1) {
-    console.log(instructions.toString());
     instructions.toHuman().forEach((instruction) => {
       // Print V1 Message
       if (instructions.asV1.isReserveAssetDeposited) {

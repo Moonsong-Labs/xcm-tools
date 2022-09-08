@@ -79,3 +79,11 @@ Sends a batched proposal to Open/Accept HRMP channel to/from Astar, it also regi
 ```
 yarn generic-call-propose -w  wss://wss.api.moonbeam.network --call 0x670001010002100004000000000700e40b540213000000000700e40b5402010700f2052a01060002286bee183c01d60700000d0100040001010070617261d4070000000000000000000000000000000000000000000000000000 --call 0x670001010002100004000000000700e40b540213000000000700e40b5402010700f2052a01060002286bee383c00d6070000e8030000009001000d0100040001010070617261d4070000000000000000000000000000000000000000000000000000 --call 0x1e020c690000010100591f1441737461721878634153545212000100000000000000000000000000000001690100010100591ff04655035730576905000000000000001000000000050411011da53b775b270400e7e61ed5cbc5a146ea70f53d5a3306ce02aaf97049cf181aed86b347e278df2301326ef872c1e5f8ffffffffa893ad19e540e172c10d78d4d479b5cf181460006000fd --account-priv-key  "<priv_key>" --send-preimage-hash true --send-proposal-as democracy
 ```
+
+## 2022-09-08 \[Moonbeam-1702\] Adding USDT Asset from Statemint
+
+Add USDT to the asset pallet from parachain 1000. Also add the precompile to access it through EVM.
+
+```
+yarn register-asset -w wss://wss.api.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X3": [ { "Parachain": 1000 }, {"PalletInstance": 50}, { "GeneralIndex": 1984 }]}}' -u 25000000 --name "Tether USD" --sym "xcUSDT" -d 6 --ed 1 --sufficient true --account-priv-key "<priv_key>" --send-preimage-hash true --revert-code true
+```

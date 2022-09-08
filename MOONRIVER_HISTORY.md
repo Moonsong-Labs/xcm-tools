@@ -144,6 +144,14 @@ Add aUSD as a fee token to pay for XCM execution on Moonriver.
 yarn generic-call-propose -w wss://wss.moonriver.moonbeam.network/ --call "0x690100010200411f0608008100ec019ccc120000000000000000000007000000" --account-priv-key "<priv_key>" --send-preimage-hash true
 ```
 
+## 2022-04-19 \[Moonriver-1401\] Adding USDT Asset from Statemine
+
+Add USDT to the asset pallet from parachain 1000. Also add the precompile to access it through EVM.
+
+```
+yarn register-asset -w wss://wss.moonriver.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X3": [ { "Parachain": 1000 }, {"PalletInstance": 50}, { "GeneralIndex": 1984 }]}}' -u 25000000 --name "Tether USD" --sym "xcUSDT" -d 6 --ed 1 --sufficient true --account-priv-key "<priv_key>" --send-preimage-hash true --revert-code true
+```
+
 ## 2022-04-20 \[Moonriver-1401\] Open/Accept HRMP channel request to/from Khala, Register PHA asset
 
 Sends a batched proposal to Open/Accept HRMP channel to/from Khala, it also register PHA as an XC-20

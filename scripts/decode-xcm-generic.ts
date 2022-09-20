@@ -29,15 +29,16 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
   console.log(instructions.toHuman());
 
   if (instructions.isV1) {
-    // Print V1 Message
-    console.log(instructions.asV1.toHuman());
-    if (instructions.asV1.isReserveAssetDeposited) {
-      console.log("Reserve Asset Deposit:");
-      console.log(instructions.asV1.toHuman().ReserveAssetDeposited.assets);
-    } else if (instructions.isDepositAsset) {
-      console.log("Beneficiary Located At");
-      console.log(instructions.toHuman().DepositAsset.beneficiary);
-    }
+    instructions.toHuman().forEach((instruction) => {
+      // Print V1 Message
+      if (instructions.asV1.isReserveAssetDeposited) {
+        console.log("Reserve Asset Deposit:");
+      } else if (instructions.isDepositAsset) {
+        console.log("Beneficiary Located At");
+      }
+      console.log(instruction.toString());
+      console.log("\n");
+    });
   } else {
     instructions.asV2.forEach((instruction) => {
       // Print V2 Message

@@ -87,7 +87,6 @@ async function main() {
       break;
     default:
       const genesisHash = (await relayApi.genesisHash) as any;
-      console.log(genesisHash.toString().toLowerCase());
       if (
         genesisHash.toString().toLowerCase() ===
         "0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443"
@@ -151,18 +150,22 @@ async function main() {
     ? api.tx.scheduler.schedule(args["at-block"], null, 0, { Value: batchCall })
     : batchCall;
 
-  const account = await keyring.addFromUri(args["account-priv-key"], null, "ethereum");
-  const { nonce: rawNonce, data: balance } = (await api.query.system.account(
-    account.address
-  )) as any;
-  let nonce = BigInt(rawNonce.toString());
-
   // We just prepare the proposals
   let encodedProposal = toPropose?.method.toHex() || "";
   let encodedHash = blake2AsHex(encodedProposal);
   console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
   console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
   console.log("Encoded length %d", encodedProposal.length);
+
+  let account;
+  let nonce;
+  if (args["account-priv-key"]) {
+    account = await keyring.addFromUri(args["account-priv-key"], null, "ethereum");
+    const { nonce: rawNonce, data: balance } = (await api.query.system.account(
+      account.address
+    )) as any;
+    nonce = BigInt(rawNonce.toString());
+  }
 
   if (args["send-preimage-hash"]) {
     await api.tx.democracy.notePreimage(encodedProposal).signAndSend(account, { nonce: nonce++ });

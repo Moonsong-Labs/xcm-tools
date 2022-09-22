@@ -88,6 +88,14 @@ Sends a batched proposal to update the UnitsPerSecond for all XC-20s to target $
 yarn generic-call-propose -w wss://wss.api.moonbeam.network/  --call "0x1e021c6901000100dc950db307000000000000000000000011000000690100010200c11f06080002473e6ab935030000000000000000000011000000690100010200c11f06080001d5c9010000000000000000000000000011000000690100010200711f061050415241d79343fb1ab30200000000000000000011000000690100010200411f0608000100901ec4bc160000000000000000000011000000690100010200411f060800006de8580b14690000000000000000000011000000690100010100cd1f9fcaf80132d40000000000000000000011000000 " --account-priv-key  "<priv_key>" --send-preimage-hash true --send-proposal-as democracy
 ```
 
+## 2022-09-08 \[Moonbeam-1702\] Adding USDT Asset from Statemint
+
+Add USDT to the asset pallet from parachain 1000. Also add the precompile to access it through EVM.
+
+```
+yarn register-asset -w wss://wss.api.moonbeam.network/ --asset '{ "parents": 1, "interior": {"X3": [ { "Parachain": 1000 }, {"PalletInstance": 50}, { "GeneralIndex": 1984 }]}}' -u 25000000 --name "Tether USD" --sym "xcUSDT" -d 6 --ed 1 --sufficient true --account-priv-key "<priv_key>" --send-preimage-hash true --revert-code true
+```
+
 # 2022-09-20 \[Moonbeam-1702\] Open/Accept HRMP channel request to/from Darwinia, Register RING
 
 Sends a batched proposal to Open/Accept HRMP channel to/from Darwinia, it also register RING as XC-20

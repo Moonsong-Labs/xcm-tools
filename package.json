@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@moonbeam-network/api-augment": "^0.1700.0",
-    "@polkadot/api": "^7.10.1",
-    "@polkadot/types": "^7.10.1",
+    "@polkadot/api": "^9.5.2",
+    "@polkadot/types": "^9.5.2",
     "@types/yargs": "^17.0.0",
     "divide-bigint": "1.0.4",
     "exceljs": "4.2.1",

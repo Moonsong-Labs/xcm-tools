@@ -16,7 +16,7 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
       break;
     case 2:
       // XCM going from a Parachain to another Parachain (HRMP/XCMP)
-      // First byte is a format version that creates problme when decoding it as XcmVersionedXcm
+      // First byte is a format version that creates problem when decoding it as XcmVersionedXcm
       // We remove it
 
       fragments = decodeMessageIntoFragmentVec(provider, message.data.slice(1));
@@ -28,15 +28,15 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
 
   for (let i = 0; i < fragments.length; i++) {
     let instructions = fragments[i];
-    console.log(`Blake2 hash of fragment ${i} is: ${u8aToHex(blake2AsU8a(instructions.toU8a()))}\n`);
-    console.log(instructions.toHuman());
+    console.log(`Blake2 hash of fragment ${i+1} is: ${u8aToHex(blake2AsU8a(instructions.toU8a()))}\n`);
+    console.log(instructions.toHuman(),'\n');
     if (instructions.isV1) {
       instructions.toHuman().forEach((instruction) => {
         // Print V1 Message
         if (instructions.asV1.isReserveAssetDeposited) {
-          console.log("Reserve Asset Deposit:");
+          console.log("Reserve Asset Deposited:");
         } else if (instructions.isDepositAsset) {
-          console.log("Beneficiary Located At");
+          console.log("Deposit Asset");
         }
         console.log(instruction.toString());
         console.log("\n");
@@ -45,9 +45,9 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
       instructions.asV2.forEach((instruction) => {
         // Print V2 Message
         if (instruction.isReserveAssetDeposited) {
-          console.log("Deposit Asset Located At");
+          console.log("Reserve Asset Deposited:");
         } else if (instruction.isDepositAsset) {
-          console.log("Beneficiary Located At");
+          console.log("Deposit Asset:");
         } else if (instruction.isDescendOrigin) {
           console.log("Descend Origin:");
         } else if (instruction.isWithdrawAsset) {
@@ -55,10 +55,10 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
         } else if (instruction.isBuyExecution) {
           console.log("Buy Execution:");
         }
-        console.log(instruction.toString());
-        console.log("\n");
+        console.log(instruction.toString(),'\n');
       });
     }
+    console.log("-------------------\n");
   }
 }
 

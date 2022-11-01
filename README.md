@@ -205,18 +205,6 @@ The script accepts these inputs fields:
 
 `yarn generic-call-propose -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as democracy`
 
-## Derivated Address Calculator script
-
-Script that allows to calculate what the derivative address will be for a specific multilocation in a given parachain
-
-The script accepts these inputs fields:
-- `--parachain-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the address should be calculated
-- `--multilocation` or `-m`, the multilocation for which we want to calculate the derivated address
-
-### Example
-
-`yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`
-
 ## Decode XCM scripts
 
 A coumple of scripts that allow to decode XCM messages in the relay chain (`decode-xcm-relay`) and in any parachain (`decode-xcm-para`). This first iteration can be easily expanded to support and expand on more XCM instructions.
@@ -265,3 +253,59 @@ The script accepts these inputs fields:
 ### Example
 
 `yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`
+
+## Calculate Sovereign Account
+
+Script that allows to calculate the sovereign account address of a given parachain ID for both other parachains (32 bytes address) and a Moonbeam-based network (20 bytes address).
+
+The script accepts these inputs fields:
+- `--para-id or --p`, which specifies the parachain ID of the parachain that you want to calculate the sovereign address
+- `--relay or --r`, (optional) which specifies the relay chain that you want to use as provider for the parachain ID type generation (defaults to Polkadot)
+
+### Example
+
+`yarn calculate-sovereign-account --p 1000`
+
+## Calculate External Asset Information
+
+Script that allows to calculate the storage key, XC-20 address and asset ID for a external XC-20 (foreign XC-20).
+
+The script accepts these inputs fields:
+- `--asset or --a`, which specifies the multilocation (as seen from Moonbeam) of the XC-20 to be registered
+- `--network or --n`, (optional) which specifies the parachain that you want to use as provider for the multilocation type generation (defaults to Moonbeam)
+
+## Calculate Local Asset Information
+
+Script that allows to calculate the storage key, XC-20 address and asset ID for a local XC-20 (mintable XC-20).
+
+The script accepts these inputs fields:
+- `--asset-number or --a`, which specifies the local asset counter from which you want to calculate the local asset information
+- `--network or --n`, (optional) which specifies the parachain that you want to use as provider for the u128 type generation (defaults to Moonbeam)
+
+### Example
+
+`yarn calculate-external-asset-info --a '{ "parents": 1, "interior": {"X3": [ { "Parachain": 1000 }, {"PalletInstance": 50}, { "GeneralIndex": 1984 }]}}'`
+
+## Calculate Multilocation Derivative Account
+
+Script that allows to calculate the multilocation-derivative account for Moonbeam-based networks by providing some simple parameters. This account is calculated as the blake2 hash of a provided multilocation. Note that the hash is of the multilocation after the location is converted by the XCM queue in Moonbeam (with `parents: 1`).
+
+'parachain-ws-provider': { type: 'string', demandOption: true, alias: 'w' }, //Target WS Provider
+  address: { type: 'string', demandOption: true, alias: 'a' },
+  'para-id': { type: 'string', demandOption: false, alias: 'p' }, //Origin Parachain ID,
+  named: { type: 'string', demandOption: false, alias: 'n' }, // Named optional
+
+The script accepts these inputs fields:
+- `--parachain-ws-provider or --w`, which specifies websocket endpoint of the target parachain (for example, for an XCM message from Polkadot to Moonbeam, it would be a WS endpoint of Moonbeam)
+- `--address or --a`, which specifies the origin chain address that sent the XCM message. It is expected that this is injected into the origin multilocation via a junction through `DescendOrigin`
+- `--para-id or --p`, (optional) which specifies the parachain ID of the origin chain of the XCM message. It is optional as the XCM message might come from the relay chain (no parachain ID)
+- `--named or --n`, (optional) which specifies the name field that might be included by the `DescendOrigin` instruction of some chains (for example, Polkadot). It is optional as some chains might not enforce a name. It defaults to `named = 'Any'`
+
+### Example
+
+```
+yarn calculate-multilocation-derivative-account \
+--w wss://wss.api.moonbeam.network \
+--a 0x78914a4d7a946a0e4ed641f336b498736336e05096e342c799cc33c0f868d62f \
+--n 0x57657374656e64
+```

@@ -1,10 +1,7 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import yargs from "yargs";
-import { decodeXCMGeneric } from "./decode-xcm-generic";
-
-import { blake2AsU8a } from "@polkadot/util-crypto";
-import { u8aToHex } from "@polkadot/util";
+import { decodeXCMGeneric } from "./helpers/decode-xcm-generic";
 
 const args = yargs.options({
   "para-ws-provider": { type: "string", demandOption: true, alias: "wr" },

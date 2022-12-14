@@ -1,7 +1,7 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import yargs from "yargs";
-import { decodeXCMGeneric } from "./decode-xcm-generic";
+import { decodeXCMGeneric } from "./helpers/decode-xcm-generic";
 
 const args = yargs.options({
   "relay-ws-provider": { type: "string", demandOption: true, alias: "wr" },

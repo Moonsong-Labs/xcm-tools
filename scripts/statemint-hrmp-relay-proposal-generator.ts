@@ -1,9 +1,9 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
+import { u8aToHex } from "@polkadot/util";
 import { BN } from "@polkadot/util";
 
-import { blake2AsHex, xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
+import { blake2AsHex } from "@polkadot/util-crypto";
 import yargs from "yargs";
 import { Keyring } from "@polkadot/api";
 import { ParaId } from "@polkadot/types/interfaces";

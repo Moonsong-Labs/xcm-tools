@@ -1,12 +1,16 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
+import { u8aToHex } from "@polkadot/util";
 import { BN } from "@polkadot/util";
-
-import { blake2AsHex, xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
 import yargs from "yargs";
-import { Keyring } from "@polkadot/api";
 import { ParaId } from "@polkadot/types/interfaces";
+import {
+  schedulerWrapper,
+  accountWrapper,
+  sudoWrapper,
+  preimageWrapper,
+  democracyWrapper,
+} from "./helpers/function-helpers";
 
 const args = yargs.options({
   "parachain-ws-provider": { type: "string", demandOption: true, alias: "wp" },
@@ -40,9 +44,8 @@ async function main() {
 
   const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
 
-  const collectiveThreshold = args["collective-threshold"] ? args["collective-threshold"] : 1;
+  const collectiveThreshold = args["collective-threshold"] ?? 1;
 
-  const keyring = new Keyring({ type: "ethereum" });
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 
   let relayCall;
@@ -144,43 +147,40 @@ async function main() {
     }
   );
 
-  console.log("Encoded proposal for PolkdotXcmSend is %s", batchCall.method.toHex() || "");
+  // Scheduler
+  const finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], batchCall) : batchCall;
 
-  const toPropose = args["at-block"]
-    ? api.tx.scheduler.schedule(args["at-block"], null, 0, { Value: batchCall })
-    : batchCall;
+  console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());
 
-  // We just prepare the proposals
-  let encodedProposal = toPropose?.method.toHex() || "";
-  let encodedHash = blake2AsHex(encodedProposal);
-  console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
-  console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
-  console.log("Encoded length %d", encodedProposal.length);
-
+  // Create account with manual nonce handling
   let account;
   let nonce;
   if (args["account-priv-key"]) {
-    account = await keyring.addFromUri(args["account-priv-key"], null, "ethereum");
-    const { nonce: rawNonce, data: balance } = (await api.query.system.account(
-      account.address
-    )) as any;
-    nonce = BigInt(rawNonce.toString());
+    [account, nonce] = await accountWrapper(api, args["account-priv-key"]);
   }
 
+  // Send through SUDO
+  if (args["sudo"]) {
+    await sudoWrapper(api, finalTx, account);
+  }
+
+  // Create Preimage
+  let preimage;
   if (args["send-preimage-hash"]) {
-    await api.tx.democracy.notePreimage(encodedProposal).signAndSend(account, { nonce: nonce++ });
+    [preimage, nonce] = await preimageWrapper(api, finalTx, account, nonce);
+  }
 
-    if (args["send-proposal-as"] == "democracy") {
-      await api.tx.democracy
-        .propose(encodedHash, proposalAmount)
-        .signAndSend(account, { nonce: nonce++ });
-    } else if (args["send-proposal-as"] == "council-external") {
-      let external = api.tx.democracy.externalProposeMajority(encodedHash);
-
-      await api.tx.councilCollective
-        .propose(collectiveThreshold, external, external.length)
-        .signAndSend(account, { nonce: nonce++ });
-    }
+  // Send Democracy Proposal
+  if (args["send-proposal-as"]) {
+    await democracyWrapper(
+      api,
+      args["send-proposal-as"],
+      preimage,
+      proposalAmount,
+      account,
+      nonce,
+      collectiveThreshold
+    );
   }
 }
 

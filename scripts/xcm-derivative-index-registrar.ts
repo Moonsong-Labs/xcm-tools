@@ -37,11 +37,7 @@ async function main() {
   let registerTx = api.tx.xcmTransactor.register(args["owner"], args["index"]);
 
   // Scheduler
-  const finalTx = args["at-block"]
-    ? schedulerWrapper(api, args["at-block"], registerTx)
-    : registerTx;
-
-  console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());
+  let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], registerTx) : registerTx;
 
   // Create account with manual nonce handling
   let account;
@@ -50,10 +46,12 @@ async function main() {
     [account, nonce] = await accountWrapper(api, args["account-priv-key"]);
   }
 
-  // Send through SUDO
+  // Sudo Wrapper
   if (args["sudo"]) {
-    await sudoWrapper(api, finalTx, account);
+    finalTx = await sudoWrapper(api, finalTx, account);
   }
+
+  console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());
 
   // Create Preimage
   let preimage;

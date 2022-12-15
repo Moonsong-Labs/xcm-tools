@@ -19,12 +19,19 @@ export async function accountWrapper(api, privateKey) {
 }
 
 export async function sudoWrapper(api, tx, account) {
-  try {
-    await api.tx.sudo.sudo(tx).signAndSend(account);
-    console.log("--> Sudo Tx sent\n");
-  } catch (e) {
-    console.log(e.message);
+  let sudoTx = await api.tx.sudo.sudo(tx);
+
+  console.log("-- Using SUDO --");
+  if (account) {
+    try {
+      await api.tx(sudoTx.toHex()).signAndSend(account);
+      console.log("--> Sudo Tx sent\n");
+    } catch (e) {
+      console.log(e.message);
+    }
   }
+
+  return sudoTx;
 }
 
 export async function preimageWrapper(api, tx, account, nonce) {

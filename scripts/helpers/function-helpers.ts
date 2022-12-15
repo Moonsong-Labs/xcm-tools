@@ -57,7 +57,7 @@ export async function preimageWrapper(api, tx, account, nonce) {
     ]);
   }
 
-  // If preimage does not exists
+  // If preimage does not exist
   if (preimageCheck.toHex() == "0x") {
     try {
       if (runtimeVersion < 2000n) {

@@ -14,7 +14,7 @@ const args = yargs.options({
   "ws-provider": { type: "string", demandOption: true, alias: "w" },
   "generic-call": { type: "string", demandOption: true, alias: "call" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
-  sudo: { type: "boolean", demandOption: false, alias: "x" },
+  sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
     choices: ["democracy", "council-external"],

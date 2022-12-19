@@ -25,7 +25,7 @@ const args = yargs.options({
   "max-capacity": { type: "number", demandOption: true, alias: "mc" },
   "max-message-size": { type: "number", demandOption: true, alias: "mms" },
   "account-priv-key": { type: "string", demandOption: true, alias: "account" },
-  sudo: { type: "boolean", demandOption: false, alias: "x" },
+  sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: true, alias: "h" },
   "send-proposal-as": {
     choices: ["democracy", "council-external"],

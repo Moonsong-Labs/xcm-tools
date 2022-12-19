@@ -22,7 +22,7 @@ const args = yargs.options({
   "existential-deposit": { type: "number", demandOption: false, alias: "ed" },
   sufficient: { type: "boolean", demandOption: false, alias: "suf" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
-  sudo: { type: "boolean", demandOption: false, alias: "x" },
+  sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "revert-code": { type: "boolean", demandOption: false, alias: "revert" },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {

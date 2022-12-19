@@ -18,6 +18,7 @@ const args = yargs.options({
   "relay-encoder-address": { type: "string", demandOption: false, alias: "re" },
   "default-xcm-version": { type: "number", demandOption: false, alias: "d" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
+  sudo: { type: "boolean", demandOption: false, alias: "x" },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
     choices: ["democracy", "council-external", "sudo"],

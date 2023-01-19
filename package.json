@@ -19,7 +19,9 @@
     "calculate-sovereign-account": "ts-node 'scripts/calculate-sovereign-account.ts'",
     "calculate-external-asset-info": "ts-node 'scripts/calculate-external-asset-info.ts'",
     "calculate-local-asset-info": "ts-node 'scripts/calculate-local-asset-info.ts'",
-    "calculate-multilocation-derivative-account": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'"
+    "calculate-multilocation-derivative-account": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'",
+    "find-disputes": "ts-node 'scripts/find-disputes.ts'"
+
   },
   "dependencies": {
     "@moonbeam-network/api-augment": "^0.1801.0",

@@ -49,8 +49,7 @@ async function main() {
   } else {
     // Else, we just push one
     let call = api.createType("Call", hexToU8a(args["generic-call"])) as any;
-    let extrinsic = api.createType("GenericExtrinsicV4", call) as any;
-    Tx = extrinsic;
+    Tx = call;
   }
 
   // Scheduler
@@ -66,6 +65,11 @@ async function main() {
   // Sudo Wrapper
   if (args["sudo"]) {
     finalTx = await sudoWrapper(api, finalTx, account);
+  }
+
+  // If finalTx is not an Extrinsic, create the right type
+  if (finalTx.method) {
+    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
   }
 
   console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());

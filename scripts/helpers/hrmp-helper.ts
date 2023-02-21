@@ -96,9 +96,7 @@ export async function hrmpHelper(api, relayApi, hrmpAction, targetParaId, maxCap
     }
 
     // ...otherwise, use the legacy construction method
-    catch (e) {
-        console.log(e);
-
+    catch (_) {
         let relayCall;
         if (hrmpAction == "accept") {
             relayCall = relayApi.tx.hrmp.hrmpAcceptOpenChannel(maxCapacity);

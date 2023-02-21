@@ -7,9 +7,9 @@ import {
   accountWrapper,
   sudoWrapper,
   preimageWrapper,
-  democracyWrapper,
-  hrmpWrapper
+  democracyWrapper
 } from "./helpers/function-helpers";
+import { hrmpHelper } from "./helpers/hrmp-helper";
 
 const args = yargs.options({
   "parachain-ws-provider": { type: "string", demandOption: true, alias: "wp" },
@@ -32,6 +32,7 @@ const args = yargs.options({
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
+  "fee-currency": { type: "string", demandOption: false }
 }).argv;
 
 // Construct
@@ -45,9 +46,9 @@ async function main() {
   const collectiveThreshold = args["collective-threshold"] ?? 1;
 
   // Get parachain extrinsic
-  let batchCall = await hrmpWrapper(
+  let batchCall = await hrmpHelper(
     api, relayApi, args["hrmp-action"], args["target-para-id"], 
-    args["max-capacity"], args["max-message-size"]
+    args["max-capacity"], args["max-message-size"], args["fee-currency"]
   );
 
   // Scheduler

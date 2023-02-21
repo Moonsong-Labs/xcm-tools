@@ -213,7 +213,7 @@ export async function hrmpWrapper(api, relayApi, hrmpAction, targetParaId, maxCa
         }
       },
       {
-        transactRequiredAtMost: feeAmount
+        transactRequiredWeightAtMost: feeAmount
       }
     );
     return xcmTransactorHrmpManageExtrinsic;

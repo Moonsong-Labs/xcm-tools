@@ -4,7 +4,7 @@ import yargs from "yargs";
 import { decodeXCMGeneric } from "./helpers/decode-xcm-generic";
 
 const args = yargs.options({
-  "para-ws-provider": { type: "string", demandOption: true, alias: "wr" },
+  "para-ws-provider": { type: "string", demandOption: true, alias: "w" },
   "block-number": { type: "number", demandOption: true, alias: "b" },
   channel: { choices: ["dmp", "hrmp"], demandOption: true, alias: "channel" },
   "para-id": { type: "number", demandOption: false, alias: "p" },

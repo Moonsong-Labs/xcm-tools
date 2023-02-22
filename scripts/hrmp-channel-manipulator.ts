@@ -13,7 +13,7 @@ import {
 } from "./helpers/function-helpers";
 
 const args = yargs.options({
-  "parachain-ws-provider": { type: "string", demandOption: true, alias: "wp" },
+  "parachain-ws-provider": { type: "string", demandOption: true, alias: "w" },
   "relay-ws-provider": { type: "string", demandOption: true, alias: "wr" },
   "hrmp-action": {
     choices: ["accept", "cancel", "close", "open"],

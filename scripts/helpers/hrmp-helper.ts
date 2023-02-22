@@ -86,10 +86,12 @@ export async function hrmpHelper(api, relayApi, hrmpAction, targetParaId, maxCap
         let xcmTransactorHrmpManageExtrinsic = await api.tx.xcmTransactor.hrmpManage(
             action,
             {
-                currency: feeToken
+                currency: feeToken,
+                feeAmount: feeAmount
             },
             {
-                transactRequiredWeightAtMost: feeAmount
+                transactRequiredWeightAtMost: new BN(1000000000),
+                overallWeight: new BN(5000000000)
             }
         );
         return xcmTransactorHrmpManageExtrinsic;

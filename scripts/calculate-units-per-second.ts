@@ -53,7 +53,7 @@ async function main() {
       (targetPrice * BigInt(10 ** 12) * BigInt(decimalsFactor)) / (xcmTotalCost * tokenPrice);
 
     console.log(`Token Price is $${tokenPrice.toString() / decimalsFactor}`);
-    console.log(`The UnitsPerSecond need to be set ${unitsPerSecond.toString()}`);
+    console.log(`The UnitsPerSecond needs to be set ${unitsPerSecond.toString()}`);
 
     return unitsPerSecond;
   } else {

@@ -300,11 +300,6 @@ The script accepts these inputs fields:
 
 Script that allows to calculate the multilocation-derivative account for Moonbeam-based networks by providing some simple parameters. This account is calculated as the blake2 hash of a provided multilocation. Note that the hash is of the multilocation after the location is converted by the XCM queue in Moonbeam (with `parents: 1`).
 
-'parachain-ws-provider': { type: 'string', demandOption: true, alias: 'w' }, //Target WS Provider
-  address: { type: 'string', demandOption: true, alias: 'a' },
-  'para-id': { type: 'string', demandOption: false, alias: 'p' }, //Origin Parachain ID,
-  named: { type: 'string', demandOption: false, alias: 'n' }, // Named optional
-
 The script accepts these inputs fields:
 - `--parachain-ws-provider or --w`, which specifies websocket endpoint of the target parachain (for example, for an XCM message from Polkadot to Moonbeam, it would be a WS endpoint of Moonbeam)
 - `--address or --a`, which specifies the origin chain address that sent the XCM message. It is expected that this is injected into the origin multilocation via a junction through `DescendOrigin`
@@ -318,4 +313,24 @@ yarn calculate-multilocation-derivative-account \
 --w wss://wss.api.moonbeam.network \
 --a 0x78914a4d7a946a0e4ed641f336b498736336e05096e342c799cc33c0f868d62f \
 --n 0x57657374656e64
+```
+
+## Calculate Units Per Second
+
+Script that calculates the units of token charged per second of execution for some given parameters. It uses the [Coingecko API](https://www.coingecko.com/). If your token is not supported by Coingecko, you can tell the script the price manually. 
+
+The script accepts these inputs fields:
+- `--decimals or --d`, decimals of the token used for calculations
+- `--xcm-weight-cost or --xwc`, which specifies total cost of the XCM execution in weight, it includes all transactions
+- `--target or --t`, (optional) which specifies the target price for the execution. Default is `$0.02`
+- `--asset or --a`, (optional) which specifies asset name compatible with the [Coingecko API](https://www.coingecko.com/)
+- `--price pr --p`, (optional) if the asset is not supported by Coingecko, specifies the price to use
+
+### Example
+
+```
+yarn calculate-units-per-second \
+--d 10 \
+--xwc 4000000000 \
+--a polkadot
 ```

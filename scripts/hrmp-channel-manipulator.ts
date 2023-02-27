@@ -1,13 +1,13 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import {  } from "@polkadot/util";
+import {} from "@polkadot/util";
 import yargs from "yargs";
 import {
   schedulerWrapper,
   accountWrapper,
   sudoWrapper,
   preimageWrapper,
-  democracyWrapper
+  democracyWrapper,
 } from "./helpers/function-helpers";
 import { hrmpHelper } from "./helpers/hrmp-helper";
 
@@ -32,7 +32,7 @@ const args = yargs.options({
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
-  "fee-currency": { type: "string", demandOption: false }
+  "fee-currency": { type: "string", demandOption: false },
 }).argv;
 
 // Construct
@@ -47,8 +47,13 @@ async function main() {
 
   // Get parachain extrinsic
   let batchCall = await hrmpHelper(
-    api, relayApi, args["hrmp-action"], args["target-para-id"], 
-    args["max-capacity"], args["max-message-size"], args["fee-currency"]
+    api,
+    relayApi,
+    args["hrmp-action"],
+    args["target-para-id"],
+    args["max-capacity"],
+    args["max-message-size"],
+    args["fee-currency"]
   );
 
   // Scheduler

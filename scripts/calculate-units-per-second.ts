@@ -57,7 +57,7 @@ async function main() {
 
     return unitsPerSecond;
   } else {
-    console.error("Token name not supported, note that is token name and not ticker!");
+    console.error("Token name not supported. Note that a specific CoinGecko API ID is required, not a ticker!");
   }
 }
 

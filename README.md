@@ -215,7 +215,6 @@ The script accepts these inputs fields:
 
 `yarn generic-call-propose -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as democracy`
 
-=======
 ## Decode XCM scripts
 
 A coumple of scripts that allow to decode XCM messages in the relay chain (`decode-xcm-relay`) and in any parachain (`decode-xcm-para`). This first iteration can be easily expanded to support and expand on more XCM instructions.
@@ -252,18 +251,6 @@ For example:
 `yarn xcm-decode-para --w wss://wss.api.moonriver.moonbeam.network --b 2391172 --channel dmp`
 
 `yarn xcm-decode-para --w wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
-
-## Derivated Address Calculator script
-
-Script that allows to calculate what the derivative address will be for a specific multilocation in a given parachain
-
-The script accepts these inputs fields:
-- `--parachain-ws-provider or --w`, which specifies the websocket provider of the parachain in which the address should be calculated
-- `--multilocation or -m`, the multilocation for which we want to calculate the derivated address
-
-### Example
-
-`yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`
 
 ## Calculate Sovereign Account
 
@@ -336,3 +323,17 @@ yarn calculate-units-per-second \
 --a polkadot
 ```
 
+## Para-registrar-swap
+
+Script that allows a para id swap in the relay from the parachain.
+
+The script accepts these inputs fields:
+- `--parachain-ws-provider or --wp`, which specifies the parachain websocket provider to which we will be issuing our requests
+- `--relay-ws-provider or --wr`, which specifies the relay websocket provider to which we will be issuing our requests
+- `--old-para-id or -p`, The paraId to be swapped.
+- `--bew-para-id or -p`, The new paraId.
+- `--account-priv-key or -a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.

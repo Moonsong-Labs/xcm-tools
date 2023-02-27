@@ -252,18 +252,6 @@ For example:
 
 `yarn xcm-decode-para --w wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
 
-## Derivated Address Calculator script
-
-Script that allows to calculate what the derivative address will be for a specific multilocation in a given parachain
-
-The script accepts these inputs fields:
-- `--parachain-ws-provider or --w`, which specifies the websocket provider of the parachain in which the address should be calculated
-- `--multilocation or -m`, the multilocation for which we want to calculate the derivated address
-
-### Example
-
-`yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`
-
 ## Calculate Sovereign Account
 
 Script that allows to calculate the sovereign account address of a given parachain ID for both other parachains (32 bytes address) and a Moonbeam-based network (20 bytes address).
@@ -334,3 +322,18 @@ yarn calculate-units-per-second \
 --xwc 4000000000 \
 --a polkadot
 ```
+
+## Para-registrar-swap
+
+Script that allows a para id swap in the relay from the parachain.
+
+The script accepts these inputs fields:
+- `--parachain-ws-provider or --wp`, which specifies the parachain websocket provider to which we will be issuing our requests
+- `--relay-ws-provider or --wr`, which specifies the relay websocket provider to which we will be issuing our requests
+- `--old-para-id or -p`, The paraId to be swapped.
+- `--bew-para-id or -p`, The new paraId.
+- `--account-priv-key or -a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.

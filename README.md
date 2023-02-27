@@ -82,7 +82,7 @@ The script accepts these inputs fields:
 Script that allows to initiate an HRMP action in the relay from the parachain. In particular, the script allows to open a channel, accept an existing open channel request, cancel an existing open channel request, or closing an existing HRMP channel.
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider` or `--wp`, which specifies the parachain websocket provider to which we will be issuing our requests
+- `--parachain-ws-provider` or `--w`, which specifies the parachain websocket provider to which we will be issuing our requests
 - `--relay-ws-provider` or `--wr`, which specifies the relay websocket provider to which we will be issuing our requests
 - `--hrmp-action` or `--hrmp`, one of "accept", "close", "cancel", or "open".
 - `--target-para-id` or `-p`, The target paraId with which we interact.
@@ -163,7 +163,7 @@ The script accepts these inputs fields:
 Script that allows to build and send the relay call necessary to make statemine accept an already open channel request target-para-id -> statemine and open a new one in the opposite direction. This is meant to be proposed/executed in the relay.
 
 The script accepts these inputs fields:
-- `--statemint-ws-provider` or `-ws`, which specifies the statemint websocket provider
+- `--statemint-ws-provider` or `-w`, which specifies the statemint websocket provider
 - `--relay-ws-provider` or `--wr`, which specifies the relay websocket -provider
 - `--target-para-id` or `-p`, The target paraId to which the proposal from statemint will be sent.
 - `--max-capacity` or `--mc`, The max capacity in messages that the channel supports.
@@ -220,7 +220,7 @@ The script accepts these inputs fields:
 A coumple of scripts that allow to decode XCM messages in the relay chain (`decode-xcm-relay`) and in any parachain (`decode-xcm-para`). This first iteration can be easily expanded to support and expand on more XCM instructions.
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the address should be calculated
+- `--parachain-ws-provider` or `--w`, which specifies the websocket provider of the parachain in which the address should be calculated
 - `--multilocation` or `-m`, the multilocation for which we want to calculate the derivated address
 
 ### Decode XCM Relay
@@ -228,36 +228,36 @@ The script accepts these inputs fields:
 Script to specifically decode XCM messages sent to the relay chain via UMP.
 
 The script accepts these input fields:
-- `--relay-ws-provider` or `--wr`, which specifies the websocket provider of the relay chain in which the XCM will be decoded
+- `--relay-ws-provider` or `--w`, which specifies the websocket provider of the relay chain in which the XCM will be decoded
 - `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
 - `--para-id` or `-p`, which specifies the parachain ID from which the XCM message was sent from
 
 For example:
 
-`yarn xcm-decode-relay --wr wss://kusama-rpc.polkadot.io --b 12034878 --p 2023`
+`yarn xcm-decode-relay --w wss://kusama-rpc.polkadot.io --b 12034878 --p 2023`
 
 ### Decode XCM Parachain
 
 Script to specifically decode XCM messages sent to parachains either via DMP or HRMP/XCMP
 
 The script accepts these input fields:
-- `--para-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the XCM will be decoded
+- `--para-ws-provider` or `--w`, which specifies the websocket provider of the parachain in which the XCM will be decoded
 - `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
 - `--channel`, which specifies the type of channel (or transport method) the XCM is being delivered through. Valid options are `dmp` and `hrmp`/`xcmp` (although anything different than `dmp` defaults to `hrmp` or `xcmp`)
 - `--para-id` or `-p`, (optional if channel is hrmp/xcmp) which specifies the parachain ID from which the XCM message was sent from
 
 For example:
 
-`yarn xcm-decode-para --wr wss://wss.api.moonriver.moonbeam.network --b 2391172 --channel dmp`
+`yarn xcm-decode-para --w wss://wss.api.moonriver.moonbeam.network --b 2391172 --channel dmp`
 
-`yarn xcm-decode-para --wr wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
+`yarn xcm-decode-para --w wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
 
 ## Derivated Address Calculator script
 
 Script that allows to calculate what the derivative address will be for a specific multilocation in a given parachain
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider or --wr`, which specifies the websocket provider of the parachain in which the address should be calculated
+- `--parachain-ws-provider or --w`, which specifies the websocket provider of the parachain in which the address should be calculated
 - `--multilocation or -m`, the multilocation for which we want to calculate the derivated address
 
 ### Example

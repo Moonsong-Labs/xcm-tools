@@ -13,7 +13,7 @@ import {
 } from "./helpers/function-helpers";
 
 const args = yargs.options({
-  "statemint-ws-provider": { type: "string", demandOption: true, alias: "ws" },
+  "statemint-ws-provider": { type: "string", demandOption: true, alias: "w" },
   "relay-ws-provider": { type: "string", demandOption: true, alias: "wr" },
   "target-para-id": { type: "number", demandOption: true, alias: "p" },
   "send-deposit-from": {

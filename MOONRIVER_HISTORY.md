@@ -168,7 +168,6 @@ Sets new transact info after 0.9.19 release in Moonriver
 yarn set-transact-info --ws-provider wss://wss.api.moonriver.moonbeam.network  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second  41485177350 --extra-weight 3000000000 --max-weight 20000000000 --send-preimage-hash true --account-priv-key "<priv_key>"
 ```
 
-=======
 
 ## 2022-05-16 \[Moonriver-1502\] Open/Accept HRMP channel request to/from Calamari, Register KMA asset
 

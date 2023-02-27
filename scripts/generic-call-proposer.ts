@@ -1,85 +1,99 @@
 // Import
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import {hexToU8a} from '@polkadot/util';
-
-import {blake2AsHex} from '@polkadot/util-crypto';
-import yargs from 'yargs';
-import { Keyring } from "@polkadot/api";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { hexToU8a } from "@polkadot/util";
+import yargs from "yargs";
+import {
+  schedulerWrapper,
+  accountWrapper,
+  sudoWrapper,
+  preimageWrapper,
+  democracyWrapper,
+} from "./helpers/function-helpers";
 
 const args = yargs.options({
-    'ws-provider': {type: 'string', demandOption: true, alias: 'w'},
-    'generic-call': {type: 'string', demandOption: true, alias: 'call'},
-    'account-priv-key': {type: 'string', demandOption: false, alias: 'account'},
-    'send-preimage-hash': {type: 'boolean', demandOption: false, alias: 'h'},
-    'send-proposal-as': {choices: ['democracy', 'council-external', 'sudo'], demandOption: false, alias: 's'},
-    'collective-threshold': {type: 'number', demandOption: false, alias: 'c'},
-    'at-block': {type: 'number', demandOption: false},
-  }).argv;
- 
+  "ws-provider": { type: "string", demandOption: true, alias: "w" },
+  "generic-call": { type: "string", demandOption: true, alias: "call" },
+  "account-priv-key": { type: "string", demandOption: false, alias: "account" },
+  sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
+  "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
+  "send-proposal-as": {
+    choices: ["democracy", "council-external"],
+    demandOption: false,
+    alias: "s",
+  },
+  "collective-threshold": { type: "number", demandOption: false, alias: "c" },
+  "at-block": { type: "number", demandOption: false },
+}).argv;
+
 // Construct
-const wsProvider = new WsProvider(args['ws-provider']);
+const wsProvider = new WsProvider(args["ws-provider"]);
 
-async function main () {
-    const api = await ApiPromise.create({ provider: wsProvider });
-    const collectiveThreshold = (args['collective-threshold']) ? args['collective-threshold'] :1;
+async function main() {
+  const api = await ApiPromise.create({ provider: wsProvider });
 
-    const proposalAmount = await api.consts.democracy.minimumDeposit as any;
+  const collectiveThreshold = args["collective-threshold"] ?? 1;
 
-    const keyring = new Keyring({ type: "ethereum" });
+  const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
 
-    let Tx;
-    if (Array.isArray(args["generic-call"])) {
-        let Txs = [];
+  let Tx;
+  if (Array.isArray(args["generic-call"])) {
+    let Txs = [];
 
-        // If several calls, we just push alltogether to batch
-        for (let i = 0; i < args["generic-call"].length; i++) {
-            let call = api.createType('Call', hexToU8a(args['generic-call'][i])) as any;
-            Txs.push(call)
-        }
-        const batchCall = api.tx.utility.batchAll(Txs);
-        Tx = batchCall;
+    // If several calls, we just push alltogether to batch
+    for (let i = 0; i < args["generic-call"].length; i++) {
+      let call = api.createType("Call", hexToU8a(args["generic-call"][i])) as any;
+      Txs.push(call);
     }
-    else {
-        // Else, we just push one
-        let call = api.createType('Call', hexToU8a(args['generic-call'])) as any;
-        let extrinsic = api.createType('GenericExtrinsicV4', call) as any;
-        Tx = extrinsic
-    }
+    const batchCall = api.tx.utility.batchAll(Txs);
+    Tx = batchCall;
+  } else {
+    // Else, we just push one
+    let call = api.createType("Call", hexToU8a(args["generic-call"])) as any;
+    Tx = call;
+  }
 
-    console.log("Encoded proposal for batchAll is %s", Tx.method.toHex() || "");
+  // Scheduler
+  let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], Tx) : Tx;
 
-    const toPropose = args['at-block'] ? 
-        api.tx.scheduler.schedule(args["at-block"], null, 0, {Value: Tx}) :
-        Tx;
+  // Create account with manual nonce handling
+  let account;
+  let nonce;
+  if (args["account-priv-key"]) {
+    [account, nonce] = await accountWrapper(api, args["account-priv-key"]);
+  }
 
-    const account =  await keyring.addFromUri(args['account-priv-key'], null, "ethereum");
-    const { nonce: rawNonce, data: balance } = await api.query.system.account(account.address) as any;
-    let nonce = BigInt(rawNonce.toString());
+  // Sudo Wrapper
+  if (args["sudo"]) {
+    finalTx = await sudoWrapper(api, finalTx, account);
+  }
 
-    // We just prepare the proposals
-    let encodedProposal = toPropose?.method.toHex() || "";
-    let encodedHash = blake2AsHex(encodedProposal);
-    console.log("Encoded proposal hash for complete is %s", encodedHash);
-    console.log("Encoded length %d", encodedProposal.length);
+  // If finalTx is not an Extrinsic, create the right type
+  if (finalTx.method) {
+    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
+  }
 
-    if (args["send-preimage-hash"]) {
-        await api.tx.democracy
-        .notePreimage(encodedProposal)
-        .signAndSend(account, { nonce: nonce++ })
-    }
+  console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());
 
-    if (args["send-proposal-as"] == 'democracy') {
-        await api.tx.democracy
-        .propose(encodedHash, proposalAmount)
-        .signAndSend(account, { nonce: nonce++ });
-    }
-    else if (args["send-proposal-as"] == 'council-external') {
-        let external =  api.tx.democracy.externalProposeMajority(encodedHash)
-        
-        await api.tx.councilCollective
-        .propose(collectiveThreshold, external, external.length)
-        .signAndSend(account, { nonce: nonce++ });
-    }
+  // Create Preimage
+  let preimage;
+  if (args["send-preimage-hash"]) {
+    [preimage, nonce] = await preimageWrapper(api, finalTx, account, nonce);
+  }
+
+  // Send Democracy Proposal
+  if (args["send-proposal-as"]) {
+    await democracyWrapper(
+      api,
+      args["send-proposal-as"],
+      preimage,
+      proposalAmount,
+      account,
+      nonce,
+      collectiveThreshold
+    );
+  }
 }
 
-main().catch(console.error).finally(() => process.exit());
+main()
+  .catch(console.error)
+  .finally(() => process.exit());

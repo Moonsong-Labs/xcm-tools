@@ -28,7 +28,6 @@ async function main () {
     const api = await ApiPromise.create({ provider: wsProvider });
     const relayApi = await ApiPromise.create({ provider: relayProvider });
 
-    const proposalAmount = await api.consts.democracy.minimumDeposit as any;
 
     const collectiveThreshold = (args['collective-threshold']) ? args['collective-threshold'] :1;
 
@@ -102,6 +101,7 @@ async function main () {
         .signAndSend(account, { nonce: nonce++ });
 
         if (args["send-proposal-as"] == 'democracy') {
+            const proposalAmount = await api.consts.democracy.minimumDeposit as any;
             await api.tx.democracy
             .propose(encodedHash, proposalAmount)
             .signAndSend(account, { nonce: nonce++ });

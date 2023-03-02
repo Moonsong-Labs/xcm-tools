@@ -80,12 +80,10 @@ async function main() {
 
   // Send Democracy Proposal
   if (args["send-proposal-as"]) {
-    const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
     await democracyWrapper(
       api,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
       collectiveThreshold

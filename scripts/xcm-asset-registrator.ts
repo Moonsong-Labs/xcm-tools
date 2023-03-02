@@ -32,6 +32,8 @@ const args = yargs.options({
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
+  "track": { type: "string", demandOption: false },
+  "delay": { type: "string", demandOption: false }
 }).argv;
 
 // Construct
@@ -41,8 +43,6 @@ async function main() {
   const api = await ApiPromise.create({ provider: wsProvider });
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
-
-  const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
 
   const assetMetadata = {
     name: args["name"],
@@ -137,7 +137,6 @@ async function main() {
       api,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
       collectiveThreshold

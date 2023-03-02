@@ -36,8 +36,6 @@ async function main() {
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
 
-  const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
-
   const initializeTxs = [];
 
   if (args["default-xcm-version"]) {
@@ -159,7 +157,6 @@ async function main() {
       api,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
       collectiveThreshold

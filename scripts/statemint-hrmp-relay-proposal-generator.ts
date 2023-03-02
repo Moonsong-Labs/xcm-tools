@@ -46,8 +46,6 @@ async function main() {
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
 
-  const proposalAmount = (await relayApi.consts.democracy.minimumDeposit) as any;
-
   const statemintParaId: ParaId = (await statemintApi.query.parachainInfo.parachainId()) as any;
   const targetParaId: ParaId = relayApi.createType("ParaId", args["target-para-id"]);
 
@@ -165,7 +163,6 @@ async function main() {
       relayApi,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
       collectiveThreshold

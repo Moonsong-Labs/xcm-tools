@@ -33,8 +33,6 @@ async function main() {
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
 
-  const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
-
   let Tx;
   if (Array.isArray(args["generic-call"])) {
     let Txs = [];
@@ -86,7 +84,6 @@ async function main() {
       api,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
       collectiveThreshold

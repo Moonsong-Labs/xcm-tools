@@ -88,7 +88,6 @@ export async function democracyWrapper(
   api,
   proposalType,
   preimage,
-  proposalAmount,
   account,
   nonce,
   collectiveThreshold?,
@@ -100,6 +99,8 @@ export async function democracyWrapper(
 
     // OpenGovV1, OpenGovV2, or Council
     if ((proposalType == "democracy" && track == null) || proposalType == "democracy-v1" || proposalType == "v1") {
+      const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
+
       if (runtimeVersion < 2000n) {
         await api.tx.democracy
           .propose(preimage["encodedHash"], proposalAmount)

@@ -117,18 +117,21 @@ export async function democracyWrapper(
       console.log("--> Democracy Tx sent\n");
     }
     else if (proposalType == "v2") {
-      const tracks = {
+      let t = {
         root: { system: 'Root' },
         whitelisted: { Origins: 'WhitelistedCaller' } ,
         general: { Origins: 'GeneralAdmin' },
         canceller: { Origins: 'ReferendumCanceller' },
         killer: { Origins: 'ReferendumKiller' }
-      };
-      if(tracks[track] == undefined) throw new Error(`${track} is not a valid track for OpenGovV2. Use root, whitelisted, general, canceller, or killer.`);
-      console.log(preimage);
+      }[track];
+      
+      if(t == undefined) {
+        t = JSON.parse(track);
+      }
+
       await api.tx.referenda
         .submit(
-          tracks[track],
+          t,
           { Lookup: { hash_: preimage["encodedHash"], len: preimage["encodedLength"] } },
           { After: delay ?? 100 } // Set to 100 blocks by default, like in Polkadot.js Apps
         )

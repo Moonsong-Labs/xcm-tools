@@ -33,6 +33,8 @@ const args = yargs.options({
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
   "fee-currency": { type: "string", demandOption: false },
+  "delay": { type: "string", demandOption: false },
+  "track": { type: "string", demandOption: false }
 }).argv;
 
 // Construct
@@ -86,7 +88,9 @@ async function main() {
       preimage,
       account,
       nonce,
-      collectiveThreshold
+      collectiveThreshold,
+      args["track"],
+      args["delay"]
     );
   }
 }

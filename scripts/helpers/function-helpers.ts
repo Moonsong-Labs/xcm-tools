@@ -91,12 +91,15 @@ export async function democracyWrapper(
   proposalAmount,
   account,
   nonce,
-  collectiveThreshold?
+  collectiveThreshold?,
+  track?,
+  delay?
 ) {
   try {
     let runtimeVersion = BigInt(api.runtimeVersion.specVersion);
-    // Regular Democracy or Council
-    if (proposalType == "democracy") {
+
+    // OpenGovV1, OpenGovV2, or Council
+    if ((proposalType == "democracy" && track == null) || proposalType == "democracy-v1" || proposalType == "v1") {
       if (runtimeVersion < 2000n) {
         await api.tx.democracy
           .propose(preimage["encodedHash"], proposalAmount)
@@ -111,7 +114,25 @@ export async function democracyWrapper(
       }
 
       console.log("--> Democracy Tx sent\n");
-    } else if (proposalType == "council-external") {
+    }
+    else if ((proposalType == "democracy" && track != null) || proposalType == "democracy-v2" || proposalType == "v2") {
+      const tracks = {
+        root: { origin: { system: 'Root' } },
+        whitelisted: { origin: { Origins: 'WhitelistedCaller' } } ,
+        general: { origin: { Origins: 'GeneralAdmin' } },
+        canceller: { origin: { Origins: 'ReferendumCanceller' } },
+        killer: { origin: { Origins: 'ReferendumKiller' } }
+      };
+      if(tracks[track] == undefined) throw new Error(`${track} is not a valid track for OpenGovV2. Use root, whitelisted, general, canceller, or killer.`);
+      await api.tx.referenda
+        .submit(
+          tracks[track],
+          { Lookup: { hash_: preimage["encodedHash"], len: preimage["encodedLength"] } },
+          { After: delay ?? 100 } // Set to 100 blocks by default, like in Polkadot.js Apps
+        )
+        .signAndSend(account, { nonce });
+    }
+    else if (proposalType == "council-external") {
       let external;
 
       if (runtimeVersion < 2000n) {

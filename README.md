@@ -30,7 +30,7 @@ The script accepts these inputs fields:
 - `--revert-code` or `--revert`, boolean specifying whether we want register the revert code in the evm
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash    
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
@@ -65,8 +65,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -91,7 +93,9 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
@@ -122,6 +126,8 @@ The script accepts these inputs fields:
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -145,8 +151,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -173,8 +181,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the preimage
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image with external account
@@ -199,8 +209,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example through democracy
@@ -334,6 +346,8 @@ The script accepts these inputs fields:
 - `--bew-para-id or -p`, The new paraId.
 - `--account-priv-key or -a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.

@@ -98,7 +98,7 @@ export async function democracyWrapper(
     let runtimeVersion = BigInt(api.runtimeVersion.specVersion);
 
     // OpenGovV1, OpenGovV2, or Council
-    if ((proposalType == "democracy" && track == null) || proposalType == "democracy-v1" || proposalType == "v1") {
+    if (proposalType == "democracy" || proposalType == "v1") {
       const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
 
       if (runtimeVersion < 2000n) {
@@ -116,15 +116,16 @@ export async function democracyWrapper(
 
       console.log("--> Democracy Tx sent\n");
     }
-    else if ((proposalType == "democracy" && track != null) || proposalType == "democracy-v2" || proposalType == "v2") {
+    else if (proposalType == "v2") {
       const tracks = {
-        root: { origin: { system: 'Root' } },
-        whitelisted: { origin: { Origins: 'WhitelistedCaller' } } ,
-        general: { origin: { Origins: 'GeneralAdmin' } },
-        canceller: { origin: { Origins: 'ReferendumCanceller' } },
-        killer: { origin: { Origins: 'ReferendumKiller' } }
+        root: { system: 'Root' },
+        whitelisted: { Origins: 'WhitelistedCaller' } ,
+        general: { Origins: 'GeneralAdmin' },
+        canceller: { Origins: 'ReferendumCanceller' },
+        killer: { Origins: 'ReferendumKiller' }
       };
       if(tracks[track] == undefined) throw new Error(`${track} is not a valid track for OpenGovV2. Use root, whitelisted, general, canceller, or killer.`);
+      console.log(preimage);
       await api.tx.referenda
         .submit(
           tracks[track],

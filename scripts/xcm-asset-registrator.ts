@@ -26,14 +26,17 @@ const args = yargs.options({
   "revert-code": { type: "boolean", demandOption: false, alias: "revert" },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
-    choices: ["democracy", "council-external"],
+    choices: ["democracy", "v1", "council-external", "v2"],
     demandOption: false,
     alias: "s",
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
-  "track": { type: "string", demandOption: false },
-  "delay": { type: "string", demandOption: false }
+  "delay": { type: "string", demandOption: false },
+  "track": { 
+    choices: ["root", "whitelisted", "general", "canceller", "killer"], 
+    demandOption: false 
+  }
 }).argv;
 
 // Construct
@@ -139,7 +142,9 @@ async function main() {
       preimage,
       account,
       nonce,
-      collectiveThreshold
+      collectiveThreshold,
+      args["track"],
+      args["delay"]
     );
   }
 }

@@ -15,26 +15,26 @@ export async function hrmpHelper(
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 
   // Determine fee amount from relay chain
+  console.log("about to get genesis hash");
   const genesisHash = (await relayApi.genesisHash).toString().toLowerCase();
-  const feeAmount: BN = new BN(fee) ?? (() => {
+  console.log("Genesis hash is: " + genesisHash);
+  const feeAmount: BN = fee ? new BN(fee) : (() => {
     switch (genesisHash) {
       case "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe":
         // Kusama - 0.1 KSM
-        console.log("KUSAMA")
         return new BN(100000000000);
       case "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3":
         // Polkadot - 1 DOT
-        console.log("DOT")
         return new BN(10000000000);
       case "0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443":
         // Moonbase Alpha Relay - 1 UNIT
-        console.log("MOONBASE RELAY")
         return new BN(1000000000000);
       default:
         // Generic Relay - 1 UNIT
         return new BN(1000000000000);
     }
   })();
+  console.log("FeeAmount is: " + feeAmount)
 
   // Attempt to find & use the xcmTransactor...
   try {

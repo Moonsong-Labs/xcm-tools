@@ -34,7 +34,8 @@ const args = yargs.options({
   "at-block": { type: "number", demandOption: false },
   "fee-currency": { type: "string", demandOption: false },
   "delay": { type: "string", demandOption: false },
-  "track": { type: "string", demandOption: false }
+  "track": { type: "string", demandOption: false },
+  "fee-amount": { type: "number", demandOption: false }
 }).argv;
 
 // Construct
@@ -55,7 +56,8 @@ async function main() {
     args["target-para-id"],
     args["max-capacity"],
     args["max-message-size"],
-    args["fee-currency"]
+    args["fee-currency"],
+    args["fee-amount"]
   );
 
   // Scheduler

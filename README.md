@@ -94,6 +94,8 @@ The script accepts these inputs fields:
 - `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
+- `--fee-currency`, Optional, the Multiasset to use to pay for the transaction in the XCM transaction
+- `--fee-amount`, Optional, the amount of fee to pay in the XCM transaction
 
 ### Example to note Pre-Image and propose
 

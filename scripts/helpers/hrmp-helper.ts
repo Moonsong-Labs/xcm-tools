@@ -15,7 +15,6 @@ export async function hrmpHelper(
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 
   // Determine fee amount from relay chain
-  console.log("about to get genesis hash");
   const genesisHash = (await relayApi.genesisHash).toString().toLowerCase();
   console.log("Genesis hash is: " + genesisHash);
   const feeAmount: BN = fee ? new BN(fee) : (() => {

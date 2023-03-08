@@ -7,7 +7,7 @@ import { blake2AsHex, xxhashAsU8a, blake2AsU8a } from '@polkadot/util-crypto';
 import yargs from 'yargs';
 import { Keyring } from "@polkadot/api";
 import { ParaId } from '@polkadot/types/interfaces';
-import { democracyWrapper, preimageWrapper, accountWrapper } from './helpers/function-helpers';
+import { democracyWrapper, preimageWrapper, accountWrapper, schedulerWrapper } from './helpers/function-helpers';
 
 const args = yargs.options({
     'parachain-ws-provider': { type: 'string', demandOption: true, alias: 'wp' },
@@ -41,7 +41,7 @@ async function main() {
     // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
     let para_address = u8aToHex((new Uint8Array([...new TextEncoder().encode("para"), ...selfParaId.toU8a()]))).padEnd(66, "0");
 
-    const batchCall = api.tx.polkadotXcm.send(
+    const xcmSendTx = api.tx.polkadotXcm.send(
         { V1: { parents: new BN(1), interior: "Here" } },
         {
             V2: [
@@ -82,18 +82,12 @@ async function main() {
             ]
         });
 
-    console.log("Encoded proposal for PolkdotXcmSend is %s", batchCall.method.toHex() || "");
+    // Scheduler
+    const finalTx = args['at-block'] ? schedulerWrapper(api, args["at-block"], xcmSendTx) : xcmSendTx;
 
-    const toPropose = args['at-block'] ?
-        api.tx.scheduler.schedule(args["at-block"], null, 0, { Value: batchCall }) :
-        batchCall;
-
-    // We just prepare the proposals
-    let encodedProposal = toPropose?.method.toHex() || "";
-    let encodedHash = blake2AsHex(encodedProposal);
-    console.log("Encoded proposal for batch utility after schedule is %s", encodedProposal);
-    console.log("Encoded proposal hash for batch utility after schedule is %s", encodedHash);
-    console.log("Encoded length %d", encodedProposal.length);
+    // Prepare proposal encoded data
+    let encodedProposal = finalTx?.method.toHex() || "";
+    console.log("Encoded Call Data for Tx is %s", encodedProposal);
 
     // Get account
     let account, nonce;
@@ -103,12 +97,12 @@ async function main() {
 
     // Create Preimage
     let preimage;
-    if (args["send-preimage-hash"] && account) {
+    if (args["send-preimage-hash"]) {
         [preimage, nonce] = await preimageWrapper(api, encodedProposal, account, nonce);
     }
 
     // Send Democracy Proposal
-    if (args["send-proposal-as"] && preimage) {
+    if (args["send-proposal-as"]) {
         const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
         const collectiveThreshold = args['collective-threshold'] ?? 1;
 

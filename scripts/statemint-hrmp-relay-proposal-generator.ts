@@ -28,12 +28,14 @@ const args = yargs.options({
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: true, alias: "h" },
   "send-proposal-as": {
-    choices: ["democracy", "council-external"],
+    choices: ["democracy", "v1", "council-external", "v2"],
     demandOption: false,
     alias: "s",
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
+  "delay": { type: "string", demandOption: false },
+  "track": { type: "string", demandOption: false }
 }).argv;
 
 // Construct
@@ -45,8 +47,6 @@ async function main() {
   const relayApi = await ApiPromise.create({ provider: relayProvider });
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
-
-  const proposalAmount = (await relayApi.consts.democracy.minimumDeposit) as any;
 
   const statemintParaId: ParaId = (await statemintApi.query.parachainInfo.parachainId()) as any;
   const targetParaId: ParaId = relayApi.createType("ParaId", args["target-para-id"]);
@@ -165,10 +165,11 @@ async function main() {
       relayApi,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
-      collectiveThreshold
+      collectiveThreshold,
+      args["track"],
+      args["delay"]
     );
   }
 }

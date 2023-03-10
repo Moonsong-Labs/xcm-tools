@@ -88,15 +88,19 @@ export async function democracyWrapper(
   api,
   proposalType,
   preimage,
-  proposalAmount,
   account,
   nonce,
-  collectiveThreshold?
+  collectiveThreshold?,
+  track?,
+  delay?
 ) {
   try {
     let runtimeVersion = BigInt(api.runtimeVersion.specVersion);
-    // Regular Democracy or Council
-    if (proposalType == "democracy") {
+
+    // OpenGovV1, OpenGovV2, or Council
+    if (proposalType == "democracy" || proposalType == "v1") {
+      const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
+
       if (runtimeVersion < 2000n) {
         await api.tx.democracy
           .propose(preimage["encodedHash"], proposalAmount)
@@ -111,7 +115,29 @@ export async function democracyWrapper(
       }
 
       console.log("--> Democracy Tx sent\n");
-    } else if (proposalType == "council-external") {
+    }
+    else if (proposalType == "v2") {
+      let t = {
+        root: { system: 'Root' },
+        whitelisted: { Origins: 'WhitelistedCaller' } ,
+        general: { Origins: 'GeneralAdmin' },
+        canceller: { Origins: 'ReferendumCanceller' },
+        killer: { Origins: 'ReferendumKiller' }
+      }[track];
+      
+      if(t == undefined) {
+        t = JSON.parse(track);
+      }
+
+      await api.tx.referenda
+        .submit(
+          t,
+          { Lookup: { hash_: preimage["encodedHash"], len: preimage["encodedLength"] } },
+          { After: delay ?? 100 } // Set to 100 blocks by default, like in Polkadot.js Apps
+        )
+        .signAndSend(account, { nonce });
+    }
+    else if (proposalType == "council-external") {
       let external;
 
       if (runtimeVersion < 2000n) {

@@ -26,12 +26,14 @@ const args = yargs.options({
   "revert-code": { type: "boolean", demandOption: false, alias: "revert" },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
-    choices: ["democracy", "council-external"],
+    choices: ["democracy", "v1", "council-external", "v2"],
     demandOption: false,
     alias: "s",
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
+  "delay": { type: "string", demandOption: false },
+  "track": { type: "string", demandOption: false }
 }).argv;
 
 // Construct
@@ -41,8 +43,6 @@ async function main() {
   const api = await ApiPromise.create({ provider: wsProvider });
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
-
-  const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
 
   const assetMetadata = {
     name: args["name"],
@@ -137,10 +137,11 @@ async function main() {
       api,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
-      collectiveThreshold
+      collectiveThreshold,
+      args["track"],
+      args["delay"]
     );
   }
 }

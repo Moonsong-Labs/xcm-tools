@@ -30,7 +30,7 @@ The script accepts these inputs fields:
 - `--revert-code` or `--revert`, boolean specifying whether we want register the revert code in the evm
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash    
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
@@ -47,6 +47,12 @@ The script accepts these inputs fields:
 ### Example to note Pre-Image and propose through council
 
 `yarn register-asset -w ws://127.0.0.1:34102  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "Parent" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
+
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn register-asset -s v2 --track '{ "Origins": "YourCustomOrigin" }' -w ws://127.0.0.1:9944  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "DOT" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true --revert-code true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 ## XCM-initializer script
 
@@ -65,8 +71,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -76,6 +84,12 @@ The script accepts these inputs fields:
 ### Example to note Pre-Image and propose through council
 
 `yarn initialize-xcm --ws-provider ws://127.0.0.1:34102  --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true --send-proposal-as council-external --collective-threshold 2`
+
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn initialize-xcm -s v2 --track '{ "Origins": "YourCustomOrigin" }' --ws-provider ws://127.0.0.1:34102  --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 ## HRMP-manipulator script
 
@@ -91,7 +105,9 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 - `--fee-currency`, Optional, the Multiasset to use to pay for the transaction in the XCM transaction
@@ -106,6 +122,12 @@ The script accepts these inputs fields:
 `yarn hrmp-manipulator --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action accept --target-para-id 2003 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true  --send-proposal-as council-external -c 2`
 
 `yarn hrmp-manipulator --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action open --target-para-id 2003 --mc 8 --mms 512 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as democracy`
+
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn hrmp-manipulator -s v2 --track '{ "Origins": "YourCustomOrigin" }' --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action accept --target-para-id 2003 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 ## XCM-transactor-info-setter script
 
@@ -124,6 +146,8 @@ The script accepts these inputs fields:
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -134,6 +158,12 @@ The script accepts these inputs fields:
 
 ### Example to note Pre-Image and propose through democracy with index registration
 `yarn set-transact-info --ws-provider ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second 8 --extra-weight 3000000000 --max-weight 20000000000 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as  democracy --register-index true --owner "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac" --index 0`
+
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn set-transact-info -s v2 --track '{ "Origins": "YourCustomOrigin" }' --ws-provider ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second 8 --extra-weight 3000000000 --max-weight 20000000000 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 
 ## XCM-derivative-index-registrator script
@@ -147,8 +177,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -159,6 +191,11 @@ The script accepts these inputs fields:
 
 `yarn register-derivative-index -w ws://127.0.0.1:34102  --index  0 --owner "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as council-external --collective-threshold 2`
 
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn register-derivative-index -s v2 --track '{ "Origins": "YourCustomOrigin" }' -w ws://127.0.0.1:34102  --index  0 --owner "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 ## Statemint-HRMP-relay-proposal-generator script
 
@@ -175,8 +212,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the preimage
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image with external account
@@ -201,8 +240,10 @@ The script accepts these inputs fields:
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example through democracy
@@ -212,6 +253,12 @@ The script accepts these inputs fields:
 ### Example through council
 
 `yarn generic-call-propose -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as council-external --collective-threshold 2`
+
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn generic-call-propose -s v2 --track '{ "Origins": "YourCustomOrigin" }' -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 ### Example through democracy but batching 2 txs
 
@@ -336,6 +383,8 @@ The script accepts these inputs fields:
 - `--bew-para-id or -p`, The new paraId.
 - `--account-priv-key or -a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as or -s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.

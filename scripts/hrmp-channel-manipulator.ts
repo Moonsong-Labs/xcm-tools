@@ -26,13 +26,15 @@ const args = yargs.options({
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
-    choices: ["democracy", "council-external"],
+    choices: ["democracy", "v1", "council-external", "v2"],
     demandOption: false,
     alias: "s",
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
   "fee-currency": { type: "string", demandOption: false },
+  "delay": { type: "string", demandOption: false },
+  "track": { type: "string", demandOption: false }
   "fee-amount": { type: "string", demandOption: false }
 }).argv;
 
@@ -82,15 +84,15 @@ async function main() {
 
   // Send Democracy Proposal
   if (args["send-proposal-as"]) {
-    const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
     await democracyWrapper(
       api,
       args["send-proposal-as"],
       preimage,
-      proposalAmount,
       account,
       nonce,
-      collectiveThreshold
+      collectiveThreshold,
+      args["track"],
+      args["delay"]
     );
   }
 }

@@ -110,6 +110,8 @@ The script accepts these inputs fields:
 - `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
+- `--fee-currency`, Optional, the Multiasset to use to pay for the transaction in the XCM transaction
+- `--fee-amount`, Optional, the amount of fee to pay in the XCM transaction
 
 ### Example to note Pre-Image and propose
 

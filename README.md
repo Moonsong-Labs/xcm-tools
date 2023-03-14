@@ -341,7 +341,7 @@ The script accepts these inputs fields:
 - `--parachain-ws-provider or --w`, which specifies websocket endpoint of the target parachain (for example, for an XCM message from Polkadot to Moonbeam, it would be a WS endpoint of Moonbeam)
 - `--address or --a`, which specifies the origin chain address that sent the XCM message. It is expected that this is injected into the origin multilocation via a junction through `DescendOrigin`
 - `--para-id or --p`, (optional) which specifies the parachain ID of the origin chain of the XCM message. It is optional as the XCM message might come from the relay chain (no parachain ID)
-- `--named or --n`, (optional) which specifies the name field that might be included by the `DescendOrigin` instruction of some chains (for example, Polkadot). It is optional as some chains might not enforce a name. It defaults to `named = 'Any'`
+- `--named or --n`, (optional) which specifies the name field that might be included by the `DescendOrigin` instruction of some chains (for example, Polkadot). It is optional as some chains might not enforce a name. It defaults to `named = 'Any'`. For `DescendOrigin` where the name is `Polkadot` or `Kusama` you can provide that as input such `--n polkadot` and it will create the multilocation for derivation with the correct naming
 
 ### Example
 

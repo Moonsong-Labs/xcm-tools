@@ -27,7 +27,17 @@ async function main() {
   // Handle name
   let named;
   if (args["named"]) {
-    named = { Named: args["named"] };
+    switch (args["named"].toLowerCase()) {
+      case "polkadot":
+        named = { polkadot: null };
+        break;
+      case "kusama":
+        named = { kusama: null };
+        break;
+      default:
+        named = { Named: args["named"] };
+        break;
+    }
   } else {
     named = "Any";
   }

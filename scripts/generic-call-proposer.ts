@@ -1,23 +1,30 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { hexToU8a } from "@polkadot/util";
-
-import { blake2AsHex } from "@polkadot/util-crypto";
 import yargs from "yargs";
-import { Keyring } from "@polkadot/api";
+import {
+  schedulerWrapper,
+  accountWrapper,
+  sudoWrapper,
+  preimageWrapper,
+  democracyWrapper,
+} from "./helpers/function-helpers";
 
 const args = yargs.options({
   "ws-provider": { type: "string", demandOption: true, alias: "w" },
   "generic-call": { type: "string", demandOption: true, alias: "call" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
+  sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
-    choices: ["democracy", "council-external", "sudo"],
+    choices: ["democracy", "v1", "council-external", "v2"],
     demandOption: false,
     alias: "s",
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
+  "delay": { type: "string", demandOption: false },
+  "track": { type: "string", demandOption: false }
 }).argv;
 
 // Construct
@@ -25,11 +32,8 @@ const wsProvider = new WsProvider(args["ws-provider"]);
 
 async function main() {
   const api = await ApiPromise.create({ provider: wsProvider });
-  const collectiveThreshold = args["collective-threshold"] ? args["collective-threshold"] : 1;
 
-  const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
-
-  const keyring = new Keyring({ type: "ethereum" });
+  const collectiveThreshold = args["collective-threshold"] ?? 1;
 
   let Tx;
   if (Array.isArray(args["generic-call"])) {
@@ -45,46 +49,49 @@ async function main() {
   } else {
     // Else, we just push one
     let call = api.createType("Call", hexToU8a(args["generic-call"])) as any;
-    let extrinsic = api.createType("GenericExtrinsicV4", call) as any;
-    Tx = extrinsic;
+    Tx = call;
   }
 
-  console.log("Encoded proposal for batchAll is %s", Tx.method.toHex() || "");
+  // Scheduler
+  let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], Tx) : Tx;
 
-  const toPropose = args["at-block"]
-    ? api.tx.scheduler.schedule(args["at-block"], null, 0, { Value: Tx })
-    : Tx;
-
-  // We just prepare the proposals
-  let encodedProposal = toPropose?.method.toHex() || "";
-  let encodedHash = blake2AsHex(encodedProposal);
-  console.log("Encoded proposal hash for complete is %s", encodedHash);
-  console.log("Encoded length %d", encodedProposal.length);
-
+  // Create account with manual nonce handling
   let account;
   let nonce;
   if (args["account-priv-key"]) {
-    account = await keyring.addFromUri(args["account-priv-key"], null, "ethereum");
-    const { nonce: rawNonce, data: balance } = (await api.query.system.account(
-      account.address
-    )) as any;
-    nonce = BigInt(rawNonce.toString());
+    [account, nonce] = await accountWrapper(api, args["account-priv-key"]);
   }
 
+  // Sudo Wrapper
+  if (args["sudo"]) {
+    finalTx = await sudoWrapper(api, finalTx, account);
+  }
+
+  // If finalTx is not an Extrinsic, create the right type
+  if (finalTx.method) {
+    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
+  }
+
+  console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());
+
+  // Create Preimage
+  let preimage;
   if (args["send-preimage-hash"]) {
-    await api.tx.democracy.notePreimage(encodedProposal).signAndSend(account, { nonce: nonce++ });
+    [preimage, nonce] = await preimageWrapper(api, finalTx, account, nonce);
   }
 
-  if (args["send-proposal-as"] == "democracy") {
-    await api.tx.democracy
-      .propose(encodedHash, proposalAmount)
-      .signAndSend(account, { nonce: nonce++ });
-  } else if (args["send-proposal-as"] == "council-external") {
-    let external = api.tx.democracy.externalProposeMajority(encodedHash);
-
-    await api.tx.councilCollective
-      .propose(collectiveThreshold, external, external.length)
-      .signAndSend(account, { nonce: nonce++ });
+  // Send Democracy Proposal
+  if (args["send-proposal-as"]) {
+    await democracyWrapper(
+      api,
+      args["send-proposal-as"],
+      preimage,
+      account,
+      nonce,
+      collectiveThreshold,
+      args["track"],
+      args["delay"]
+    );
   }
 }
 

@@ -12,6 +12,7 @@
     "set-transact-info": "ts-node 'scripts/xcm-transactor-info-setter.ts'",
     "register-derivative-index": "ts-node 'scripts/xcm-derivative-index-registrar.ts'",
     "statemint-hrmp-propose": "ts-node 'scripts/statemint-hrmp-relay-proposal-generator.ts'",
+    "para-registrar-swap": "ts-node 'scripts/para-registrar-swapper'",
     "xcm-decode-relay": "ts-node 'scripts/decode-xcm-relay.ts'",
     "xcm-decode-para": "ts-node 'scripts/decode-xcm-para.ts'",
     "generic-call-propose": "ts-node 'scripts/generic-call-proposer.ts'",
@@ -19,13 +20,15 @@
     "calculate-sovereign-account": "ts-node 'scripts/calculate-sovereign-account.ts'",
     "calculate-external-asset-info": "ts-node 'scripts/calculate-external-asset-info.ts'",
     "calculate-local-asset-info": "ts-node 'scripts/calculate-local-asset-info.ts'",
-    "calculate-multilocation-derivative-account": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'"
+    "calculate-multilocation-derivative-account": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'",
+    "calculate-units-per-second": "ts-node 'scripts/calculate-units-per-second.ts'"
   },
   "dependencies": {
     "@moonbeam-network/api-augment": "^0.1801.0",
-    "@polkadot/api": "^9.5.2",
-    "@polkadot/types": "^9.5.2",
+    "@polkadot/api": "^9.7.1",
+    "@polkadot/types": "^9.7.1",
     "@types/yargs": "^17.0.0",
+    "coingecko-api": "^1.0.10",
     "divide-bigint": "1.0.4",
     "exceljs": "4.2.1",
     "load-json-file": "^6.2.0",

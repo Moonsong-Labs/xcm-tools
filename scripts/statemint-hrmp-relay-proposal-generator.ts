@@ -1,15 +1,19 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
+import { u8aToHex } from "@polkadot/util";
 import { BN } from "@polkadot/util";
-
-import { blake2AsHex, xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
 import yargs from "yargs";
-import { Keyring } from "@polkadot/api";
 import { ParaId } from "@polkadot/types/interfaces";
+import {
+  schedulerWrapper,
+  accountWrapper,
+  sudoWrapper,
+  preimageWrapper,
+  democracyWrapper,
+} from "./helpers/function-helpers";
 
 const args = yargs.options({
-  "statemint-ws-provider": { type: "string", demandOption: true, alias: "ws" },
+  "statemint-ws-provider": { type: "string", demandOption: true, alias: "w" },
   "relay-ws-provider": { type: "string", demandOption: true, alias: "wr" },
   "target-para-id": { type: "number", demandOption: true, alias: "p" },
   "send-deposit-from": {
@@ -21,11 +25,18 @@ const args = yargs.options({
   "max-capacity": { type: "number", demandOption: true, alias: "mc" },
   "max-message-size": { type: "number", demandOption: true, alias: "mms" },
   "account-priv-key": { type: "string", demandOption: true, alias: "account" },
+  sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: true, alias: "h" },
-  "send-proposal-as": { choices: ["democracy", "sudo"], demandOption: false, alias: "s" },
+  "send-proposal-as": {
+    choices: ["democracy", "v1", "council-external", "v2"],
+    demandOption: false,
+    alias: "s",
+  },
+  "collective-threshold": { type: "number", demandOption: false, alias: "c" },
+  "at-block": { type: "number", demandOption: false },
+  "delay": { type: "string", demandOption: false },
+  "track": { type: "string", demandOption: false }
 }).argv;
-
-const PROPOSAL_AMOUNT = 10000000000000n;
 
 // Construct
 const statemintProvider = new WsProvider(args["statemint-ws-provider"]);
@@ -35,7 +46,8 @@ async function main() {
   const statemintApi = await ApiPromise.create({ provider: statemintProvider });
   const relayApi = await ApiPromise.create({ provider: relayProvider });
 
-  const keyring = new Keyring({ type: "sr25519" });
+  const collectiveThreshold = args["collective-threshold"] ?? 1;
+
   const statemintParaId: ParaId = (await statemintApi.query.parachainInfo.parachainId()) as any;
   const targetParaId: ParaId = relayApi.createType("ParaId", args["target-para-id"]);
 
@@ -122,34 +134,43 @@ async function main() {
     ),
   ]);
 
-  // We just prepare the proposals
-  let encodedProposal = relayProposalCall?.method.toHex() || "";
-  let encodedHash = blake2AsHex(encodedProposal);
-  console.log("Encoded proposal hash for complete is %s", encodedHash);
-  console.log("Encoded length %d", encodedProposal.length);
+  // Scheduler
+  let finalTx = args["at-block"]
+    ? schedulerWrapper(relayApi, args["at-block"], relayProposalCall)
+    : relayProposalCall;
 
+  // Create account with manual nonce handling
   let account;
   let nonce;
   if (args["account-priv-key"]) {
-    account = await keyring.addFromUri(args["account-priv-key"], null, "ethereum");
-    const { nonce: rawNonce, data: balance } = (await relayApi.query.system.account(
-      account.address
-    )) as any;
-    nonce = BigInt(rawNonce.toString());
+    [account, nonce] = await accountWrapper(relayApi, args["account-priv-key"]);
   }
 
+  // Sudo Wrapper
+  if (args["sudo"]) {
+    finalTx = await sudoWrapper(relayApi, finalTx, account);
+  }
+
+  console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());
+
+  // Create Preimage
+  let preimage;
   if (args["send-preimage-hash"]) {
-    await relayApi.tx.democracy
-      .notePreimage(encodedProposal)
-      .signAndSend(account, { nonce: nonce++ });
+    [preimage, nonce] = await preimageWrapper(relayApi, finalTx, account, nonce);
   }
 
-  if (args["send-proposal-as"] == "democracy") {
-    await relayApi.tx.democracy
-      .propose(encodedHash, PROPOSAL_AMOUNT)
-      .signAndSend(account, { nonce: nonce++ });
-  } else if (args["send-proposal-as"] == "sudo") {
-    await relayApi.tx.sudo.sudo(relayProposalCall).signAndSend(account);
+  // Send Democracy Proposal
+  if (args["send-proposal-as"]) {
+    await democracyWrapper(
+      relayApi,
+      args["send-proposal-as"],
+      preimage,
+      account,
+      nonce,
+      collectiveThreshold,
+      args["track"],
+      args["delay"]
+    );
   }
 }
 

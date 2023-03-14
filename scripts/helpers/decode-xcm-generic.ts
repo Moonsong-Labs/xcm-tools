@@ -28,8 +28,10 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
 
   for (let i = 0; i < fragments.length; i++) {
     let instructions = fragments[i];
-    console.log(`Blake2 hash of fragment ${i+1} is: ${u8aToHex(blake2AsU8a(instructions.toU8a()))}\n`);
-    console.log(instructions.toHuman(),'\n');
+    console.log(
+      `Blake2 hash of fragment ${i + 1} is: ${u8aToHex(blake2AsU8a(instructions.toU8a()))}\n`
+    );
+    console.log(instructions.toHuman(), "\n");
     if (instructions.isV1) {
       instructions.toHuman().forEach((instruction) => {
         // Print V1 Message
@@ -55,13 +57,12 @@ export function decodeXCMGeneric(provider: any, message: any, type: number) {
         } else if (instruction.isBuyExecution) {
           console.log("Buy Execution:");
         }
-        console.log(instruction.toString(),'\n');
+        console.log(instruction.toString(), "\n");
       });
     }
     console.log("-------------------\n");
   }
 }
-
 
 function decodeMessageIntoFragmentVec(provider: any, message: any): Array<XcmVersionedXcm> {
   let fragments = [];
@@ -69,7 +70,7 @@ function decodeMessageIntoFragmentVec(provider: any, message: any): Array<XcmVer
   while (remainingMessage.length != 0) {
     let fragment: XcmVersionedXcm = provider.createType("XcmVersionedXcm", remainingMessage) as any;
     fragments.push(fragment);
-    remainingMessage = remainingMessage.slice(fragment.toU8a().length)
+    remainingMessage = remainingMessage.slice(fragment.toU8a().length);
   }
   return fragments;
 }

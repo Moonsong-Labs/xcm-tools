@@ -1,6 +1,8 @@
 # XCM-tools
 
-A set of scripts to help XCM initialization, asset registration and chanel set up
+A set of scripts to help XCM initialization, asset registration and chanel set up.
+
+**Use at your own risk!**
 
 ## Install dependencies
 
@@ -28,7 +30,7 @@ The script accepts these inputs fields:
 - `--revert-code` or `--revert`, boolean specifying whether we want register the revert code in the evm
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash    
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
@@ -46,6 +48,12 @@ The script accepts these inputs fields:
 
 `yarn register-asset -w ws://127.0.0.1:34102  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "Parent" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" -h true -s council-external -c 2`
 
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn register-asset -s v2 --track '{ "Origins": "YourCustomOrigin" }' -w ws://127.0.0.1:9944  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "DOT" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true --revert-code true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
+
 ## XCM-initializer script
 
 Script that allows to initialize XCM in a Moonbeam runtime. It particularly does:
@@ -61,9 +69,12 @@ The script accepts these inputs fields:
 - `--xcm-transactor-address` or `--xcmt`, optional, if provided, it will set the revert code at that address.
 - `--relay-encoder-address` or `--re`, optional, if provided, it will set the revert code at that address.
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -74,22 +85,33 @@ The script accepts these inputs fields:
 
 `yarn initialize-xcm --ws-provider ws://127.0.0.1:34102  --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true --send-proposal-as council-external --collective-threshold 2`
 
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn initialize-xcm -s v2 --track '{ "Origins": "YourCustomOrigin" }' --ws-provider ws://127.0.0.1:34102  --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
+
 ## HRMP-manipulator script
 
 Script that allows to initiate an HRMP action in the relay from the parachain. In particular, the script allows to open a channel, accept an existing open channel request, cancel an existing open channel request, or closing an existing HRMP channel.
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider` or `--wp`, which specifies the parachain websocket provider to which we will be issuing our requests
+- `--parachain-ws-provider` or `--w`, which specifies the parachain websocket provider to which we will be issuing our requests
 - `--relay-ws-provider` or `--wr`, which specifies the relay websocket provider to which we will be issuing our requests
 - `--hrmp-action` or `--hrmp`, one of "accept", "close", "cancel", or "open".
 - `--target-para-id` or `-p`, The target paraId with which we interact.
 - `--max-capacity` or `--mc`, Optional, only for "open". The max capacity in messages that the channel supports.
 - `--max-message-size` or `-mms`, Optional, only for "open". The max message size that the channel supports.
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
+- `--fee-currency`, Optional, the Multiasset to use to pay for the transaction in the XCM transaction
+- `--fee-amount`, Optional, the amount of fee to pay in the XCM transaction
 
 ### Example to note Pre-Image and propose
 
@@ -100,6 +122,12 @@ The script accepts these inputs fields:
 `yarn hrmp-manipulator --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action accept --target-para-id 2003 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true  --send-proposal-as council-external -c 2`
 
 `yarn hrmp-manipulator --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action open --target-para-id 2003 --mc 8 --mms 512 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as democracy`
+
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn hrmp-manipulator -s v2 --track '{ "Origins": "YourCustomOrigin" }' --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 --hrmp-action accept --target-para-id 2003 --account-priv-key "0x8075991ce870b93a8870eca0c0f91913d12f47948ca0fd25b49c6fa7cdbeee8b" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 ## XCM-transactor-info-setter script
 
@@ -114,9 +142,12 @@ The script accepts these inputs fields:
 - `--fee-per-weight` or `--fw`, the amount of fee the destination will charge per weight
 - `--extra-weight` or `--ew`, the amount of extra weight that sending the transact XCM message involves
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -128,6 +159,12 @@ The script accepts these inputs fields:
 ### Example to note Pre-Image and propose through democracy with index registration
 `yarn set-transact-info --ws-provider ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second 8 --extra-weight 3000000000 --max-weight 20000000000 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as  democracy --register-index true --owner "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac" --index 0`
 
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn set-transact-info -s v2 --track '{ "Origins": "YourCustomOrigin" }' --ws-provider ws://127.0.0.1:34102  --destination  '{ "parents": 1, "interior": "Here" }' --fee-per-second 8 --extra-weight 3000000000 --max-weight 20000000000 --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
+
 
 ## XCM-derivative-index-registrator script
 
@@ -138,9 +175,12 @@ The script accepts these inputs fields:
 - `--owner` or `--o`, the parachain account that will own the derivative index
 - `--index` or `--i`, the index that the owner will own
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image and propose
@@ -151,13 +191,18 @@ The script accepts these inputs fields:
 
 `yarn register-derivative-index -w ws://127.0.0.1:34102  --index  0 --owner "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as council-external --collective-threshold 2`
 
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn register-derivative-index -s v2 --track '{ "Origins": "YourCustomOrigin" }' -w ws://127.0.0.1:34102  --index  0 --owner "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
 
 ## Statemint-HRMP-relay-proposal-generator script
 
 Script that allows to build and send the relay call necessary to make statemine accept an already open channel request target-para-id -> statemine and open a new one in the opposite direction. This is meant to be proposed/executed in the relay.
 
 The script accepts these inputs fields:
-- `--statemint-ws-provider` or `-ws`, which specifies the statemint websocket provider
+- `--statemint-ws-provider` or `-w`, which specifies the statemint websocket provider
 - `--relay-ws-provider` or `--wr`, which specifies the relay websocket -provider
 - `--target-para-id` or `-p`, The target paraId to which the proposal from statemint will be sent.
 - `--max-capacity` or `--mc`, The max capacity in messages that the channel supports.
@@ -165,8 +210,13 @@ The script accepts these inputs fields:
 - `--send-deposit-from` or `-s`, where the deposit of KSM to statemint sovereign account will be made.  one of "sovereign" or "external-account".
 - `--external--account` or `-e`, Optional, only for "external-account" choices in the previous argument. The account from which we will send the KSM
 - `--account-priv-key` or `-a`, which specifies the account that will submit the preimage
+- `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, Optional, whether we want to submit the proposal. Choices are "democracy" or "sudo"
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
+- `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example to note Pre-Image with external account
 
@@ -188,9 +238,12 @@ The script accepts these inputs fields:
 - `--ws-provider` or `-w`, which specifies the websocket provider to which we will be issuing our requests
 - `--generic-call` or `--call`, the call (as hex string) that should be proposed through democracy. Can be passed many times, if we want to batch several together
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
+- `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash
-- `--send-proposal-as` or `-s`, optional, but if providede needs to be "democracy" or "council-external" specifying whether we want to send the proposal through regular democracy or as an external proposal that will be voted by the council
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
 - `--collective-threshold` or `-c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
 
 ### Example through democracy
@@ -201,6 +254,12 @@ The script accepts these inputs fields:
 
 `yarn generic-call-propose -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as council-external --collective-threshold 2`
 
+### Example to note Pre-Image and propose through OpenGov2 with custom track
+
+`yarn generic-call-propose -s v2 --track '{ "Origins": "YourCustomOrigin" }' -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true`
+
+The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
+
 ### Example through democracy but batching 2 txs
 
 `yarn generic-call-propose -w ws://127.0.0.1:34102  --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --call "0x0302f24ff3a9cf04c71dbc94d0b566f7a27b94566cacc0f0f4ab324c46e55d02d0033343b4be8a55532d28" --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" --send-preimage-hash true --send-proposal-as democracy`
@@ -210,7 +269,7 @@ The script accepts these inputs fields:
 A coumple of scripts that allow to decode XCM messages in the relay chain (`decode-xcm-relay`) and in any parachain (`decode-xcm-para`). This first iteration can be easily expanded to support and expand on more XCM instructions.
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the address should be calculated
+- `--parachain-ws-provider` or `--w`, which specifies the websocket provider of the parachain in which the address should be calculated
 - `--multilocation` or `-m`, the multilocation for which we want to calculate the derivated address
 
 ### Decode XCM Relay
@@ -218,41 +277,29 @@ The script accepts these inputs fields:
 Script to specifically decode XCM messages sent to the relay chain via UMP.
 
 The script accepts these input fields:
-- `--relay-ws-provider` or `--wr`, which specifies the websocket provider of the relay chain in which the XCM will be decoded
+- `--relay-ws-provider` or `--w`, which specifies the websocket provider of the relay chain in which the XCM will be decoded
 - `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
 - `--para-id` or `-p`, which specifies the parachain ID from which the XCM message was sent from
 
 For example:
 
-`yarn xcm-decode-relay --wr wss://kusama-rpc.polkadot.io --b 12034878 --p 2023`
+`yarn xcm-decode-relay --w wss://kusama-rpc.polkadot.io --b 12034878 --p 2023`
 
 ### Decode XCM Parachain
 
 Script to specifically decode XCM messages sent to parachains either via DMP or HRMP/XCMP
 
 The script accepts these input fields:
-- `--para-ws-provider` or `--wr`, which specifies the websocket provider of the parachain in which the XCM will be decoded
+- `--para-ws-provider` or `--w`, which specifies the websocket provider of the parachain in which the XCM will be decoded
 - `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
 - `--channel`, which specifies the type of channel (or transport method) the XCM is being delivered through. Valid options are `dmp` and `hrmp`/`xcmp` (although anything different than `dmp` defaults to `hrmp` or `xcmp`)
 - `--para-id` or `-p`, (optional if channel is hrmp/xcmp) which specifies the parachain ID from which the XCM message was sent from
 
 For example:
 
-`yarn xcm-decode-para --wr wss://wss.api.moonriver.moonbeam.network --b 2391172 --channel dmp`
+`yarn xcm-decode-para --w wss://wss.api.moonriver.moonbeam.network --b 2391172 --channel dmp`
 
-`yarn xcm-decode-para --wr wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
-
-## Derivated Address Calculator script
-
-Script that allows to calculate what the derivative address will be for a specific multilocation in a given parachain
-
-The script accepts these inputs fields:
-- `--parachain-ws-provider or --wr`, which specifies the websocket provider of the parachain in which the address should be calculated
-- `--multilocation or -m`, the multilocation for which we want to calculate the derivated address
-
-### Example
-
-`yarn xcm-derivated-address-calculator --wp  ws://127.0.0.1:34102  --multilocation '{ "parents": 1, "interior": {"X2": [ { "Parachain": 1000 }, { "AccountKey20": {"network": "Any", "key": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"} }]}}'`
+`yarn xcm-decode-para --w wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
 
 ## Calculate Sovereign Account
 
@@ -290,16 +337,11 @@ The script accepts these inputs fields:
 
 Script that allows to calculate the multilocation-derivative account for Moonbeam-based networks by providing some simple parameters. This account is calculated as the blake2 hash of a provided multilocation. Note that the hash is of the multilocation after the location is converted by the XCM queue in Moonbeam (with `parents: 1`).
 
-'parachain-ws-provider': { type: 'string', demandOption: true, alias: 'w' }, //Target WS Provider
-  address: { type: 'string', demandOption: true, alias: 'a' },
-  'para-id': { type: 'string', demandOption: false, alias: 'p' }, //Origin Parachain ID,
-  named: { type: 'string', demandOption: false, alias: 'n' }, // Named optional
-
 The script accepts these inputs fields:
 - `--parachain-ws-provider or --w`, which specifies websocket endpoint of the target parachain (for example, for an XCM message from Polkadot to Moonbeam, it would be a WS endpoint of Moonbeam)
 - `--address or --a`, which specifies the origin chain address that sent the XCM message. It is expected that this is injected into the origin multilocation via a junction through `DescendOrigin`
 - `--para-id or --p`, (optional) which specifies the parachain ID of the origin chain of the XCM message. It is optional as the XCM message might come from the relay chain (no parachain ID)
-- `--named or --n`, (optional) which specifies the name field that might be included by the `DescendOrigin` instruction of some chains (for example, Polkadot). It is optional as some chains might not enforce a name. It defaults to `named = 'Any'`
+- `--named or --n`, (optional) which specifies the name field that might be included by the `DescendOrigin` instruction of some chains (for example, Polkadot). It is optional as some chains might not enforce a name. It defaults to `named = 'Any'`. For `DescendOrigin` where the name is `Polkadot` or `Kusama` you can provide that as input such `--n polkadot` and it will create the multilocation for derivation with the correct naming
 
 ### Example
 
@@ -308,4 +350,47 @@ yarn calculate-multilocation-derivative-account \
 --w wss://wss.api.moonbeam.network \
 --a 0x78914a4d7a946a0e4ed641f336b498736336e05096e342c799cc33c0f868d62f \
 --n 0x57657374656e64
+```
+
+## Calculate Units Per Second
+
+Script that calculates the units of token charged per second of execution for some given parameters. It uses the [Coingecko API](https://www.coingecko.com/). If your token is not supported by Coingecko, you can tell the script the price manually. 
+
+The script accepts these inputs fields:
+- `--decimals or --d`, decimals of the token used for calculations
+- `--xcm-weight-cost or --xwc`, which specifies total cost of the XCM execution in weight, it includes all transactions
+- `--target or --t`, (optional) which specifies the target price for the execution. Default is `$0.02`
+- `--asset or --a`, (optional) which specifies asset name compatible with the [Coingecko API](https://www.coingecko.com/)
+- `--price pr --p`, (optional) if the asset is not supported by Coingecko, specifies the price to use
+
+### Example
+
+```
+yarn calculate-units-per-second \
+--d 10 \
+--xwc 4000000000 \
+--a polkadot
+```
+
+## Para-registrar-swap
+
+Script that allows a para id swap in the relay from the parachain.
+
+The script accepts these inputs fields:
+- `--parachain-ws-provider or --wp`, which specifies the parachain websocket provider to which we will be issuing our requests
+- `--relay-ws-provider or --wr`, which specifies the relay websocket provider to which we will be issuing our requests
+- `--old-para-id or -p`, The paraId to be swapped.
+- `--new-para-id or -np`, The new paraId.
+- `--account-priv-key or -a`, which specifies the account that will submit the proposal
+- `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
+- `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
+- `--collective-threshold or -c`, Optional, number specifying the number of council votes that need to aprove the proposal. If not provided defautls to 1.
+- `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
+- `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
+- `--at-block`, Optional, number specifying the block number at which the call should get executed.
+
+### Example
+
+```
+yarn para-registrar-swap --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 -p 1000 -np 2000 -h
 ```

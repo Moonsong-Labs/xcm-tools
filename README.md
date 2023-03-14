@@ -380,7 +380,7 @@ The script accepts these inputs fields:
 - `--parachain-ws-provider or --wp`, which specifies the parachain websocket provider to which we will be issuing our requests
 - `--relay-ws-provider or --wr`, which specifies the relay websocket provider to which we will be issuing our requests
 - `--old-para-id or -p`, The paraId to be swapped.
-- `--bew-para-id or -p`, The new paraId.
+- `--new-para-id or -np`, The new paraId.
 - `--account-priv-key or -a`, which specifies the account that will submit the proposal
 - `--send-preimage-hash or -h`, boolean specifying whether we want to send the preimage hash
 - `--send-proposal-as` or `-s`, optional, but if provided needs to be "democracy", "council-external", or "v2" specifying whether we want to send the proposal through regular democracy, as an external proposal that will be voted by the council, or through OpenGovV2
@@ -388,3 +388,9 @@ The script accepts these inputs fields:
 - `--delay`, Optional, number of blocks to delay an OpenGovV2 proposal's execution by
 - `--track`, Optional, the JSON encoded origin for an OpenGovV2 proposal. For Moonbeam networks: "root", "whitelisted", "general", "canceller", "killer"
 - `--at-block`, Optional, number specifying the block number at which the call should get executed.
+
+### Example
+
+```
+yarn para-registrar-swap --parachain-ws-provider ws://127.0.0.1:34102  --relay-ws-provider ws://127.0.0.1:34002 -p 1000 -np 2000 -h
+```

@@ -16,8 +16,13 @@ const args = yargs.options({
     'new-para-id': { type: 'number', demandOption: true, alias: 'np' },
     'account-priv-key': { type: 'string', demandOption: false, alias: 'account' },
     'send-preimage-hash': { type: 'boolean', demandOption: false, alias: 'h' },
-    'send-proposal-as': { choices: ['democracy', 'council-external'], demandOption: false, alias: 's' },
-    'collective-threshold': { type: 'number', demandOption: false, alias: 'c' },
+    "send-proposal-as": {
+        choices: ["democracy", "v1", "council-external", "v2"],
+        demandOption: false,
+        alias: "s",
+    }, 'collective-threshold': { type: 'number', demandOption: false, alias: 'c' },
+    "delay": { type: "string", demandOption: false },
+    "track": { type: "string", demandOption: false },
     'at-block': { type: 'number', demandOption: false },
 }).argv;
 
@@ -110,10 +115,11 @@ async function main() {
             api,
             args["send-proposal-as"],
             preimage,
-            proposalAmount,
             account,
             nonce,
-            collectiveThreshold
+            collectiveThreshold,
+            args["track"],
+            args["delay"]
         );
     }
 }

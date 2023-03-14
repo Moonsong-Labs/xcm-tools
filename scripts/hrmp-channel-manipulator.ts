@@ -34,8 +34,8 @@ const args = yargs.options({
   "at-block": { type: "number", demandOption: false },
   "fee-currency": { type: "string", demandOption: false },
   "delay": { type: "string", demandOption: false },
-  "track": { type: "string", demandOption: false }
-  "fee-amount": { type: "string", demandOption: false }
+  "track": { type: "string", demandOption: false },
+  "fee-amount": { type: "number", demandOption: false }
 }).argv;
 
 // Construct

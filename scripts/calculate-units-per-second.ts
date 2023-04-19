@@ -43,7 +43,7 @@ async function main() {
     }
   } else {
     // Use given price
-    tokenPrice = BigInt(decimalsFactor * args["price"]);
+    tokenPrice = BigInt(Math.trunc(decimalsFactor * args["price"]));
     tokenData.success = true;
   }
 
@@ -57,7 +57,9 @@ async function main() {
 
     return unitsPerSecond;
   } else {
-    console.error("Token name not supported. Note that a specific CoinGecko API ID is required, not a ticker!");
+    console.error(
+      "Token name not supported. Note that a specific CoinGecko API ID is required, not a ticker!"
+    );
   }
 }
 

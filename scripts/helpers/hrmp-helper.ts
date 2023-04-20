@@ -37,13 +37,10 @@ export async function hrmpHelper(
       })();
   console.log("FeeAmount is: " + feeAmount);
 
-  // Get XCM Version - Not right but there is no chain state approach
-  let xcmVersion = (await api.query.xcmpQueue.palletVersion()).toString();
-  if (xcmVersion == "3") {
-    xcmVersion = "V3";
-  } else {
-    xcmVersion = "V2";
-  }
+  // Get XCM Version - Not great but there is no chain state approach
+  let xcmpQueueVersion = await api.query.xcmpQueue.palletVersion();
+  let xcmSafeVersion = await api.query.polkadotXcm.safeXcmVersion();
+  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
   console.log(`XCM Version is ${xcmVersion}`);
 
   // Attempt to find & use the xcmTransactor...
@@ -77,6 +74,7 @@ export async function hrmpHelper(
       };
     }
 
+    // Fee Token as a Multilocation (more general for all parachains)
     let feeToken;
     if (feeCurrency == null) {
       feeToken = {
@@ -86,7 +84,8 @@ export async function hrmpHelper(
             : { V1: { parents: new BN(1), interior: "Here" } },
       };
     } else {
-      const asset: MultiLocation = api.createType("MultiLocation", JSON.parse(feeCurrency));
+      // If Fee Token is provided as an input
+      const asset: MultiLocation = api.createType("XcmV1MultiLocation", JSON.parse(feeCurrency));
       feeToken = {
         AsMultiLocation:
           xcmVersion == "V3"
@@ -112,6 +111,7 @@ export async function hrmpHelper(
         currency: feeToken,
         feeAmount: feeAmount,
       },
+      // Account for XCM V3, note the Proof Sizes are hardcoded for now
       xcmVersion == "V3"
         ? {
             transactRequiredWeightAtMost: { refTime: new BN(1000000000), proofSize: new BN(65536) },

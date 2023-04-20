@@ -29,7 +29,7 @@ const main = async () => {
   });
   await api.isReady;
 
-  const asset: MultiLocation = api.createType("MultiLocation", JSON.parse(args["asset"]));
+  const asset: MultiLocation = api.createType("XcmV1MultiLocation", JSON.parse(args["asset"]));
 
   const assetIdHex = u8aToHex(api.registry.hash(asset.toU8a()).slice(0, 16).reverse());
 

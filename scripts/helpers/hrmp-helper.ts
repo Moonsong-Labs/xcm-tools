@@ -123,8 +123,7 @@ export async function hrmpHelper(
           }
     );
     return xcmTransactorHrmpManageExtrinsic;
-  } catch (err) {
-    console.log(err.message);
+  } catch (_) {
     // ...otherwise, use the legacy construction method
     let relayCall;
     if (hrmpAction == "accept") {

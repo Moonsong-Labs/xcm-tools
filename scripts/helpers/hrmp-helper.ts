@@ -43,6 +43,9 @@ export async function hrmpHelper(
   let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
   console.log(`XCM Version is ${xcmVersion}`);
 
+  // Get XCM Versioned Multilocation Type
+  const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";
+
   // Attempt to find & use the xcmTransactor...
   try {
     // Find correct HRMP action
@@ -85,7 +88,7 @@ export async function hrmpHelper(
       };
     } else {
       // If Fee Token is provided as an input
-      const asset: MultiLocation = api.createType("XcmV1MultiLocation", JSON.parse(feeCurrency));
+      const asset: MultiLocation = api.createType(xcmType, JSON.parse(feeCurrency));
       feeToken = {
         AsMultiLocation:
           xcmVersion == "V3"

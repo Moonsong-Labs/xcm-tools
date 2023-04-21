@@ -19,6 +19,15 @@ async function main() {
   // Create Provider and Type
   const api = await ApiPromise.create({ provider: wsProvider });
 
+  // Get XCM Version - Not great but there is no chain state approach
+  let xcmpQueueVersion = (await api.query.xcmpQueue.palletVersion()) as any;
+  let xcmSafeVersion = (await api.query.polkadotXcm.safeXcmVersion()) as any;
+  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
+  console.log(`XCM Version is ${xcmVersion}`);
+
+  // Get XCM Versioned Multilocation Type
+  const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";
+
   // Check Ethereum Address and/or Decode
   let address = args["address"];
   let account;
@@ -34,12 +43,15 @@ async function main() {
       case "kusama":
         named = { kusama: null };
         break;
+      case "westend":
+        named = { westend: null };
+        break;
       default:
-        named = { Named: args["named"] };
+        named = xcmVersion == "V3" ? args["named"] : { Named: args["named"] };
         break;
     }
   } else {
-    named = "Any";
+    named = xcmVersion == "V3" ? null : "Any";
   }
 
   // Handle address
@@ -63,7 +75,7 @@ async function main() {
   }
 
   const multilocation: MultiLocation = api.createType(
-    "XcmV1MultiLocation",
+    xcmType,
     JSON.parse(
       JSON.stringify({
         parents: 1,

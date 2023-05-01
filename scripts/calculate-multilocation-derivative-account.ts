@@ -6,10 +6,10 @@ import { MultiLocation } from "@polkadot/types/interfaces";
 import "@moonbeam-network/api-augment";
 
 const args = yargs.options({
-  "parachain-ws-provider": { type: "string", demandOption: true, alias: "w" }, //Target WS Provider
+  "parachain-ws-provider": { type: "string", demandOption: true, alias: "w" }, // Target WS Provider
   address: { type: "string", demandOption: true, alias: "a" },
   "para-id": { type: "string", demandOption: false, alias: "p" }, //Origin Parachain ID,
-  named: { type: "string", demandOption: false, alias: "n" }, // Named optional
+  network: { type: "string", demandOption: false, alias: "n" }, // Network optional
 }).argv;
 
 // Construct
@@ -24,30 +24,34 @@ async function main() {
   let account;
   const ethAddress = address.length === 42;
 
-  // Handle name
-  let named;
-  if (args["named"]) {
-    switch (args["named"].toLowerCase()) {
-      case "polkadot":
-        named = { polkadot: null };
-        break;
-      case "kusama":
-        named = { kusama: null };
-        break;
-      default:
-        named = { Named: args["named"] };
-        break;
+  // Handle network
+  const supportedNetworks = [
+    "bygenesis",
+    "byfork",
+    "polkadot",
+    "kusama",
+    "westend",
+    "rococo",
+    "wococo",
+    "ethereum",
+    "bitcoincore",
+    "bitcoincash",
+  ];
+  let network = null;
+  if (args["network"]) {
+    if (!supportedNetworks.includes(args["network"].toLowerCase())) {
+      console.error("Network option not supported");
+      return;
     }
-  } else {
-    named = "Any";
+    network = args["network"];
   }
 
   // Handle address
   if (!ethAddress) {
     address = decodeAddress(address);
-    account = { AccountId32: { network: named, id: u8aToHex(address) } };
+    account = { AccountId32: { network, id: u8aToHex(address) } };
   } else {
-    account = { AccountKey20: { network: named, key: address } };
+    account = { AccountKey20: { network, key: address } };
   }
 
   // Handle para-id
@@ -63,7 +67,7 @@ async function main() {
   }
 
   const multilocation: MultiLocation = api.createType(
-    "XcmV1MultiLocation",
+    "XcmV3MultiLocation",
     JSON.parse(
       JSON.stringify({
         parents: 1,

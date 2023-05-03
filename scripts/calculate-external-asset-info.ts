@@ -29,7 +29,16 @@ const main = async () => {
   });
   await api.isReady;
 
-  const asset: MultiLocation = api.createType("XcmV1MultiLocation", JSON.parse(args["asset"]));
+  // Get XCM Version - Not great but there is no chain state approach
+  let xcmpQueueVersion = (await api.query.xcmpQueue.palletVersion()) as any;
+  let xcmSafeVersion = (await api.query.polkadotXcm.safeXcmVersion()) as any;
+  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
+  console.log(`\nXCM Version is ${xcmVersion}`);
+
+  // Get XCM Versioned Multilocation Type
+  const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";
+
+  const asset: MultiLocation = api.createType(xcmType, JSON.parse(args["asset"]));
 
   const assetIdHex = u8aToHex(api.registry.hash(asset.toU8a()).slice(0, 16).reverse());
 
@@ -41,7 +50,7 @@ const main = async () => {
   let addressHash = blake2AsU8a(assetAddress, 128);
   let concatKey = new Uint8Array([...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
 
-  console.log(`External Asset Multilocation: `, asset);
+  console.log(`External Asset Multilocation: `, asset.toString());
 
   console.log(`Storage Key ${u8aToHex(concatKey)}`);
   console.log(`Asset Address Precompile: ${u8aToHex(assetAddress)}`);

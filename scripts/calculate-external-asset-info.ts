@@ -3,6 +3,7 @@ import { xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
 import { u8aToHex, hexToU8a, hexToString } from "@polkadot/util";
 import { MultiLocation } from "@polkadot/types/interfaces";
 import yargs from "yargs";
+import { getXCMVersion } from "./helpers/get-xcm-version";
 
 const args = yargs.options({
   asset: { type: "string", demandOption: true, alias: "a" },
@@ -29,7 +30,10 @@ const main = async () => {
   });
   await api.isReady;
 
-  const asset: MultiLocation = api.createType("XcmV1MultiLocation", JSON.parse(args["asset"]));
+  // Get XCM Version and MultiLocation Type
+  const [, xcmType] = await getXCMVersion(api);
+
+  const asset: MultiLocation = api.createType(xcmType, JSON.parse(args["asset"]));
 
   const assetIdHex = u8aToHex(api.registry.hash(asset.toU8a()).slice(0, 16).reverse());
 
@@ -41,7 +45,7 @@ const main = async () => {
   let addressHash = blake2AsU8a(assetAddress, 128);
   let concatKey = new Uint8Array([...palletHash, ...storageHash, ...addressHash, ...assetAddress]);
 
-  console.log(`External Asset Multilocation: `, asset);
+  console.log(`External Asset Multilocation: `, asset.toString());
 
   console.log(`Storage Key ${u8aToHex(concatKey)}`);
   console.log(`Asset Address Precompile: ${u8aToHex(assetAddress)}`);

@@ -1,6 +1,7 @@
 import { ParaId } from "@polkadot/types/interfaces";
 import { u8aToHex, BN } from "@polkadot/util";
 import { MultiLocation } from "@polkadot/types/interfaces";
+import { getXCMVersion } from "./get-xcm-version";
 
 export async function hrmpHelper(
   api,
@@ -37,11 +38,8 @@ export async function hrmpHelper(
       })();
   console.log("FeeAmount is: " + feeAmount);
 
-  // Get XCM Version - Not great but there is no chain state approach
-  let xcmpQueueVersion = await api.query.xcmpQueue.palletVersion();
-  let xcmSafeVersion = await api.query.polkadotXcm.safeXcmVersion();
-  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
-  console.log(`XCM Version is ${xcmVersion}`);
+  // Get XCM Version and MultiLocation Type
+  const [xcmVersion, xcmType] = await getXCMVersion(api);
 
   // Attempt to find & use the xcmTransactor...
   try {
@@ -85,7 +83,7 @@ export async function hrmpHelper(
       };
     } else {
       // If Fee Token is provided as an input
-      const asset: MultiLocation = api.createType("XcmV1MultiLocation", JSON.parse(feeCurrency));
+      const asset: MultiLocation = api.createType(xcmType, JSON.parse(feeCurrency));
       feeToken = {
         AsMultiLocation:
           xcmVersion == "V3"
@@ -192,7 +190,10 @@ export async function hrmpHelper(
               max_assets: 1,
               beneficiary: {
                 parents: new BN(0),
-                interior: { X1: { AccountId32: { network: "Any", id: para_address } } },
+                interior:
+                  xcmVersion == "V3"
+                    ? { X1: { AccountId32: { network: null, id: para_address } } }
+                    : { X1: { AccountId32: { network: "Any", id: para_address } } },
               },
             },
           },

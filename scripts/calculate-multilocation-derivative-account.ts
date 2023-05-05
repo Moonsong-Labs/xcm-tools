@@ -1,8 +1,9 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
+import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/util-crypto";
 import yargs from "yargs";
 import { MultiLocation } from "@polkadot/types/interfaces";
+import { getXCMVersion } from "./helpers/get-xcm-version";
 import "@moonbeam-network/api-augment";
 
 const args = yargs.options({
@@ -19,6 +20,9 @@ async function main() {
   // Create Provider and Type
   const api = await ApiPromise.create({ provider: wsProvider });
 
+  // Get XCM Version and MultiLocation Type
+  const [xcmVersion, xcmType] = await getXCMVersion(api);
+
   // Check Ethereum Address and/or Decode
   let address = args["address"];
   let account;
@@ -34,12 +38,15 @@ async function main() {
       case "kusama":
         named = { kusama: null };
         break;
+      case "westend":
+        named = { westend: null };
+        break;
       default:
-        named = { Named: args["named"] };
+        named = xcmVersion == "V3" ? args["named"] : { Named: args["named"] };
         break;
     }
   } else {
-    named = "Any";
+    named = xcmVersion == "V3" ? null : "Any";
   }
 
   // Handle address
@@ -63,7 +70,7 @@ async function main() {
   }
 
   const multilocation: MultiLocation = api.createType(
-    "XcmV1MultiLocation",
+    xcmType,
     JSON.parse(
       JSON.stringify({
         parents: 1,

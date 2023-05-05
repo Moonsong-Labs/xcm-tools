@@ -20,11 +20,8 @@ async function main() {
   // Create Provider and Type
   const api = await ApiPromise.create({ provider: wsProvider });
 
-  // Get XCM Version
-  let xcmVersion = await getXCMVersion(api);
-
-  // Get XCM Versioned Multilocation Type
-  const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";
+  // Get XCM Version and MultiLocation Type
+  const [xcmVersion, xcmType] = await getXCMVersion(api);
 
   // Check Ethereum Address and/or Decode
   let address = args["address"];

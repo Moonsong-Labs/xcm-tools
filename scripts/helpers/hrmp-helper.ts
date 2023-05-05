@@ -38,11 +38,8 @@ export async function hrmpHelper(
       })();
   console.log("FeeAmount is: " + feeAmount);
 
-  // Get XCM Version
-  let xcmVersion = await getXCMVersion(api);
-
-  // Get XCM Versioned Multilocation Type
-  const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";
+  // Get XCM Version and MultiLocation Type
+  const [xcmVersion, xcmType] = await getXCMVersion(api);
 
   // Attempt to find & use the xcmTransactor...
   try {

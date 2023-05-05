@@ -30,11 +30,8 @@ const main = async () => {
   });
   await api.isReady;
 
-  // Get XCM Version
-  let xcmVersion = await getXCMVersion(api);
-
-  // Get XCM Versioned Multilocation Type
-  const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";
+  // Get XCM Version and MultiLocation Type
+  const [, xcmType] = await getXCMVersion(api);
 
   const asset: MultiLocation = api.createType(xcmType, JSON.parse(args["asset"]));
 

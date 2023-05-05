@@ -11,6 +11,7 @@ import {
   preimageWrapper,
   democracyWrapper,
 } from "./helpers/function-helpers";
+import { getXCMVersion } from "./helpers/get-xcm-version";
 
 const args = yargs.options({
   "ws-provider": { type: "string", demandOption: true, alias: "w" },
@@ -32,8 +33,8 @@ const args = yargs.options({
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
-  "delay": { type: "string", demandOption: false },
-  "track": { type: "string", demandOption: false }
+  delay: { type: "string", demandOption: false },
+  track: { type: "string", demandOption: false },
 }).argv;
 
 // Construct
@@ -41,6 +42,9 @@ const wsProvider = new WsProvider(args["ws-provider"]);
 
 async function main() {
   const api = await ApiPromise.create({ provider: wsProvider });
+
+  // Get XCM Version and MultiLocation Type
+  const [, xcmType] = await getXCMVersion(api);
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
 
@@ -52,10 +56,10 @@ async function main() {
   };
 
   const registerTxs = [];
-  const asset: MultiLocation = api.createType("MultiLocation", JSON.parse(args["asset"]));
+  const asset: MultiLocation = api.createType(xcmType, JSON.parse(args["asset"]));
 
   const assetId = u8aToHex(api.registry.hash(asset.toU8a()).slice(0, 16).reverse());
-  const sourceLocation = { XCM: asset };
+  const sourceLocation = { Xcm: asset };
 
   let registerTx = api.tx.assetManager.registerForeignAsset(
     sourceLocation,

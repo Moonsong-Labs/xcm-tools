@@ -1,8 +1,9 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
+import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/util-crypto";
 import yargs from "yargs";
 import { MultiLocation } from "@polkadot/types/interfaces";
+import { getXCMVersion } from "./helpers/get-xcm-version";
 import "@moonbeam-network/api-augment";
 
 const args = yargs.options({
@@ -19,11 +20,8 @@ async function main() {
   // Create Provider and Type
   const api = await ApiPromise.create({ provider: wsProvider });
 
-  // Get XCM Version - Not great but there is no chain state approach
-  let xcmpQueueVersion = (await api.query.xcmpQueue.palletVersion()) as any;
-  let xcmSafeVersion = (await api.query.polkadotXcm.safeXcmVersion()) as any;
-  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
-  console.log(`XCM Version is ${xcmVersion}`);
+  // Get XCM Version
+  let xcmVersion = await getXCMVersion(api);
 
   // Get XCM Versioned Multilocation Type
   const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";

@@ -1,6 +1,7 @@
 import { ParaId } from "@polkadot/types/interfaces";
 import { u8aToHex, BN } from "@polkadot/util";
 import { MultiLocation } from "@polkadot/types/interfaces";
+import { getXCMVersion } from "./get-xcm-version";
 
 export async function hrmpHelper(
   api,
@@ -37,11 +38,8 @@ export async function hrmpHelper(
       })();
   console.log("FeeAmount is: " + feeAmount);
 
-  // Get XCM Version - Not great but there is no chain state approach
-  let xcmpQueueVersion = await api.query.xcmpQueue.palletVersion();
-  let xcmSafeVersion = await api.query.polkadotXcm.safeXcmVersion();
-  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
-  console.log(`XCM Version is ${xcmVersion}`);
+  // Get XCM Version
+  let xcmVersion = await getXCMVersion(api);
 
   // Get XCM Versioned Multilocation Type
   const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";

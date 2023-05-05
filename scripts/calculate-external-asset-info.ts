@@ -3,6 +3,7 @@ import { xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
 import { u8aToHex, hexToU8a, hexToString } from "@polkadot/util";
 import { MultiLocation } from "@polkadot/types/interfaces";
 import yargs from "yargs";
+import { getXCMVersion } from "./helpers/get-xcm-version";
 
 const args = yargs.options({
   asset: { type: "string", demandOption: true, alias: "a" },
@@ -29,11 +30,8 @@ const main = async () => {
   });
   await api.isReady;
 
-  // Get XCM Version - Not great but there is no chain state approach
-  let xcmpQueueVersion = (await api.query.xcmpQueue.palletVersion()) as any;
-  let xcmSafeVersion = (await api.query.polkadotXcm.safeXcmVersion()) as any;
-  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
-  console.log(`\nXCM Version is ${xcmVersion}`);
+  // Get XCM Version
+  let xcmVersion = await getXCMVersion(api);
 
   // Get XCM Versioned Multilocation Type
   const xcmType = xcmVersion == "V3" ? "XcmV3MultiLocation" : "XcmV1MultiLocation";

@@ -190,7 +190,10 @@ export async function hrmpHelper(
               max_assets: 1,
               beneficiary: {
                 parents: new BN(0),
-                interior: { X1: { AccountId32: { network: "Any", id: para_address } } },
+                interior:
+                  xcmVersion == "V3"
+                    ? { X1: { AccountId32: { network: null, id: para_address } } }
+                    : { X1: { AccountId32: { network: "Any", id: para_address } } },
               },
             },
           },

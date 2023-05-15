@@ -36,10 +36,13 @@ async function main() {
       );
     }
 
-    if (tokenData.success) {
+    console.log(tokenData.success && tokenData.data[args["asset"]].usd);
+    if (tokenData.success && tokenData.data[args["asset"]].usd) {
       tokenPrice = BigInt(Math.round(decimalsFactor * tokenData.data[args["asset"]].usd));
     } else {
-      console.error(tokenData.data);
+      throw new Error(
+        `Price is not available - Check https://www.coingecko.com/en/coins/${args["asset"]}`
+      );
     }
   } else {
     // Use given price

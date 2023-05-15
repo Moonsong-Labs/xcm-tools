@@ -23,8 +23,8 @@ const args = yargs.options({
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
-  "delay": { type: "string", demandOption: false },
-  "track": { type: "string", demandOption: false }
+  delay: { type: "string", demandOption: false },
+  track: { type: "string", demandOption: false },
 }).argv;
 
 // Construct
@@ -44,7 +44,7 @@ async function main() {
       let call = api.createType("Call", hexToU8a(args["generic-call"][i])) as any;
       Txs.push(call);
     }
-    const batchCall = api.tx.utility.batch(Txs);
+    const batchCall = api.tx.utility.batchAll(Txs);
     Tx = batchCall;
   } else {
     // Else, we just push one

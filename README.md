@@ -99,9 +99,10 @@ The script accepts these inputs fields:
 - `--parachain-ws-provider` or `--w`, which specifies the parachain websocket provider to which we will be issuing our requests
 - `--relay-ws-provider` or `--wr`, which specifies the relay websocket provider to which we will be issuing our requests
 - `--hrmp-action` or `--hrmp`, one of "accept", "close", "cancel", or "open".
+- `--force-xcm-send` or `--xcm-send`, boolean to force `polkadotXcm.send` over `xcmTransactor`
 - `--target-para-id` or `-p`, The target paraId with which we interact.
-- `--max-capacity` or `--mc`, Optional, only for "open". The max capacity in messages that the channel supports.
-- `--max-message-size` or `-mms`, Optional, only for "open". The max message size that the channel supports.
+- `--max-capacity` or `--mc`, Optional, only for "open". The max capacity in messages that the channel supports
+- `--max-message-size` or `-mms`, Optional, only for "open". The max message size that the channel supports
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--sudo` or `-x`, which wraps the transaction with `sudo.sudo`. If the private key is included it will also send it, if not, it will only provide the encoded call data
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash

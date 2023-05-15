@@ -44,7 +44,7 @@ async function main() {
       let call = api.createType("Call", hexToU8a(args["generic-call"][i])) as any;
       Txs.push(call);
     }
-    const batchCall = api.tx.utility.batchAll(Txs);
+    const batchCall = api.tx.utility.batch(Txs);
     Tx = batchCall;
   } else {
     // Else, we just push one

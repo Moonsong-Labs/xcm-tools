@@ -19,6 +19,11 @@ const args = yargs.options({
     demandOption: true,
     alias: "hrmp",
   },
+  "force-xcm-send": {
+    type: "boolean",
+    demandOption: false,
+    alias: "xcm-send",
+  },
   "target-para-id": { type: "number", demandOption: true, alias: "p" },
   "max-capacity": { type: "number", demandOption: false, alias: "mc" },
   "max-message-size": { type: "number", demandOption: false, alias: "mms" },
@@ -57,7 +62,8 @@ async function main() {
     args["max-capacity"],
     args["max-message-size"],
     args["fee-currency"],
-    args["fee-amount"]
+    args["fee-amount"],
+    args["force-xcm-send"]
   );
 
   // Scheduler

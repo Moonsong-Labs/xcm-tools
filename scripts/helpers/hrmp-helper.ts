@@ -11,38 +11,42 @@ export async function hrmpHelper(
   maxCapacity = 1000,
   maxMessageSize = 102400,
   feeCurrency = null,
-  fee = null
+  fee = null,
+  forceXcmSend = null
 ) {
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 
   // Determine fee amount from relay chain
   const genesisHash = (await relayApi.genesisHash).toString().toLowerCase();
-  console.log("Genesis hash is: " + genesisHash);
+  console.log("\nGenesis hash is: " + genesisHash);
   const feeAmount: BN = fee
     ? new BN(fee)
     : (() => {
-        switch (genesisHash) {
-          case "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe":
-            // Kusama - 0.1 KSM
-            return new BN(100000000000);
-          case "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3":
-            // Polkadot - 1 DOT
-            return new BN(10000000000);
-          case "0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443":
-            // Moonbase Alpha Relay - 1 UNIT
-            return new BN(1000000000000);
-          default:
-            // Generic Relay - 1 UNIT
-            return new BN(1000000000000);
-        }
-      })();
+      switch (genesisHash) {
+        case "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe":
+          // Kusama - 0.1 KSM
+          return new BN(100000000000);
+        case "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3":
+          // Polkadot - 1 DOT
+          return new BN(10000000000);
+        case "0xe1ea3ab1d46ba8f4898b6b4b9c54ffc05282d299f89e84bd0fd08067758c9443":
+          // Moonbase Alpha Relay - 1 UNIT
+          return new BN(1000000000000);
+        default:
+          // Generic Relay - 1 UNIT
+          return new BN(1000000000000);
+      }
+    })();
   console.log("FeeAmount is: " + feeAmount);
 
   // Get XCM Version and MultiLocation Type
   const [xcmVersion, xcmType] = await getXCMVersion(api);
 
-  // Attempt to find & use the xcmTransactor...
   try {
+    // Check if Force XCM Send or Not, and Check XCM Transactor
+    const useTransactor = forceXcmSend ? false : api.query.xcmTransactor ? true : false;
+    if(!useTransactor) throw new Error("XCM construction method was forced by user.");
+
     // Find correct HRMP action
     let action;
     if (hrmpAction == "accept") {
@@ -88,17 +92,17 @@ export async function hrmpHelper(
         AsMultiLocation:
           xcmVersion == "V3"
             ? {
-                V3: {
-                  parents: asset.parents,
-                  interior: asset.interior,
-                },
-              }
-            : {
-                V1: {
-                  parents: asset.parents,
-                  interior: asset.interior,
-                },
+              V3: {
+                parents: asset.parents,
+                interior: asset.interior,
               },
+            }
+            : {
+              V1: {
+                parents: asset.parents,
+                interior: asset.interior,
+              },
+            },
       };
     }
 
@@ -112,20 +116,23 @@ export async function hrmpHelper(
       // Account for XCM V3, note the Proof Sizes are hardcoded for now
       xcmVersion == "V3"
         ? {
-            transactRequiredWeightAtMost: { refTime: new BN(1000000000), proofSize: new BN(65536) },
-            overallWeight: { refTime: new BN(5000000000), proofSize: new BN(131072) },
-          }
+          transactRequiredWeightAtMost: { refTime: new BN(1000000000), proofSize: new BN(65536) },
+          overallWeight: { refTime: new BN(5000000000), proofSize: new BN(131072) },
+        }
         : {
-            transactRequiredWeightAtMost: new BN(1000000000),
-            overallWeight: new BN(5000000000),
-          }
+          transactRequiredWeightAtMost: new BN(1000000000),
+          overallWeight: new BN(5000000000),
+        }
     );
     return xcmTransactorHrmpManageExtrinsic;
-  } catch (_) {
+  }
+  catch (e) {
+    console.log(`Not using XCM Transactor: ${e.message ?? '[no message specified]'}`);
+
     // ...otherwise, use the legacy construction method
     let relayCall;
     if (hrmpAction == "accept") {
-      relayCall = relayApi.tx.hrmp.hrmpAcceptOpenChannel(maxCapacity);
+      relayCall = relayApi.tx.hrmp.hrmpAcceptOpenChannel(targetParaId);
     } else if (hrmpAction == "open") {
       relayCall = relayApi.tx.hrmp.hrmpInitOpenChannel(targetParaId, maxCapacity, maxMessageSize);
     } else if (hrmpAction == "cancel") {
@@ -146,58 +153,70 @@ export async function hrmpHelper(
       new Uint8Array([...new TextEncoder().encode("para"), ...selfParaId.toU8a()])
     ).padEnd(66, "0");
 
+    const xcmMessage: any = [
+      {
+        WithdrawAsset: [
+          {
+            id: { Concrete: { parents: new BN(0), interior: "Here" } },
+            fun: { Fungible: feeAmount },
+          },
+        ],
+      },
+      {
+        BuyExecution: {
+          fees: {
+            id: { Concrete: { parents: new BN(0), interior: "Here" } },
+            fun: { Fungible: feeAmount },
+          },
+          weightLimit: "Unlimited",
+        },
+      },
+      {
+        Transact: {
+          originType: "Native",
+          requireWeightAtMost:
+            xcmVersion == "V3"
+              ? {
+                refTime: new BN(1000000000),
+                proofSize: new BN(65536),
+              }
+              : new BN(1000000000),
+          call: {
+            encoded: relayCall2,
+          },
+        },
+      },
+    ];
+
+    // DepositAsset depends on XCM V3 or V2
+    xcmVersion == "V3"
+      ? xcmMessage.push({
+        DepositAsset: {
+          assets: { Wild: { AllCounted: 1 } },
+          beneficiary: {
+            parents: new BN(0),
+            interior: { X1: { AccountId32: { network: null, id: para_address } } },
+          },
+        },
+      })
+      : xcmMessage.push({
+        DepositAsset: {
+          assets: { Wild: "All" },
+          max_assets: 1,
+          beneficiary: {
+            parents: new BN(0),
+            interior: { X1: { AccountId32: { network: "Any", id: para_address } } },
+          },
+        },
+      });
+
+    // XCM Send
     const batchCall = api.tx.polkadotXcm.send(
       xcmVersion == "V3"
         ? { V3: { parents: new BN(1), interior: "Here" } }
         : { V1: { parents: new BN(1), interior: "Here" } },
       {
-        [xcmVersion]: [
-          {
-            WithdrawAsset: [
-              {
-                id: { Concrete: { parents: new BN(0), interior: "Here" } },
-                fun: { Fungible: feeAmount },
-              },
-            ],
-          },
-          {
-            BuyExecution: {
-              fees: {
-                id: { Concrete: { parents: new BN(0), interior: "Here" } },
-                fun: { Fungible: feeAmount },
-              },
-              weightLimit: "Unlimited",
-            },
-          },
-          {
-            Transact: {
-              originType: "Native",
-              requireWeightAtMost:
-                xcmVersion == "V3"
-                  ? {
-                      refTime: new BN(1000000000),
-                      proofSize: new BN(65536),
-                    }
-                  : new BN(1000000000),
-              call: {
-                encoded: relayCall2,
-              },
-            },
-          },
-          {
-            DepositAsset: {
-              assets: { Wild: "All" },
-              max_assets: 1,
-              beneficiary: {
-                parents: new BN(0),
-                interior:
-                  xcmVersion == "V3"
-                    ? { X1: { AccountId32: { network: null, id: para_address } } }
-                    : { X1: { AccountId32: { network: "Any", id: para_address } } },
-              },
-            },
-          },
-        ],
+        [xcmVersion]: xcmMessage,
       }
     );
 

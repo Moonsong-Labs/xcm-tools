@@ -14,6 +14,25 @@ const FOREIGN_CHAIN_PREFIX_PARA_32 = "ForeignChainAliasAccountPrefix_Para32";
 const FOREIGN_CHAIN_PREFIX_PARA_20 = "ForeignChainAliasAccountPrefix_Para20";
 const FOREIGN_CHAIN_PREFIX_RELAY = "ForeignChainAliasAccountPrefix_Relay";
 
+const getPrefix = (ethAddress, parents, paraId) => {
+  if (parents) {
+    if (!paraId && ethAddress) {
+      // Relay Chains don't have Acoount Key 20
+      throw new Error(
+        "Error: Invalid configuration. Parents is included but no Parachain ID was provided. Relay Chains don't use Account Key 20."
+      );
+    }
+    if (paraId) {
+      return ethAddress ? FOREIGN_CHAIN_PREFIX_PARA_20 : FOREIGN_CHAIN_PREFIX_PARA_32;
+    }
+    return FOREIGN_CHAIN_PREFIX_RELAY;
+  }
+  if (paraId) {
+    return ethAddress ? FOREIGN_CHAIN_PREFIX_PARA_20 : FOREIGN_CHAIN_PREFIX_PARA_32;
+  }
+  return FOREIGN_CHAIN_PREFIX_RELAY;
+};
+
 async function main() {
   // Check Ethereum Address and/or Decode
   let decodedAddress;
@@ -27,67 +46,23 @@ async function main() {
     decodedAddress = hexToU8a(address);
   }
 
-  // Get Component to Hash
-  let toHash;
-  let prefix;
-  let parents;
-  let paraID;
+  // Initialize variables
+  let paraId = args["para-id"];
+  let parents = args["parents"] ? 1 : 0;
 
-  if (args["parents"]) {
-    // Parents is 1
-    parents = 1;
+  // Get the correct prefix
+  let prefix = getPrefix(ethAddress, parents, paraId);
 
-    if (args["para-id"]) {
-      paraID = args["para-id"];
-
-      // Get Right Para Prefix
-      if (ethAddress) {
-        prefix = FOREIGN_CHAIN_PREFIX_PARA_20;
-      } else {
-        prefix = FOREIGN_CHAIN_PREFIX_PARA_32;
-      }
-
-      // Calculate Hash Component
-      toHash = new Uint8Array([
-        ...new TextEncoder().encode(prefix),
-        ...bnToU8a(args["para-id"], { bitLength: 32 }),
-        ...decodedAddress,
-        ...bnToU8a(parents, { bitLength: 8 }),
-      ]);
-    } else {
-      // Parents 1 - No ParaID - Message is from Relay
-      paraID = null;
-      prefix = FOREIGN_CHAIN_PREFIX_RELAY;
-
-      // Calculate Hash Component
-      toHash = new Uint8Array([
-        ...new TextEncoder().encode(prefix),
-        ...decodedAddress,
-        ...bnToU8a(parents, { bitLength: 8 }),
-      ]);
-    }
-  } else if (args["para-id"]) {
-    // Parents is 0 - But ParaID is Given - This is Nested Parachain in Parachain
-    parents = 0;
-    paraID = args["para-id"];
-
-    if (ethAddress) {
-      prefix = FOREIGN_CHAIN_PREFIX_PARA_20;
-    } else {
-      prefix = FOREIGN_CHAIN_PREFIX_PARA_32;
-    }
-
-    // Calculate Hash Component
-    toHash = new Uint8Array([
-      ...new TextEncoder().encode(prefix),
-      ...bnToU8a(args["para-id"], { bitLength: 32 }),
-      ...decodedAddress,
-      ...bnToU8a(parents, { bitLength: 8 }),
-    ]);
-  }
+  // Calculate Hash Component
+  let toHash = new Uint8Array([
+    ...new TextEncoder().encode(prefix),
+    ...(paraId ? bnToU8a(paraId, { bitLength: 32 }) : []),
+    ...decodedAddress,
+    ...bnToU8a(parents, { bitLength: 8 }),
+  ]);
 
   console.log(
-    `Remote Origin calculated as ${prefix} - Account ${address} - Parents ${args["parents"]} - ParaID ${paraID}`
+    `Remote Origin calculated as ${prefix} - Account ${address} - Parents ${args["parents"]} - ParaID ${paraId}`
   );
 
   const DescendOriginAddress32 = u8aToHex(blake2AsU8a(toHash).slice(0, 32));

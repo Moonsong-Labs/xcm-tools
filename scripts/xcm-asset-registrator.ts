@@ -69,7 +69,7 @@ async function main() {
   );
   registerTxs.push(registerTx);
 
-  console.log("Encoded proposal for registerAsset is %s", registerTx.method.toHex() || "");
+  console.log("Encoded Call Data for registerAsset is %s", registerTx.method.toHex() || "");
 
   let numSupportedAssets = ((await api.query.assetManager.supportedFeePaymentAssets()) as any)
     .length;
@@ -83,7 +83,7 @@ async function main() {
     registerTxs.push(setUnitsTx);
 
     console.log(
-      "Encoded proposal for setAssetUnitsPerSecond is %s",
+      "Encoded Call Data for setAssetUnitsPerSecond is %s",
       setUnitsTx.method.toHex() || ""
     );
   }
@@ -110,7 +110,7 @@ async function main() {
     console.log("Encoded proposal for setStorage is %s", setRevertTx.method.toHex() || "");
   }
 
-  const batchCall = api.tx.utility.batchAll(registerTxs);
+  const batchCall = api.tx.utility.batch(registerTxs);
 
   // Scheduler
   let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], batchCall) : batchCall;
@@ -127,7 +127,7 @@ async function main() {
     finalTx = await sudoWrapper(api, finalTx, account);
   }
 
-  console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());
+  console.log("Encoded Call Data for batched is %s", finalTx.method.toHex());
 
   // Create Preimage
   let preimage;

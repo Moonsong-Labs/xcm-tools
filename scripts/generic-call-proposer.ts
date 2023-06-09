@@ -25,6 +25,7 @@ const args = yargs.options({
   "at-block": { type: "number", demandOption: false },
   delay: { type: "string", demandOption: false },
   track: { type: "string", demandOption: false },
+  "dispatch-as": { type: "string", demandOption: false, alias: "dispatcher" },
 }).argv;
 
 // Construct
@@ -55,6 +56,19 @@ async function main() {
   // Scheduler
   let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], Tx) : Tx;
 
+  // If finalTx is not an Extrinsic, create the right type
+  if (finalTx.method) {
+    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
+  }
+
+  // Set up Dispatcher
+  if (args["dispatch-as"]) {
+    finalTx = await api.tx.utility.dispatchAs(
+      JSON.parse(args["dispatch-as"]),
+      finalTx.method.toHex()
+    );
+  }
+
   // Create account with manual nonce handling
   let account;
   let nonce;
@@ -65,11 +79,6 @@ async function main() {
   // Sudo Wrapper
   if (args["sudo"]) {
     finalTx = await sudoWrapper(api, finalTx, account);
-  }
-
-  // If finalTx is not an Extrinsic, create the right type
-  if (finalTx.method) {
-    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
   }
 
   console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());

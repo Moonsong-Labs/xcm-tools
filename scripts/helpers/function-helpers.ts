@@ -19,7 +19,7 @@ export async function accountWrapper(api, privateKey) {
 }
 
 export async function sudoWrapper(api, tx, account) {
-  let sudoTx = await api.tx.sudo.sudo(tx);
+  let sudoTx = await api.tx.sudo.sudo(tx.toHex());
 
   console.log("-- Using SUDO --");
   if (account) {
@@ -115,17 +115,16 @@ export async function democracyWrapper(
       }
 
       console.log("--> Democracy Tx sent\n");
-    }
-    else if (proposalType == "v2") {
+    } else if (proposalType == "v2") {
       let t = {
-        root: { system: 'Root' },
-        whitelisted: { Origins: 'WhitelistedCaller' } ,
-        general: { Origins: 'GeneralAdmin' },
-        canceller: { Origins: 'ReferendumCanceller' },
-        killer: { Origins: 'ReferendumKiller' }
+        root: { system: "Root" },
+        whitelisted: { Origins: "WhitelistedCaller" },
+        general: { Origins: "GeneralAdmin" },
+        canceller: { Origins: "ReferendumCanceller" },
+        killer: { Origins: "ReferendumKiller" },
       }[track];
-      
-      if(t == undefined) {
+
+      if (t == undefined) {
         t = JSON.parse(track);
       }
 
@@ -136,8 +135,7 @@ export async function democracyWrapper(
           { After: delay ?? 100 } // Set to 100 blocks by default, like in Polkadot.js Apps
         )
         .signAndSend(account, { nonce });
-    }
-    else if (proposalType == "council-external") {
+    } else if (proposalType == "council-external") {
       let external;
 
       if (runtimeVersion < 2000n) {

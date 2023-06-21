@@ -9,30 +9,6 @@ const args = yargs.options({
   "para-id": { type: "number", demandOption: false, alias: "p" }, //Origin Parachain ID
 }).argv;
 
-// Prefix for generating alias accounts
-const FOREIGN_CHAIN_PREFIX_PARA_32 = "ForeignChainAliasAccountPrefix_Para32";
-const FOREIGN_CHAIN_PREFIX_PARA_20 = "ForeignChainAliasAccountPrefix_Para20";
-const FOREIGN_CHAIN_PREFIX_RELAY = "ForeignChainAliasAccountPrefix_Relay";
-
-const getPrefix = (ethAddress, parents, paraId) => {
-  if (parents) {
-    if (!paraId && ethAddress) {
-      // Relay Chains don't have Acoount Key 20
-      throw new Error(
-        "Error: Invalid configuration. Parents is included but no Parachain ID was provided. Relay Chains don't use Account Key 20."
-      );
-    }
-    if (paraId) {
-      return ethAddress ? FOREIGN_CHAIN_PREFIX_PARA_20 : FOREIGN_CHAIN_PREFIX_PARA_32;
-    }
-    return FOREIGN_CHAIN_PREFIX_RELAY;
-  }
-  if (paraId) {
-    return ethAddress ? FOREIGN_CHAIN_PREFIX_PARA_20 : FOREIGN_CHAIN_PREFIX_PARA_32;
-  }
-  return FOREIGN_CHAIN_PREFIX_RELAY;
-};
-
 async function main() {
   // Check Ethereum Address and/or Decode
   let decodedAddress;
@@ -50,19 +26,24 @@ async function main() {
   let paraId = args["para-id"];
   let parents = args["parents"] ? 1 : 0;
 
-  // Get the correct prefix
-  let prefix = getPrefix(ethAddress, parents, paraId);
+  // Describe family
+  // https://github.com/paritytech/polkadot/blob/master/xcm/xcm-builder/src/location_conversion.rs#L96-L118
+  let family = "SiblingChain";
+  if (parents == 0 && paraId) family = "ChildChain";
+  else if (parents == 1 && !paraId) family = "ParentChain";
+  const accType = ethAddress ? "AccountKey20" : "AccountId32";
 
   // Calculate Hash Component
   let toHash = new Uint8Array([
-    ...new TextEncoder().encode(prefix),
+    ...new TextEncoder().encode(family),
     ...(paraId ? bnToU8a(paraId, { bitLength: 32 }) : []),
-    ...decodedAddress,
-    ...bnToU8a(parents, { bitLength: 8 }),
+    bnToU8a(accType.length + (ethAddress ? 20 : 32), { bitLength: 32 }), // https://github.com/PureStake/moonbeam/blob/82035b77cd48c2fffb44907ce1501b2128117213/tests/util/xcm.ts#L134
+    ...new TextEncoder().encode(accType),
+    ...decodedAddress
   ]);
 
   console.log(
-    `Remote Origin calculated as ${prefix} - Account ${address} - Parents ${args["parents"]} - ParaID ${paraId}`
+    `Remote Origin calculated as ${family} + ParaID ${paraId} + ${accType} + Account ${address}`
   );
 
   const DescendOriginAddress32 = u8aToHex(blake2AsU8a(toHash).slice(0, 32));

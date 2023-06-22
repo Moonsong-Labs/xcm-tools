@@ -37,7 +37,7 @@ async function main() {
   let toHash = new Uint8Array([
     ...new TextEncoder().encode(family),
     ...(paraId ? bnToU8a(paraId, { bitLength: 32 }) : []),
-    bnToU8a(accType.length + (ethAddress ? 20 : 32), { bitLength: 32 }), // https://github.com/PureStake/moonbeam/blob/82035b77cd48c2fffb44907ce1501b2128117213/tests/util/xcm.ts#L134
+    ...bnToU8a(accType.length + (ethAddress ? 20 : 32), { bitLength: 32 }), // https://github.com/PureStake/moonbeam/blob/82035b77cd48c2fffb44907ce1501b2128117213/tests/util/xcm.ts#L134
     ...new TextEncoder().encode(accType),
     ...decodedAddress
   ]);
@@ -48,6 +48,9 @@ async function main() {
 
   const DescendOriginAddress32 = u8aToHex(blake2AsU8a(toHash).slice(0, 32));
   const DescendOriginAddress20 = u8aToHex(blake2AsU8a(toHash).slice(0, 20));
+
+  console.log(blake2AsU8a(toHash).slice(0, 32));
+  console.log(blake2AsU8a(toHash).slice(0, 20));
 
   console.log("32 byte address is %s", DescendOriginAddress32);
   console.log("20 byte address is %s", DescendOriginAddress20);

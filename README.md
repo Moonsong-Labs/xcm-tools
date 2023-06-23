@@ -350,12 +350,12 @@ same plane. So, it is important which chain account A acts from,
 and what type of account it is (AccountKey20 or AccountId32)
 E.g.
 * From P100.1 account (A) will act as
-   * hash(SiblingPrefix, 100, 1, AccountType, A) on P100.2
-   * hash(ChildPrefix, 100, 0, AccountType, A) on P100
+   * hash(SiblingPrefix, 100, AccountType, A) on P100.2
+   * hash(ChildPrefix, 100, AccountType, A) on P100
 * From P100 A will act as
-   * hash(RelayPrefix, 1, AccountType, A) on P100.2 & P100.1
-   * hash(SiblingPrefix, 100, 1, AccountType, A) on P2
-   * hash(ChildPrefix, 100, 0, AccountType, A) on R
+   * hash(RelayPrefix, AccountType, A) on P100.2 & P100.1
+   * hash(SiblingPrefix, 100, AccountType, A) on P2
+   * hash(ChildPrefix, 100, AccountType, A) on R
 ```
 
 ### Example

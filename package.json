@@ -25,8 +25,7 @@
   },
   "dependencies": {
     "@moonbeam-network/api-augment": "^0.1801.0",
-    "@polkadot/api": "^9.7.1",
-    "@polkadot/types": "^9.7.1",
+    "@polkadot/api": "^10.1.4",
     "@types/yargs": "^17.0.0",
     "coingecko-api": "^1.0.10",
     "divide-bigint": "1.0.4",
@@ -37,5 +36,19 @@
     "ts-node": "9.1",
     "typescript": "^3.9.6",
     "yargs": "^17.0.1"
+  },
+  "overrides": {
+    "@polkadot/api": "$@polkadot/api",
+    "@polkadot/api-derive": "$@polkadot/api",
+    "@polkadot/api-base": "$@polkadot/api",
+    "@polkadot/rpc-augment": "$@polkadot/api",
+    "@polkadot/rpc-core": "$@polkadot/api",
+    "@polkadot/rpc-provider": "$@polkadot/api",
+    "@polkadot/types-create": "$@polkadot/api",
+    "@polkadot/types-augment": "$@polkadot/api",
+    "@polkadot/types-support": "$@polkadot/api",
+    "@polkadot/types-codec": "$@polkadot/api",
+    "@polkadot/types": "$@polkadot/api",
+    "@polkadot/types-known": "$@polkadot/api"
   }
 }

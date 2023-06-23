@@ -322,35 +322,48 @@ The script accepts these inputs fields:
 - `--asset or --a`, which specifies the multilocation (as seen from Moonbeam) of the XC-20 to be registered
 - `--network or --n`, (optional) which specifies the parachain that you want to use as provider for the multilocation type generation (defaults to Moonbeam)
 
-## Calculate Local Asset Information
-
-Script that allows to calculate the storage key, XC-20 address and asset ID for a local XC-20 (mintable XC-20).
-
-The script accepts these inputs fields:
-- `--asset-number or --a`, which specifies the local asset counter from which you want to calculate the local asset information
-- `--network or --n`, (optional) which specifies the parachain that you want to use as provider for the u128 type generation (defaults to Moonbeam)
-
 ### Example
 
 `yarn calculate-external-asset-info --a '{ "parents": 1, "interior": {"X3": [ { "Parachain": 1000 }, {"PalletInstance": 50}, { "GeneralIndex": 1984 }]}}'`
 
 ## Calculate Multilocation Derivative Account
 
-Script that allows to calculate the multilocation-derivative account for Moonbeam-based networks by providing some simple parameters. This account is calculated as the blake2 hash of a provided multilocation. Note that the hash is of the multilocation after the location is converted by the XCM queue in Moonbeam (with `parents: 1`).
+Script that allows to calculate the multilocation-derivative account for Moonbeam-based networks by providing some simple parameters. This account is calculated with the [following standard on Polkadot](https://github.com/paritytech/polkadot/pull/6662).
 
 The script accepts these inputs fields:
-- `--parachain-ws-provider or --w`, which specifies websocket endpoint of the target parachain (for example, for an XCM message from Polkadot to Moonbeam, it would be a WS endpoint of Moonbeam)
 - `--address or --a`, which specifies the origin chain address that sent the XCM message. It is expected that this is injected into the origin multilocation via a junction through `DescendOrigin`
-- `--para-id or --p`, (optional) which specifies the parachain ID of the origin chain of the XCM message. It is optional as the XCM message might come from the relay chain (no parachain ID)
-- `--named or --n`, (optional) which specifies the name field that might be included by the `DescendOrigin` instruction of some chains (for example, Polkadot). It is optional as some chains might not enforce a name. It defaults to `named = 'Any'`. For `DescendOrigin` where the name is `Polkadot` or `Kusama` you can provide that as input such `--n polkadot` and it will create the multilocation for derivation with the correct naming
+- `--para-id or --p`, (optional) which specifies the parachain ID of the origin chain of the XCM message. It is optional as the XCM message might come from the relay chain (no parachain ID). Or parachains can act as relay for other parachains
+- `--parents`, (option) which specifies if `parents = 1`
+
+
+```
+              R
+          /       \
+         /         \
+      P100         P200
+       /  \         /  \
+      /    \       /    \
+ P100.1  P100.2  P200.1 P200.2
+
+Then a given account A will have the same alias accounts in the
+same plane. So, it is important which chain account A acts from.
+E.g.
+* From P100.1 account (A) will act as
+   * hash(ParaPrefix, A, 100, 1) on P100.2
+   * hash(ParaPrefix, A, 100, 0) on P100
+* From P100 A will act as
+   * hash(RelayPrefix, A, 1) on P100.2 & P100.1
+   * hash(ParaPrefix, A, 100, 1) on P2
+   * hash(ParaPrefix, A, 100, 0) on R
+```
 
 ### Example
 
 ```
 yarn calculate-multilocation-derivative-account \
---w wss://wss.api.moonbeam.network \
---a 0x78914a4d7a946a0e4ed641f336b498736336e05096e342c799cc33c0f868d62f \
---n 0x57657374656e64
+--a 0x0000000000000000000000000000000000000000000000000000000000000000 \
+--p 100 \
+--parents
 ```
 
 ## Calculate Units Per Second

@@ -2,6 +2,7 @@ import { u8aToHex, hexToU8a, bnToU8a } from "@polkadot/util";
 import { decodeAddress, blake2AsU8a } from "@polkadot/util-crypto";
 import yargs from "yargs";
 import "@moonbeam-network/api-augment";
+import { TypeRegistry } from '@polkadot/types';
 
 const args = yargs.options({
   address: { type: "string", demandOption: true, alias: "a" },
@@ -34,13 +35,14 @@ async function main() {
   const accType = ethAddress ? "AccountKey20" : "AccountId32";
 
   // Calculate Hash Component
+  const registry = new TypeRegistry();
   let toHash = new Uint8Array([
     ...new TextEncoder().encode(family),
-    ...(paraId ? bnToU8a(paraId, { bitLength: 32 }) : []),
-    ...bnToU8a(accType.length + (ethAddress ? 20 : 32), { bitLength: 32 }), // https://github.com/PureStake/moonbeam/blob/82035b77cd48c2fffb44907ce1501b2128117213/tests/util/xcm.ts#L134
+    ...registry.createType("Compact<u32>", paraId).toU8a(),
+    ...registry.createType("Compact<u32>", accType.length + (ethAddress ? 20 : 32)).toU8a(),
     ...new TextEncoder().encode(accType),
     ...decodedAddress
-  ]);
+])
 
   console.log(
     `Remote Origin calculated as ${family} + ParaID ${paraId} + ${accType} + Account ${address}`
@@ -48,9 +50,6 @@ async function main() {
 
   const DescendOriginAddress32 = u8aToHex(blake2AsU8a(toHash).slice(0, 32));
   const DescendOriginAddress20 = u8aToHex(blake2AsU8a(toHash).slice(0, 20));
-
-  console.log(blake2AsU8a(toHash).slice(0, 32));
-  console.log(blake2AsU8a(toHash).slice(0, 20));
 
   console.log("32 byte address is %s", DescendOriginAddress32);
   console.log("20 byte address is %s", DescendOriginAddress20);

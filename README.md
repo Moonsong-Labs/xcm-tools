@@ -346,15 +346,16 @@ The script accepts these inputs fields:
  P100.1  P100.2  P200.1 P200.2
 
 Then a given account A will have the same alias accounts in the
-same plane. So, it is important which chain account A acts from.
+same plane. So, it is important which chain account A acts from,
+and what type of account it is (AccountKey20 or AccountId32)
 E.g.
 * From P100.1 account (A) will act as
-   * hash(ParaPrefix, A, 100, 1) on P100.2
-   * hash(ParaPrefix, A, 100, 0) on P100
+   * hash(SiblingPrefix, 100, 1, AccountType, A) on P100.2
+   * hash(ChildPrefix, 100, 0, AccountType, A) on P100
 * From P100 A will act as
-   * hash(RelayPrefix, A, 1) on P100.2 & P100.1
-   * hash(ParaPrefix, A, 100, 1) on P2
-   * hash(ParaPrefix, A, 100, 0) on R
+   * hash(RelayPrefix, 1, AccountType, A) on P100.2 & P100.1
+   * hash(SiblingPrefix, 100, 1, AccountType, A) on P2
+   * hash(ChildPrefix, 100, 0, AccountType, A) on R
 ```
 
 ### Example

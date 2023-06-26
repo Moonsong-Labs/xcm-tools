@@ -36,7 +36,6 @@ async function main() {
       );
     }
 
-    console.log(tokenData.success && tokenData.data[args["asset"]].usd);
     if (tokenData.success && tokenData.data[args["asset"]].usd) {
       tokenPrice = BigInt(Math.round(decimalsFactor * tokenData.data[args["asset"]].usd));
     } else {

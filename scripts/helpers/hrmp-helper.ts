@@ -10,6 +10,7 @@ export async function hrmpHelper(
   targetParaId,
   maxCapacity = 1000,
   maxMessageSize = 102400,
+  openRequests = 255,
   feeCurrency = null,
   fee = null,
   forceXcmSend = null
@@ -136,10 +137,13 @@ export async function hrmpHelper(
     } else if (hrmpAction == "open") {
       relayCall = relayApi.tx.hrmp.hrmpInitOpenChannel(targetParaId, maxCapacity, maxMessageSize);
     } else if (hrmpAction == "cancel") {
-      relayCall = relayApi.tx.hrmp.hrmpCancelOpenRequest({
-        sender: selfParaId,
-        recipient: targetParaId,
-      });
+      relayCall = relayApi.tx.hrmp.hrmpCancelOpenRequest(
+        {
+          sender: selfParaId,
+          recipient: targetParaId,
+        },
+        openRequests
+      );
     } else {
       relayCall = relayApi.tx.hrmp.hrmpCloseChannel({
         sender: selfParaId,

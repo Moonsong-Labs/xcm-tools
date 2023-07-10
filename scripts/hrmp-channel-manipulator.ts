@@ -27,6 +27,7 @@ const args = yargs.options({
   "target-para-id": { type: "number", demandOption: true, alias: "p" },
   "max-capacity": { type: "number", demandOption: false, alias: "mc" },
   "max-message-size": { type: "number", demandOption: false, alias: "mms" },
+  "open-requests": { type: "number", demandOption: false, alias: "os" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
@@ -61,6 +62,7 @@ async function main() {
     args["target-para-id"],
     args["max-capacity"],
     args["max-message-size"],
+    args["open-requests"],
     args["fee-currency"],
     args["fee-amount"],
     args["force-xcm-send"]

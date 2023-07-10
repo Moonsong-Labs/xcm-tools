@@ -186,6 +186,9 @@ export async function hrmpHelper(
           },
         },
       },
+      {
+        RefundSurplus: {}
+      }
     ];
 
     // DepositAsset depends on XCM V3 or V2

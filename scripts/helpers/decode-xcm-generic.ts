@@ -3,28 +3,10 @@ import { blake2AsU8a } from "@polkadot/util-crypto";
 import { u8aToHex } from "@polkadot/util";
 import type { XcmVersionedXcm } from "@polkadot/types/lookup";
 
-export function decodeXCMGeneric(provider: any, message: any, type: number) {
+export function decodeXCMGeneric(provider: any, message: any) {
+  // Retrieve XCM Fragments
   let fragments;
-  switch (type) {
-    case 0:
-      // XCM going to the Relay Chain (UMP)
-      fragments = decodeMessageIntoFragmentVec(provider, message);
-      break;
-    case 1:
-      // XCM going from the Relay Chain to a Parachain (DMP)
-      fragments = decodeMessageIntoFragmentVec(provider, message.msg);
-      break;
-    case 2:
-      // XCM going from a Parachain to another Parachain (HRMP/XCMP)
-      // First byte is a format version that creates problem when decoding it as XcmVersionedXcm
-      // We remove it
-
-      fragments = decodeMessageIntoFragmentVec(provider, message.data.slice(1));
-      break;
-    default:
-      console.error("Not supporting this particular scenario!");
-      break;
-  }
+  fragments = decodeMessageIntoFragmentVec(provider, message);
 
   for (let i = 0; i < fragments.length; i++) {
     let instructions = fragments[i];

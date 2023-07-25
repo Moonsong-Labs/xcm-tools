@@ -118,11 +118,11 @@ export async function hrmpHelper(
       xcmVersion == "V3"
         ? {
           transactRequiredWeightAtMost: { refTime: new BN(1000000000), proofSize: new BN(65536) },
-          overallWeight: { refTime: new BN(5000000000), proofSize: new BN(131072) },
+          overallWeight: { refTime: new BN(7000000000), proofSize: new BN(131072) },
         }
         : {
           transactRequiredWeightAtMost: new BN(1000000000),
-          overallWeight: new BN(5000000000),
+          overallWeight: new BN(7000000000),
         }
     );
     return xcmTransactorHrmpManageExtrinsic;

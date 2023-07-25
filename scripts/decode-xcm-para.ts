@@ -59,7 +59,7 @@ async function main() {
     });
   } else if (args["message"]) {
     if (args["channel"] == "dmp") {
-      decodeXCMGeneric(paraApi, hexToU8a(args["message"]).slice(1)); // Message is DMP
+      decodeXCMGeneric(paraApi, hexToU8a(args["message"])); // Message is DMP
     } else {
       decodeXCMGeneric(paraApi, hexToU8a(args["message"]).slice(1)); //Message is HRMP, Slice 1st Byte
     }

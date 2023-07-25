@@ -269,38 +269,42 @@ The `track` field must be a JSON formatted representation of the `referenda.subm
 
 A coumple of scripts that allow to decode XCM messages in the relay chain (`decode-xcm-relay`) and in any parachain (`decode-xcm-para`). This first iteration can be easily expanded to support and expand on more XCM instructions.
 
-The script accepts these inputs fields:
-- `--parachain-ws-provider` or `--w`, which specifies the websocket provider of the parachain in which the address should be calculated
-- `--multilocation` or `-m`, the multilocation for which we want to calculate the derivated address
-
 ### Decode XCM Relay
 
 Script to specifically decode XCM messages sent to the relay chain via UMP.
 
 The script accepts these input fields:
-- `--relay-ws-provider` or `--w`, which specifies the websocket provider of the relay chain in which the XCM will be decoded
+- `--relay-ws-provider` or `--w`, which specifies the websocket provider of the relay chain in which the XCM will be decoded (required)
 - `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
 - `--para-id` or `-p`, which specifies the parachain ID from which the XCM message was sent from
+- `--message` or `-m`, if you want to just decode a XCM message that you have as bytes (for example, via Chopsticks) you can just provide it as bytes
 
 For example:
 
 `yarn xcm-decode-relay --w wss://kusama-rpc.polkadot.io --b 12034878 --p 2023`
+
+`yarn xcm-decode-relay --w wss://rpc.polkadot.io --m "0x03100004000000000700e40b540213000000000700e40b5402010700863ba101020008001608140d010204000100511f060002286bee02000400183c0135080000"`
+
 
 ### Decode XCM Parachain
 
 Script to specifically decode XCM messages sent to parachains either via DMP or HRMP/XCMP
 
 The script accepts these input fields:
-- `--para-ws-provider` or `--w`, which specifies the websocket provider of the parachain in which the XCM will be decoded
+- `--para-ws-provider` or `--w`, which specifies the websocket provider of the parachain in which the XCM will be decoded (required)
+- `--channel`, which specifies the type of channel (or transport method) the XCM is being delivered through. Valid options are `dmp` and `hrmp`/`xcmp` (although anything different than `dmp` defaults to `hrmp` or `xcmp`) (required)
 - `--block-number` or `-b`, which specifies the block number where the XCM message to be decoded is contained
-- `--channel`, which specifies the type of channel (or transport method) the XCM is being delivered through. Valid options are `dmp` and `hrmp`/`xcmp` (although anything different than `dmp` defaults to `hrmp` or `xcmp`)
 - `--para-id` or `-p`, (optional if channel is hrmp/xcmp) which specifies the parachain ID from which the XCM message was sent from
+- `--message` or `-m`, if you want to just decode a XCM message that you have as bytes (for example, via Chopsticks) you can just provide it as bytes
+
 
 For example:
 
 `yarn xcm-decode-para --w wss://wss.api.moonriver.moonbeam.network --b 2391172 --channel dmp`
 
 `yarn xcm-decode-para --w wss://wss.api.moonbeam.network --b 1649282 --channel hrmp --p 2000`
+
+`yarn xcm-decode-para --w wss://wss.api.moonbeam.network --channel hrmp --m "0x0003100004000001040a00130000f444829163450a13000001040a00130000f44482916345000d01020400010300f24ff3a9cf04c71dbc94d0b566f7a27b94566cac"`
 
 ## Calculate Sovereign Account
 

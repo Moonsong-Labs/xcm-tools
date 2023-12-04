@@ -6,12 +6,16 @@ export function schedulerWrapper(api, atBlock, tx) {
   return api.tx.scheduler.schedule(atBlock, null, 0, tx);
 }
 
-export async function accountWrapper(api, privateKey) {
+export async function accountWrapper(api, privateKey, accountType) {
+  // Check account input type
+  if (!["ethereum", "sr25519", "ed25519"].includes(accountType)) {
+    throw new Error("Account types supported are ethereum, sr25519 and ed25519");
+  }
   // Keyring
-  const keyring = new Keyring({ type: "ethereum" });
+  const keyring = new Keyring({ type: accountType });
 
   // Create account and get nonce
-  let account = await keyring.addFromUri(privateKey, null, "ethereum");
+  let account = await keyring.addFromUri(privateKey, null, accountType);
   const { nonce: rawNonce } = (await api.query.system.account(account.address)) as any;
   let nonce = BigInt(rawNonce.toString());
 

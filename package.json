@@ -21,6 +21,7 @@
     "calculate-external-asset-info": "ts-node 'scripts/calculate-external-asset-info.ts'",
     "calculate-local-asset-info": "ts-node 'scripts/calculate-local-asset-info.ts'",
     "calculate-multilocation-derivative-account": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'",
+    "calculate-remote-origin": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'",
     "calculate-units-per-second": "ts-node 'scripts/calculate-units-per-second.ts'"
   },
   "dependencies": {

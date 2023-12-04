@@ -18,7 +18,13 @@ const args = yargs.options({
   "relay-encoder-address": { type: "string", demandOption: false, alias: "re" },
   "default-xcm-version": { type: "number", demandOption: false, alias: "d" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
-  "account-type": { type: "string", demandOption: false, alias: "accType", default: "ethereum" },
+  "account-type": {
+    type: "string",
+    demandOption: false,
+    alias: "accType",
+    choices: ["ethereum", "sr25519", "ed25519"],
+    default: "ethereum",
+  },
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {

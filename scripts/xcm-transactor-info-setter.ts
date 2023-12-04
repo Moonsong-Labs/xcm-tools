@@ -20,6 +20,7 @@ const args = yargs.options({
   index: { type: "number", demandOption: false, alias: "i" },
   owner: { type: "string", demandOption: false, alias: "o" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
+  "account-type": { type: "string", demandOption: false, alias: "accType", default: "ethereum" },
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
@@ -28,8 +29,8 @@ const args = yargs.options({
     alias: "s",
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
-  "delay": { type: "string", demandOption: false },
-  "track": { type: "string", demandOption: false }
+  delay: { type: "string", demandOption: false },
+  track: { type: "string", demandOption: false },
 }).argv;
 
 // Construct
@@ -71,7 +72,7 @@ async function main() {
   let account;
   let nonce;
   if (args["account-priv-key"]) {
-    [account, nonce] = await accountWrapper(api, args["account-priv-key"]);
+    [account, nonce] = await accountWrapper(api, args["account-priv-key"], args["account-type"]);
   }
 
   // Sudo Wrapper

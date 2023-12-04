@@ -14,6 +14,7 @@ const args = yargs.options({
   "ws-provider": { type: "string", demandOption: true, alias: "w" },
   "generic-call": { type: "string", demandOption: true, alias: "call" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
+  "account-type": { type: "string", demandOption: false, alias: "accType", default: "ethereum" },
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
@@ -73,7 +74,7 @@ async function main() {
   let account;
   let nonce;
   if (args["account-priv-key"]) {
-    [account, nonce] = await accountWrapper(api, args["account-priv-key"]);
+    [account, nonce] = await accountWrapper(api, args["account-priv-key"], args["account-type"]);
   }
 
   // Sudo Wrapper

@@ -27,6 +27,7 @@ const main = async () => {
   // Wait for Provider
   const api = await ApiPromise.create({
     provider: wsProvider,
+    noInitWarn: true,
   });
   await api.isReady;
 

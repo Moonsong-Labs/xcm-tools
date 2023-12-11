@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@moonbeam-network/api-augment": "^0.1801.0",
-    "@polkadot/api": "^10.1.4",
+    "@polkadot/api": "^10.11.1",
     "@types/yargs": "^17.0.0",
     "coingecko-api": "^1.0.10",
     "divide-bigint": "1.0.4",

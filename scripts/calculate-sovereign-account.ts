@@ -32,6 +32,7 @@ const main = async () => {
 
   const relayApi = await ApiPromise.create({
     provider: relayProvider,
+    noInitWarn: true,
   });
 
   const targetParaId: ParaId = relayApi.createType("ParaId", args["para-id"]);

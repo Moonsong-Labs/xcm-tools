@@ -38,7 +38,7 @@ const args = yargs.options({
 const wsProvider = new WsProvider(args["ws-provider"]);
 
 async function main() {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
 

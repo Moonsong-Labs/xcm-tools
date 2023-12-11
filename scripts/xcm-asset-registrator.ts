@@ -48,7 +48,7 @@ const args = yargs.options({
 const wsProvider = new WsProvider(args["ws-provider"]);
 
 async function main() {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
 
   // Get XCM Version and MultiLocation Type
   const [, xcmType] = await getXCMVersion(api);
@@ -63,7 +63,20 @@ async function main() {
   };
 
   const registerTxs = [];
-  const asset: MultiLocation = api.createType(xcmType, JSON.parse(args["asset"]));
+  // XCM Versioning Handling
+  let asset: MultiLocation;
+  try {
+    asset = api.createType(xcmType[0], JSON.parse(args["asset"]));
+  } catch (e) {
+    try {
+      asset = api.createType(xcmType[1], JSON.parse(args["asset"]));
+    } catch (e) {
+      // Type Creating not Successful
+      console.error(
+        "Failed to create MultiLocation type for both Regular and Staging Multilocations"
+      );
+    }
+  }
 
   const assetId = u8aToHex(api.registry.hash(asset.toU8a()).slice(0, 16).reverse());
   const sourceLocation = { Xcm: asset };

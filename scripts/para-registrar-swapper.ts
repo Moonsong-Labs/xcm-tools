@@ -44,8 +44,8 @@ const wsProvider = new WsProvider(args["parachain-ws-provider"]);
 const relayProvider = new WsProvider(args["relay-ws-provider"]);
 
 async function main() {
-  const api = await ApiPromise.create({ provider: wsProvider });
-  const relayApi = await ApiPromise.create({ provider: relayProvider });
+  const api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
+  const relayApi = await ApiPromise.create({ provider: relayProvider, noInitWarn: true });
 
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 

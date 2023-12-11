@@ -17,7 +17,7 @@ const paraProvider = new WsProvider(args["para-ws-provider"]);
 
 async function main() {
   // Provider
-  const paraApi = await ApiPromise.create({ provider: paraProvider });
+  const paraApi = await ApiPromise.create({ provider: paraProvider, noInitWarn: true });
 
   if (args["block-number"]) {
     // Get block hash

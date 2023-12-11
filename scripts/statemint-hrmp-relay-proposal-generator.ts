@@ -25,6 +25,13 @@ const args = yargs.options({
   "max-capacity": { type: "number", demandOption: true, alias: "mc" },
   "max-message-size": { type: "number", demandOption: true, alias: "mms" },
   "account-priv-key": { type: "string", demandOption: true, alias: "account" },
+  "account-type": {
+    type: "string",
+    demandOption: false,
+    alias: "accType",
+    choices: ["ethereum", "sr25519", "ed25519"],
+    default: "ethereum",
+  },
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: true, alias: "h" },
   "send-proposal-as": {
@@ -34,8 +41,8 @@ const args = yargs.options({
   },
   "collective-threshold": { type: "number", demandOption: false, alias: "c" },
   "at-block": { type: "number", demandOption: false },
-  "delay": { type: "string", demandOption: false },
-  "track": { type: "string", demandOption: false }
+  delay: { type: "string", demandOption: false },
+  track: { type: "string", demandOption: false },
 }).argv;
 
 // Construct
@@ -43,8 +50,8 @@ const statemintProvider = new WsProvider(args["statemint-ws-provider"]);
 const relayProvider = new WsProvider(args["relay-ws-provider"]);
 
 async function main() {
-  const statemintApi = await ApiPromise.create({ provider: statemintProvider });
-  const relayApi = await ApiPromise.create({ provider: relayProvider });
+  const statemintApi = await ApiPromise.create({ provider: statemintProvider, noInitWarn: true });
+  const relayApi = await ApiPromise.create({ provider: relayProvider, noInitWarn: true });
 
   const collectiveThreshold = args["collective-threshold"] ?? 1;
 
@@ -143,7 +150,11 @@ async function main() {
   let account;
   let nonce;
   if (args["account-priv-key"]) {
-    [account, nonce] = await accountWrapper(relayApi, args["account-priv-key"]);
+    [account, nonce] = await accountWrapper(
+      relayApi,
+      args["account-priv-key"],
+      args["account-type"]
+    );
   }
 
   // Sudo Wrapper

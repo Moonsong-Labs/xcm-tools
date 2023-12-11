@@ -16,7 +16,7 @@ const relayProvider = new WsProvider(args["relay-ws-provider"]);
 
 async function main() {
   // Provider
-  const relayApi = await ApiPromise.create({ provider: relayProvider });
+  const relayApi = await ApiPromise.create({ provider: relayProvider, noInitWarn: true });
 
   if (args["para-id"] && args["block-number"]) {
     // Types

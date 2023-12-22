@@ -87,7 +87,4 @@ function decodeMessageIntoFragmentVec(provider: any, message: any): Array<XcmVer
     remainingMessage = remainingMessage.slice(fragment.toU8a().length);
   }
   return fragments;
-
-
-  
 }

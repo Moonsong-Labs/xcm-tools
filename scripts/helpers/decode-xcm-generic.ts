@@ -3,7 +3,6 @@ import { blake2AsU8a } from "@polkadot/util-crypto";
 import { u8aToHex } from "@polkadot/util";
 import type { XcmVersionedXcm } from "@polkadot/types/lookup";
 
-
 export function decodeXCMGeneric(provider: any, message: any) {
   // Retrieve XCM Fragments
   let fragments;
@@ -75,11 +74,11 @@ function decodeMessageIntoFragmentVec(provider: any, message: any): Array<XcmVer
   while (remainingMessage.length != 0) {
     let fragment;
     try {
-      fragment  = provider.createType("XcmVersionedXcm", remainingMessage) as any;
+      fragment = provider.createType("XcmVersionedXcm", remainingMessage) as any;
     } catch (e) {
       try {
         fragment = provider.createType("StagingXcmVersionedXcm", remainingMessage) as any;
-      } catch (e){
+      } catch (e) {
         console.error(e.message);
       }
     }

@@ -1,7 +1,6 @@
 import { u8aToHex, hexToU8a, bnToU8a } from "@polkadot/util";
 import { decodeAddress, blake2AsU8a } from "@polkadot/util-crypto";
 import yargs from "yargs";
-import "@moonbeam-network/api-augment";
 import { TypeRegistry } from "@polkadot/types";
 
 const args = yargs.options({

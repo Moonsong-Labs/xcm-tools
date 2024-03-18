@@ -7,7 +7,7 @@ import { hexToU8a } from "@polkadot/util";
 const args = yargs.options({
   "para-ws-provider": { type: "string", demandOption: true, alias: "w" },
   "block-number": { type: "number", demandOption: false, alias: "b" },
-  channel: { choices: ["dmp", "hrmp"], demandOption: true, alias: "channel" },
+  channel: { choices: ["dmp", "hrmp"], demandOption: false, alias: "channel" },
   "para-id": { type: "number", demandOption: false, alias: "p" },
   message: { type: "string", demandOption: false, alias: "m" },
 }).argv;
@@ -37,10 +37,15 @@ async function main() {
             // We recover all instructions
             decodeXCMGeneric(paraApi, message.msg); // Message is DMP
           });
-        } else {
+        } else if (args["channel"] == "hrmp") {
           // Check hrmp messages (from parachain to parachain)
           // Types
-          const para = paraApi.createType("ParaId", args["para-id"]) as any;
+          let para;
+          if (args["para-id"]) {
+            para = paraApi.createType("ParaId", args["para-id"]) as any;
+          } else {
+            throw new Error("Need to provide para-id, alias is --p");
+          }
           ex.method.args[0].horizontalMessages.forEach((messages, paraId) => {
             // Filter by the paraId that we want
             if (paraId.eq(para)) {
@@ -54,14 +59,17 @@ async function main() {
               });
             }
           });
+        } else {
+          throw new Error("Need to provide channel, either dmp or hrmp");
         }
       }
     });
   } else if (args["message"]) {
-    if (args["channel"] == "dmp") {
-      decodeXCMGeneric(paraApi, hexToU8a(args["message"])); // Message is DMP
-    } else {
+    // First byte is a format version that creates problem when decoding it as XcmVersionedXcm
+    if (args["message"].startsWith("0x00")) {
       decodeXCMGeneric(paraApi, hexToU8a(args["message"]).slice(1)); //Message is HRMP, Slice 1st Byte
+    } else {
+      decodeXCMGeneric(paraApi, hexToU8a(args["message"])); // Message is DMP
     }
   }
 }

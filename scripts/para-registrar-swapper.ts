@@ -1,11 +1,9 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
+import { u8aToHex } from "@polkadot/util";
 import { BN } from "@polkadot/util";
 
-import { blake2AsHex, xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
 import yargs from "yargs";
-import { Keyring } from "@polkadot/api";
 import { ParaId } from "@polkadot/types/interfaces";
 import {
   democracyWrapper,
@@ -59,9 +57,9 @@ async function main() {
   ).padEnd(66, "0");
 
   const xcmSendTx = api.tx.polkadotXcm.send(
-    { V1: { parents: new BN(1), interior: "Here" } },
+    { V3: { parents: new BN(1), interior: "Here" } },
     {
-      V2: [
+      V3: [
         {
           WithdrawAsset: [
             {
@@ -90,11 +88,15 @@ async function main() {
         },
         {
           DepositAsset: {
-            assets: { Wild: "All" },
+            assets: {
+              Wild: {
+                AllCounted: 1,
+              },
+            },
             max_assets: 1,
             beneficiary: {
               parents: new BN(0),
-              interior: { X1: { AccountId32: { network: "Any", id: para_address } } },
+              interior: { X1: { AccountId32: { network: null, id: para_address } } },
             },
           },
         },
@@ -123,7 +125,6 @@ async function main() {
 
   // Send Democracy Proposal
   if (args["send-proposal-as"]) {
-    const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
     const collectiveThreshold = args["collective-threshold"] ?? 1;
 
     await democracyWrapper(

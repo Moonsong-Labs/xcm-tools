@@ -74,17 +74,23 @@ async function main() {
               id: { Concrete: { parents: new BN(0), interior: "Here" } },
               fun: { Fungible: new BN(1000000000000) },
             },
-            weightLimit: { Limited: new BN(6000000000) },
+            weightLimit: "Unlimited",
           },
         },
         {
           Transact: {
             originType: "Native",
-            requireWeightAtMost: new BN(2000000000),
+            requireWeightAtMost: {
+              refTime: new BN(1000000000),
+              proofSize: new BN(65536),
+            },
             call: {
               encoded: relayCall2,
             },
           },
+        },
+        {
+          RefundSurplus: {},
         },
         {
           DepositAsset: {
@@ -96,7 +102,7 @@ async function main() {
             max_assets: 1,
             beneficiary: {
               parents: new BN(0),
-              interior: { X1: { AccountId32: { network: null, id: para_address } } },
+              interior: { X1: { Parachain: selfParaId } },
             },
           },
         },

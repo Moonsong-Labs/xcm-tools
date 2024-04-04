@@ -1,11 +1,8 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { u8aToHex, hexToU8a } from "@polkadot/util";
 import { BN } from "@polkadot/util";
 
-import { blake2AsHex, xxhashAsU8a, blake2AsU8a } from "@polkadot/util-crypto";
 import yargs from "yargs";
-import { Keyring } from "@polkadot/api";
 import { ParaId } from "@polkadot/types/interfaces";
 import {
   democracyWrapper,
@@ -13,6 +10,7 @@ import {
   accountWrapper,
   schedulerWrapper,
 } from "./helpers/function-helpers";
+import { getXCMVersion } from "./helpers/get-xcm-version";
 
 const args = yargs.options({
   "parachain-ws-provider": { type: "string", demandOption: true, alias: "wp" },
@@ -49,19 +47,20 @@ async function main() {
 
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 
+  // Get XCM Version and MultiLocation Type
+  const [xcmVersion, xcmType] = await getXCMVersion(api);
+
   let relayCall;
   relayCall = relayApi.tx.registrar.swap(args["old-para-id"], args["new-para-id"]);
 
   let relayCall2 = relayCall?.method.toHex() || "";
-  // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
-  let para_address = u8aToHex(
-    new Uint8Array([...new TextEncoder().encode("para"), ...selfParaId.toU8a()])
-  ).padEnd(66, "0");
 
   const xcmSendTx = api.tx.polkadotXcm.send(
-    { V1: { parents: new BN(1), interior: "Here" } },
+    xcmVersion == "V3"
+      ? { V3: { parents: new BN(1), interior: "Here" } }
+      : { V1: { parents: new BN(1), interior: "Here" } },
     {
-      V2: [
+      [xcmVersion]: [
         {
           WithdrawAsset: [
             {
@@ -76,25 +75,41 @@ async function main() {
               id: { Concrete: { parents: new BN(0), interior: "Here" } },
               fun: { Fungible: new BN(1000000000000) },
             },
-            weightLimit: { Limited: new BN(6000000000) },
+            weightLimit: "Unlimited",
           },
         },
         {
           Transact: {
             originType: "Native",
-            requireWeightAtMost: new BN(2000000000),
+            requireWeightAtMost:
+              xcmVersion == "V3"
+                ? {
+                    refTime: new BN(1000000000),
+                    proofSize: new BN(65536),
+                  }
+                : {
+                    transactRequiredWeightAtMost: new BN(1000000000),
+                    overallWeight: "Unlimited",
+                  },
             call: {
               encoded: relayCall2,
             },
           },
         },
         {
+          RefundSurplus: {},
+        },
+        {
           DepositAsset: {
-            assets: { Wild: "All" },
+            assets: {
+              Wild: {
+                AllCounted: 1,
+              },
+            },
             max_assets: 1,
             beneficiary: {
               parents: new BN(0),
-              interior: { X1: { AccountId32: { network: "Any", id: para_address } } },
+              interior: { X1: { Parachain: selfParaId } },
             },
           },
         },
@@ -123,7 +138,6 @@ async function main() {
 
   // Send Democracy Proposal
   if (args["send-proposal-as"]) {
-    const proposalAmount = (await api.consts.democracy.minimumDeposit) as any;
     const collectiveThreshold = args["collective-threshold"] ?? 1;
 
     await democracyWrapper(

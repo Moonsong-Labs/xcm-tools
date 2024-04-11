@@ -5,7 +5,7 @@
 
 Initializes XCM in Moonbeam
 ```
-yarn initialize-xcm --ws-provider wss://wss.api.moonbeam.network--default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "<priv_key>" --send-preimage-hash true
+yarn initialize-xcm --ws-provider wss://wss.api.moonbeam.network --default-xcm-version 2 --xcm-transactor-address "0x0000000000000000000000000000000000000806" --xtokens-address "0x0000000000000000000000000000000000000804" --account-priv-key "<priv_key>" --send-preimage-hash true
 ```
 
 ## 2022-04-20 \[Moonbeam-1300\] Register xcDOT and set asset units per second

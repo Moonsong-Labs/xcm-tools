@@ -185,10 +185,6 @@ export async function hrmpHelper(
     }
 
     let relayCall2 = relayCall?.method.toHex() || "";
-    // Sovereign account is b"para" + encode(parahain ID) + trailling zeros
-    let para_address = u8aToHex(
-      new Uint8Array([...new TextEncoder().encode("para"), ...selfParaId.toU8a()])
-    ).padEnd(66, "0");
 
     const xcmMessage: any = [
       {
@@ -209,6 +205,31 @@ export async function hrmpHelper(
         },
       },
       {
+        setAppendix: [
+          { RefundSurplus: {} }, // DepositAsset depends on XCM V3 or V2
+          xcmVersion == "V3"
+            ? {
+                DepositAsset: {
+                  assets: { Wild: { AllCounted: 1 } },
+                  beneficiary: {
+                    parents: new BN(0),
+                    interior: { X1: { Parachain: selfParaId } },
+                  },
+                },
+              }
+            : {
+                DepositAsset: {
+                  assets: { Wild: "All" },
+                  max_assets: 1,
+                  beneficiary: {
+                    parents: new BN(0),
+                    interior: { X1: { Parachain: selfParaId } },
+                  },
+                },
+              },
+        ],
+      },
+      {
         Transact: {
           originType: "Native",
           requireWeightAtMost:
@@ -223,32 +244,7 @@ export async function hrmpHelper(
           },
         },
       },
-      {
-        RefundSurplus: {},
-      },
     ];
-
-    // DepositAsset depends on XCM V3 or V2
-    xcmVersion == "V3"
-      ? xcmMessage.push({
-          DepositAsset: {
-            assets: { Wild: { AllCounted: 1 } },
-            beneficiary: {
-              parents: new BN(0),
-              interior: { X1: { AccountId32: { network: null, id: para_address } } },
-            },
-          },
-        })
-      : xcmMessage.push({
-          DepositAsset: {
-            assets: { Wild: "All" },
-            max_assets: 1,
-            beneficiary: {
-              parents: new BN(0),
-              interior: { X1: { AccountId32: { network: "Any", id: para_address } } },
-            },
-          },
-        });
 
     // XCM Send
     const batchCall = api.tx.polkadotXcm.send(

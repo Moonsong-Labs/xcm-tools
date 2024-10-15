@@ -13,7 +13,8 @@ export async function hrmpHelper(
   openRequests = 255,
   feeCurrency = null,
   fee = null,
-  forceXcmSend = null
+  forceXcmSend = null,
+  closeRole
 ) {
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 
@@ -74,10 +75,17 @@ export async function hrmpHelper(
       );
     } else {
       action = {
-        Close: {
-          sender: selfParaId,
-          recipient: targetParaId,
-        },
+        // When closing a channel it is best to close it both ways
+        Close:
+          closeRole == "receiver"
+            ? {
+                sender: targetParaId,
+                recipient: selfParaId,
+              }
+            : {
+                sender: selfParaId,
+                recipient: targetParaId,
+              },
       };
     }
 

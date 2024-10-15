@@ -43,8 +43,28 @@ export function decodeXCMGeneric(provider: any, message: any) {
         }
         console.log(instruction.toString(), "\n");
       });
-    } else {
+    } else if (instructions.isV3) {
       instructions.asV3.forEach((instruction) => {
+        // Print V3 Message
+        if (instruction.isReserveAssetDeposited) {
+          console.log("Reserve Asset Deposited:");
+        } else if (instruction.isDepositAsset) {
+          console.log("Deposit Asset:");
+        } else if (instruction.isDescendOrigin) {
+          console.log("Descend Origin:");
+        } else if (instruction.isWithdrawAsset) {
+          console.log("Withdraw Asset:");
+        } else if (instruction.isBuyExecution) {
+          console.log("Buy Execution:");
+        } else if (instruction.isTransact) {
+          console.log("Transact:");
+        } else if (instruction.isSetAppendix) {
+          console.log("SetAppendix:");
+        }
+        console.log(instruction.toString(), "\n");
+      });
+    } else if (instructions.isV4) {
+      instructions.asV4.forEach((instruction) => {
         // Print V3 Message
         if (instruction.isReserveAssetDeposited) {
           console.log("Reserve Asset Deposited:");

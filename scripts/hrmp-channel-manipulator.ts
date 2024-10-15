@@ -1,7 +1,7 @@
 // Import
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import {} from "@polkadot/util";
-import yargs from "yargs";
+import yargs, { demandOption, options } from "yargs";
 import {
   schedulerWrapper,
   accountWrapper,
@@ -25,6 +25,13 @@ const args = yargs.options({
     alias: "xcm-send",
   },
   "target-para-id": { type: "number", demandOption: true, alias: "p" },
+  "close-role": {
+    type: "string",
+    demandOption: false,
+    choices: ["sender", "receiver"],
+    default: "sender", // The origin chain is the sender of the channel being closed
+    alias: "cr",
+  },
   "max-capacity": { type: "number", demandOption: false, alias: "mc" },
   "max-message-size": { type: "number", demandOption: false, alias: "mms" },
   "open-requests": { type: "number", demandOption: false, alias: "os" },
@@ -72,7 +79,8 @@ async function main() {
     args["open-requests"],
     args["fee-currency"],
     args["fee-amount"],
-    args["force-xcm-send"]
+    args["force-xcm-send"],
+    args["close-role"]
   );
 
   // Scheduler

@@ -13,7 +13,8 @@ export async function hrmpHelper(
   openRequests = 255,
   feeCurrency = null,
   fee = null,
-  forceXcmSend = null
+  forceXcmSend = null,
+  closeRole
 ) {
   const selfParaId: ParaId = (await api.query.parachainInfo.parachainId()) as any;
 
@@ -74,10 +75,17 @@ export async function hrmpHelper(
       );
     } else {
       action = {
-        Close: {
-          sender: selfParaId,
-          recipient: targetParaId,
-        },
+        // When closing a channel it is best to close it both ways
+        Close:
+          closeRole == "receiver"
+            ? {
+                sender: targetParaId,
+                recipient: selfParaId,
+              }
+            : {
+                sender: selfParaId,
+                recipient: targetParaId,
+              },
       };
     }
 
@@ -86,16 +94,25 @@ export async function hrmpHelper(
     if (feeCurrency == null) {
       feeToken = {
         AsMultiLocation:
-          xcmVersion == "V3"
+          xcmVersion == "V4"
+            ? { V4: { parents: new BN(1), interior: "Here" } }
+            : xcmVersion == "V4"
             ? { V3: { parents: new BN(1), interior: "Here" } }
-            : { V1: { parents: new BN(1), interior: "Here" } },
+            : { V2: { parents: new BN(1), interior: "Here" } },
       };
     } else {
       // If Fee Token is provided as an input
       const asset: MultiLocation = api.createType(xcmType, JSON.parse(feeCurrency));
       feeToken = {
         AsMultiLocation:
-          xcmVersion == "V3"
+          xcmVersion == "V4"
+            ? {
+                V4: {
+                  parents: asset.parents,
+                  interior: asset.interior,
+                },
+              }
+            : xcmVersion == "V3"
             ? {
                 V3: {
                   parents: asset.parents,
@@ -103,7 +120,7 @@ export async function hrmpHelper(
                 },
               }
             : {
-                V1: {
+                V2: {
                   parents: asset.parents,
                   interior: asset.interior,
                 },
@@ -122,8 +139,8 @@ export async function hrmpHelper(
           currency: feeToken,
           feeAmount: feeAmount,
         },
-        // Account for XCM V3, note the Proof Sizes are hardcoded for now
-        xcmVersion == "V3"
+        // Account for Proof Size, which is hardcoded for now
+        xcmVersion === "V4" || xcmVersion === "V3"
           ? {
               transactRequiredWeightAtMost: {
                 refTime: new BN(1000000000),
@@ -143,8 +160,8 @@ export async function hrmpHelper(
           currency: feeToken,
           feeAmount: feeAmount,
         },
-        // Account for XCM V3, note the Proof Sizes are hardcoded for now
-        xcmVersion == "V3"
+        // Account for Proof Size, which is hardcoded for now
+        xcmVersion === "V4" || xcmVersion === "V3"
           ? {
               transactRequiredWeightAtMost: {
                 refTime: new BN(1000000000),
@@ -212,7 +229,7 @@ export async function hrmpHelper(
         Transact: {
           originType: "Native",
           requireWeightAtMost:
-            xcmVersion == "V3"
+            xcmVersion === "V4" || xcmVersion === "V3"
               ? {
                   refTime: new BN(1000000000),
                   proofSize: new BN(65536),
@@ -228,8 +245,8 @@ export async function hrmpHelper(
       },
     ];
 
-    // DepositAsset depends on XCM V3 or V2
-    xcmVersion == "V3"
+    // DepositAsset depends on XCM V4/V3 or V2
+    xcmVersion === "V4" || xcmVersion === "V3"
       ? xcmMessage.push({
           DepositAsset: {
             assets: { Wild: { AllCounted: 1 } },
@@ -252,9 +269,11 @@ export async function hrmpHelper(
 
     // XCM Send
     const batchCall = api.tx.polkadotXcm.send(
-      xcmVersion == "V3"
+      xcmVersion == "V4"
+        ? { V4: { parents: new BN(1), interior: "Here" } }
+        : xcmVersion == "V4"
         ? { V3: { parents: new BN(1), interior: "Here" } }
-        : { V1: { parents: new BN(1), interior: "Here" } },
+        : { V2: { parents: new BN(1), interior: "Here" } },
       {
         [xcmVersion]: xcmMessage,
       }

@@ -1,15 +1,43 @@
+import { getTypeDef } from "@polkadot/types";
+
 export async function getXCMVersion(provider: any): Promise<[string, string[]]> {
-  // Get XCM Version - Not great but there is no chain state approach
-  let xcmpQueueVersion = (await provider.query.xcmpQueue.palletVersion()) as any;
-  let xcmSafeVersion = (await provider.query.polkadotXcm.safeXcmVersion()) as any;
-  let xcmVersion = `V${Math.max(xcmpQueueVersion, xcmSafeVersion).toString()}`;
+  // Find XCM Version with PolkadotXcm.send
+  // The strategy is to check the Versions Available for PolkadotXcm.Send in Dest field
+  const { type } =
+    provider.tx.polkadotXcm?.send.meta.args[0] ?? provider.tx.xcmPallet.send.meta.args[0];
+  const instance =
+    provider.tx.polkadotXcm?.send.meta.registry.createType(type.toString()) ??
+    provider.tx.xcmPallet.send.meta.registry.createType(type.toString());
+  const raw = getTypeDef(instance?.toRawType());
+
+  const versions = Array.isArray(raw.sub) ? raw.sub.map((x) => x.name) : [raw.sub.name];
+
+  let xcmVersion;
+  if (versions.includes("V5")) {
+    xcmVersion = "V5";
+  } else if (versions.includes("V4")) {
+    xcmVersion = "V4";
+  } else if (versions.includes("V3")) {
+    xcmVersion = "V3";
+  } else if (versions.includes("V2")) {
+    xcmVersion = "V2";
+  } else {
+    throw new Error("Can't find XCM version");
+  }
+
   console.log(`XCM Version is ${xcmVersion}`);
 
-  // Get XCM Versioned Multilocation Type
-  const xcmType =
-    xcmVersion === "V3"
-      ? ["StagingXcmV3MultiLocation", "XcmV3MultiLocation"]
-      : ["StagingXcmV1MultiLocation", "XcmV1MultiLocation"];
+  const xcmType = (() => {
+    if (xcmVersion === "V4") {
+      return ["StagingXcmV4MultiLocation", "XcmV4MultiLocation"];
+    } else if (xcmVersion === "V3") {
+      return ["StagingXcmV3MultiLocation", "XcmV3MultiLocation"];
+    } else if (xcmVersion === "V2") {
+      return ["StagingXcmV2MultiLocation", "XcmV2MultiLocation"];
+    } else {
+      throw new Error("Can't find XCM Type");
+    }
+  })();
 
   return [xcmVersion, xcmType];
 }

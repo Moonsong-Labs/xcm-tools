@@ -139,7 +139,7 @@ export async function hrmpHelper(
           currency: feeToken,
           feeAmount: feeAmount,
         },
-        // Account for Proof Size, whichh is hardcoded for now
+        // Account for Proof Size, which is hardcoded for now
         xcmVersion === "V4" || xcmVersion === "V3"
           ? {
               transactRequiredWeightAtMost: {

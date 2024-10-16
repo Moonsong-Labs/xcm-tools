@@ -63,6 +63,11 @@ async function main() {
   // Scheduler
   let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], Tx) : Tx;
 
+  let txFees = await finalTx.paymentInfo("0xb2a1Df7B59e8b9D2cC56ebdE2c6679b254543976");
+
+  console.log("Fee of batch call");
+  console.log(txFees.toHuman());
+
   // If finalTx is not an Extrinsic, create the right type
   if (finalTx.method) {
     finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;

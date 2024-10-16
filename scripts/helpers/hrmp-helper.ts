@@ -246,7 +246,17 @@ export async function hrmpHelper(
     ];
 
     // DepositAsset depends on XCM V4/V3 or V2
-    xcmVersion === "V4" || xcmVersion === "V3"
+    xcmVersion === "V4"
+      ? xcmMessage.push({
+          DepositAsset: {
+            assets: { Wild: { AllCounted: 1 } },
+            beneficiary: {
+              parents: new BN(0),
+              interior: { X1: [{ AccountId32: { network: null, id: para_address } }] },
+            },
+          },
+        })
+      : xcmVersion === "V3"
       ? xcmMessage.push({
           DepositAsset: {
             assets: { Wild: { AllCounted: 1 } },

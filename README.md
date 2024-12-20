@@ -377,24 +377,50 @@ yarn calculate-multilocation-derivative-account \
 --parents
 ```
 
-## Calculate Units Per Second
+## Calculate Relative Price
 
-Script that calculates the units of token charged per second of execution for some given parameters. It uses the [Coingecko API](https://www.coingecko.com/). If your token is not supported by Coingecko, you can tell the script the price manually. 
+This script calculates how many units of your specified asset are equivalent to one native token on the given network (either GLMR or MOVR). The native token price is dynamically fetched from the CoinGecko API, while **your asset's price is provided directly as a command-line input**—no CoinGecko listing required for the asset.
 
-The script accepts these inputs fields:
-- `--decimals or --d`, decimals of the token used for calculations
-- `--xcm-weight-cost or --xwc`, which specifies total cost of the XCM execution in weight, it includes all transactions
-- `--target or --t`, (optional) which specifies the target price for the execution. Default is `$0.02`
-- `--asset or --a`, (optional) which specifies asset name compatible with the [Coingecko API](https://www.coingecko.com/)
-- `--price pr --p`, (optional) if the asset is not supported by Coingecko, specifies the price to use
+### Inputs
 
-### Example
+* **Price (USD):** The USD price of your asset, provided as a command-line argument. Must be a positive number.
+* **Network:** The target network's native token to compare against. Valid options are `GLMR` (Moonbeam) or `MOVR` (Moonriver).
+
+### How It Works
+
+1. The script queries CoinGecko for the current USD price of the native token (`GLMR` or `MOVR`).
+2. It uses your supplied asset's USD price to determine how many units of your asset make up one native token.
+3. The result is scaled to 18 decimal places (the WEI-like format), making it compatible with scenarios that require precise integer-based values.
+
+### Example Usage
+
+```bash
+npx ts-node calculate-relative-price.ts 0.25 GLMR
+```
+
+**Process:**
+* Your asset's USD price: `$0.25`
+* GLMR's fetched USD price: `$0.324869` (example)
+* Ratio calculation: 1 GLMR ≈ 1.299 of your asset
+* 18-decimal scaling: `1299476000000000000` units of your asset = `1 GLMR`
+
+### Example Output
 
 ```
-yarn calculate-units-per-second \
---d 10 \
---xwc 4000000000 \
---a polkadot
+Calculating relative price for asset worth $0.25 against GLMR...
+
+Results:
+Asset Price: $0.25
+Network: GLMR
+Native Token Price (from CoinGecko): $0.324869
+
+Relative Price Analysis:
+1 GLMR is equal to approximately 1.299 of your specified token.
+With 18 decimals, 1 GLMR or in WEI, 1000000000000000000 is equal to a relative price of 1299476000000000000 units of your token
+
+Relative Price: 1299476000000000000
+
+The relative price you should specify in asset registration steps is 1299476000000000000
 ```
 
 ## Para-registrar-swap

@@ -35,7 +35,7 @@ const main = async () => {
   const [, xcmType] = await getXCMVersion(api);
 
   // XCM Versioning Handling
-  let asset: MultiLocation;
+  let asset;
   try {
     asset = api.createType(xcmType[0], JSON.parse(args["asset"]));
   } catch (e) {

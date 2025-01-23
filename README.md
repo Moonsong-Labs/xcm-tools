@@ -21,13 +21,10 @@ Script that allows to register an asset in a Moonbeam runtime. It particulary do
 The script accepts these inputs fields:
 - `--ws-provider` or `--w`, which specifies the websocket provider to which we will be issuing our requests
 - `--asset` or `-a`, the MultiLocation identifier of the asset to be registered
-- `--units-per-second` or `-u`, optional, specifies how much we should charge per second of execution in the registered asset.
+- `--relative-price` or `-u`, optional, specifies how much we should charge per second of execution in the registered asset.
 - `--name` or `-n`, the name of the asset
 - `--symbol` or `--sym`, the symbol of the asset
 - `--decimals` or `-d`, the number of decimals of the asset
-- `--existential-deposit` or `--ed`, the existential deposit of the registered asset
-- `--sufficient` or `--suf`, boolean indicating whether the asset should exist without a provider reference
-- `--revert-code` or `--revert`, boolean specifying whether we want register the revert code in the evm
 - `--account-priv-key` or `-a`, which specifies the account that will submit the proposal
 - `--account-type` or `-accType`, which specifies the account derivation scheme to use. Options are `ethereum` (default), `sr25519` or `ed25519`
 - `--send-preimage-hash` or `-h`, boolean specifying whether we want to send the preimage hash    

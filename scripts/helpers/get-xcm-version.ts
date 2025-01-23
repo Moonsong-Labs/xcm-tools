@@ -29,7 +29,7 @@ export async function getXCMVersion(provider: any): Promise<[string, string[]]> 
 
   const xcmType = (() => {
     if (xcmVersion === "V4") {
-      return ["StagingXcmV4MultiLocation", "XcmV4MultiLocation"];
+      return ["StagingXcmV4Location", "XcmV4MultiLocation"];
     } else if (xcmVersion === "V3") {
       return ["StagingXcmV3MultiLocation", "XcmV3MultiLocation"];
     } else if (xcmVersion === "V2") {

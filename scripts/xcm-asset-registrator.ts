@@ -16,7 +16,7 @@ import { getXCMVersion } from "./helpers/get-xcm-version";
 const args = yargs.options({
   "ws-provider": { type: "string", demandOption: true, alias: "w" },
   asset: { type: "string", demandOption: true, alias: "a" },
-  "units-per-second": { type: "string", demandOption: false, alias: "u" },
+  "relative-price": { type: "string", demandOption: false, alias: "u" },
   name: { type: "string", demandOption: true, alias: "n" },
   symbol: { type: "string", demandOption: true, alias: "sym" },
   decimals: { type: "string", demandOption: true, alias: "d" },
@@ -59,12 +59,11 @@ async function main() {
     name: args["name"],
     symbol: args["symbol"],
     decimals: args["decimals"],
-    isFrozen: false,
   };
 
-  const registerTxs = [];
+  const registerTxs = [] as any;
   // XCM Versioning Handling
-  let asset: MultiLocation;
+  let asset;
   try {
     asset = api.createType(xcmType[0], JSON.parse(args["asset"]));
   } catch (e) {
@@ -79,58 +78,28 @@ async function main() {
   }
 
   const assetId = u8aToHex(api.registry.hash(asset.toU8a()).slice(0, 16).reverse());
-  const sourceLocation = { Xcm: asset };
 
-  let registerTx = api.tx.assetManager.registerForeignAsset(
-    sourceLocation,
-    assetMetadata,
-    args["existential-deposit"],
-    args["sufficient"]
+  let registerTx = await api.tx.evmForeignAssets.createForeignAsset(
+    BigInt(assetId).toString(10),
+    asset,
+    assetMetadata.decimals,
+    assetMetadata.symbol,
+    assetMetadata.name
   );
+
   registerTxs.push(registerTx);
 
   console.log("Encoded Call Data for registerAsset is %s", registerTx.method.toHex() || "");
 
-  let numSupportedAssets = ((await api.query.assetManager.supportedFeePaymentAssets()) as any)
-    .length;
-  if (args["units-per-second"]) {
-    let setUnitsTx = api.tx.assetManager.setAssetUnitsPerSecond(
-      sourceLocation,
-      args["units-per-second"],
-      numSupportedAssets + 10 //adds 10 to have an extra buffer
-    );
+  if (args["relative-price"]) {
+    let setRelPrice = api.tx.xcmWeightTrader.addAsset(asset, args["relative-price"]);
 
-    registerTxs.push(setUnitsTx);
+    registerTxs.push(setRelPrice);
 
-    console.log(
-      "Encoded Call Data for setAssetUnitsPerSecond is %s",
-      setUnitsTx.method.toHex() || ""
-    );
+    console.log("Encoded Call Data for Set Relative Price is %s", setRelPrice.method.toHex() || "");
   }
 
-  if (args["revert-code"]) {
-    // This is to push to the evm the revert code
-    let palletEncoder = new TextEncoder().encode("EVM");
-    let palletHash = xxhashAsU8a(palletEncoder, 128);
-    let storageEncoder = new TextEncoder().encode("AccountCodes");
-    let storageHash = xxhashAsU8a(storageEncoder, 128);
-    let assetAddress = new Uint8Array([...hexToU8a("0xFFFFFFFF"), ...hexToU8a(assetId)]);
-    let addressHash = blake2AsU8a(assetAddress, 128);
-    let concatKey = new Uint8Array([
-      ...palletHash,
-      ...storageHash,
-      ...addressHash,
-      ...assetAddress,
-    ]);
-
-    let setRevertTx = api.tx.system.setStorage([[u8aToHex(concatKey), "0x1460006000fd"]]);
-
-    registerTxs.push(setRevertTx);
-
-    console.log("Encoded proposal for setStorage is %s", setRevertTx.method.toHex() || "");
-  }
-
-  const batchCall = api.tx.utility.batch(registerTxs);
+  const batchCall = await api.tx.utility.batch(registerTxs);
 
   // Scheduler
   let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], batchCall) : batchCall;

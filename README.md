@@ -397,9 +397,9 @@ npx ts-node calculate-relative-price.ts 0.25 GLMR
 
 **Process:**
 * Your asset's USD price: `$0.25`
-* GLMR's fetched USD price: `$0.324869` (example)
-* Ratio calculation: 1 GLMR ≈ 1.299 of your asset
-* 18-decimal scaling: `1299476000000000000` units of your asset = `1 GLMR`
+* GLMR's fetched USD price: `$0.182707` (example)
+* Ratio calculation: 1 GLMR ≈ 0.731 of your asset
+* 18-decimal scaling: `1368311011619697152` units of your asset = `1 GLMR`
 
 ### Example Output
 
@@ -409,15 +409,15 @@ Calculating relative price for asset worth $0.25 against GLMR...
 Results:
 Asset Price: $0.25
 Network: GLMR
-Native Token Price (from CoinGecko): $0.324869
+Native Token Price (from CoinGecko): $0.182707
 
 Relative Price Analysis:
-1 GLMR is equal to approximately 1.299 of your specified token.
-With 18 decimals, 1 GLMR or in WEI, 1000000000000000000 is equal to a relative price of 1299476000000000000 units of your token
+1 GLMR is equal to approximately 0.731 of your specified token.
+With 18 decimals, 1 GLMR or in WEI, 1000000000000000000 is equal to a relative price of 1368311011619697152 units of your token
 
-Relative Price: 1299476000000000000
+Relative Price: 1368311011619697152
 
-The relative price you should specify in asset registration steps is 1299476000000000000
+The relative price you should specify in asset registration steps is 1368311011619697152
 ```
 
 ## Para-registrar-swap

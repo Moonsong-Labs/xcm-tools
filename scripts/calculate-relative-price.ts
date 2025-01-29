@@ -64,9 +64,9 @@ function validateInput(
 
 function printUsage() {
   console.log("\nUsage:");
-  console.log("npx ts-node relative-price-calculator.ts <price> <decimals> <network>");
+  console.log("npx ts-node calculate-relative-price.ts <price> <decimals> <network>");
   console.log("\nExample:");
-  console.log("npx ts-node relative-price-calculator.ts 0.25 12 GLMR");
+  console.log("npx ts-node calculate-relative-price.ts 0.25 12 GLMR");
   console.log("\nParameters:");
   console.log("price      - The price of your asset in USD");
   console.log("decimals   - The decimals of your asset");

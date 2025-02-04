@@ -20,7 +20,7 @@ switch (args["relay"].toLowerCase()) {
     moonNetwork = "Moonriver";
     break;
   case "moonbase":
-    relayURL = "wss://frag-moonbase-relay-rpc-ws.g.moonbase.moonbeam.network";
+    relayURL = "wss://relay.api.moonbase.moonbeam.network";
     moonNetwork = "Moonbase Alpha";
     break;
   default:

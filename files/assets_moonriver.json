@@ -1,0 +1,128 @@
+[
+  {
+    "name": "Tether USD",
+    "assetID": "311091173110107856861649819128533077277",
+    "api-name": "tether",
+    "address": "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+  },
+  {
+    "name": "xcRMRK",
+    "assetID": "182365888117048807484804376330534607370",
+    "api-name": "rmrk",
+    "address": "0xffffffFF893264794d9d57E1E0E21E0042aF5A0A"
+  },
+  {
+    "name": "Acala aSEED",
+    "assetID": "214920334981412447805621250067209749032",
+    "api-name": "ausd-seed-acala",
+    "address": "0xFfFffFFfa1B026a00FbAA67c86D5d1d5BF8D8228"
+  },
+  {
+    "name": "Karura",
+    "assetID": "10810581592933651521121702237638664357",
+    "api-name": "karura",
+    "address": "0xFFFfFfFFF8220ad2E6e157f26Ed8Bd22A336a0A5"
+  },
+  {
+    "name": "Bifrost",
+    "assetID": "319623561105283008236062145480775032445",
+    "api-name": "bifrost-native-coin",
+    "address": "0xFFfFFfFFF075423be54811EcB478e911F22dDe7D"
+  },
+  {
+    "name": "Phala Token",
+    "assetID": "189307976387032586987344677431204943363",
+    "api-name": "pha",
+    "address": "0xffFfFFff8E6b63d9e447B6d4C45BDA8AF9dc9603"
+  },
+  {
+    "name": "Shiden",
+    "assetID": "16797826370226091782818345603793389938",
+    "api-name": "shiden",
+    "address": "0xfFFFFfffFcA324c842330521525e7de111F38972"
+  },
+  {
+    "name": "Crust Shadow Native Token",
+    "assetID": "108457044225666871745333730479173774551",
+    "api-name": "crust-storage-market",
+    "address": "0xffFfFFFf519811215E05eFA24830Eebe9c43aCD7"
+  },
+  {
+    "name": "TEER",
+    "assetID": "105075627293246237499203909093923548958",
+    "api-name": "integritee",
+    "address": "0xFfFfffFf4F0CD46769550E5938F6beE2F5d4ef1e"
+  },
+  {
+    "name": "Robonomics Native Token",
+    "assetID": "108036400430056508975016746969135344601",
+    "api-name": "robonomics-network",
+    "address": "0xFffFFffF51470Dca3dbe535bD2880a9CcDBc6Bd9"
+  },
+  {
+    "name": "Calamari",
+    "assetID": "213357169630950964874127107356898319277",
+    "api-name": "calamari-network",
+    "address": "0xFFffFffFA083189f870640b141ae1E882c2b5bad"
+  },
+  {
+    "name": "HKO",
+    "assetID": "76100021443485661246318545281171740067",
+    "price": 0.000000001,
+    "address": "0xffffffFF394054BCDa1902B6A6436840435655a3"
+  },
+  {
+    "name": "Picasso",
+    "assetID": "167283995827706324502761431814209211090",
+    "api-name": "picasso",
+    "address": "0xFffFfFFf7dD9B9C60ac83e49D7E3E1f7A1370aD2"
+  },
+  {
+    "name": "Kintsugi Wrapped BTC",
+    "assetID": "328179947973504579459046439826496046832",
+    "api-name": "kintsugi-btc",
+    "address": "0xFFFfFfFfF6E528AD57184579beeE00c5d5e646F0"
+  },
+  {
+    "name": "Kintsugi Native Token",
+    "assetID": "175400718394635817552109270754364440562",
+    "api-name": "kintsugi",
+    "address": "0xfffFFFFF83F4f317d3cbF6EC6250AeC3697b3fF2"
+  },
+  {
+    "name": "Crab Parachain Token",
+    "assetID": "173481220575862801646329923366065693029",
+    "price": 0.000000001,
+    "address": "0xFFFffFfF8283448b3cB519Ca4732F2ddDC6A6165"
+  },
+  {
+    "name": "LIT",
+    "assetID": "65216491554813189869575508812319036608",
+    "api-name": "litentry",
+    "address": "0xfffFFfFF31103d490325BB0a8E40eF62e2F614C0"
+  },
+  {
+    "name": "Mangata X Native Token",
+    "assetID": "118095707745084482624853002839493125353",
+    "price": 0.000000001,
+    "address": "0xffFfFffF58d867EEa1Ce5126A4769542116324e9"
+  },
+  {
+    "name": "Turing Network",
+    "assetID": "133300872918374599700079037156071917454",
+    "api-name": "turing-network",
+    "address": "0xfFffffFf6448d0746f2a66342B67ef9CAf89478E"
+  },
+  {
+    "name": "Tinkernet",
+    "assetID": "138512078356357941985706694377215053953",
+    "price": 0.000000001,
+    "address": "0xfFFfFffF683474B842852111cc31d470bD8f5081"
+  },
+  {
+    "name": "xcKSM",
+    "assetID": "42259045809535163221576417993425387648",
+    "api-name": "kusama",
+    "address": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
+  }
+]

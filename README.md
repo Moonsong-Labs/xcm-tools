@@ -15,7 +15,7 @@ From this directory
 Script that allows to register an asset in a Moonbeam runtime. It particulary does three things:
 
 - Registers the asset
-- Sets the asset units per second to be charged
+- Sets the asset weight trader (relative price)
 - Sets the revert code in the asset precompile
 
 The script accepts these inputs fields:
@@ -51,6 +51,23 @@ The script accepts these inputs fields:
 `yarn register-asset -s v2 --track '{ "Origins": "YourCustomOrigin" }' -w ws://127.0.0.1:9944  --asset  '{ "parents": 1, "interior": "Here" }' -u 1 --name "DOT" --sym "DOT" -d 12 --ed 1 --sufficient true --account-priv-key "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133" -h true --revert-code true`
 
 The `track` field must be a JSON formatted representation of the `referenda.submit` extrinsic's `proposalOrigin` input.  
+
+## Update weight trader for assets
+
+Script that allows you to obtain a batch call to update the weight trader relative price for all assets under the `files` folder. We need to ensure the files are updated. For assets with no Coingecko API, we've set the prize to something very small to ensure we are overcharging by a lot.
+
+The script accepts the following input
+
+- `--network` or `-n`, which specifies the network to run the script against and predefined Coingecko API IDs (options are `moonbeam`, `moonriver` or `moonbase`)
+- `--ws-provider` or `-w`, which specifies the websocket provider of the network
+- `--coingecko-id` or `-c`, if you are providing a websocket instead of the network options, you must define the Coingecko API ID to be used
+- `--file-name` or `-f`, which specifices the file under `files` folder to be used
+
+To run it:
+
+```
+yarn update-weight-traders --n moonbeam --f assets_moonbeam  
+```
 
 ## XCM-initializer script
 

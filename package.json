@@ -22,12 +22,14 @@
     "calculate-local-asset-info": "ts-node 'scripts/calculate-local-asset-info.ts'",
     "calculate-multilocation-derivative-account": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'",
     "calculate-remote-origin": "ts-node 'scripts/calculate-multilocation-derivative-account.ts'",
-    "calculate-relative-price": "ts-node 'scripts/calculate-relative-price.ts'"
+    "calculate-relative-price": "ts-node 'scripts/calculate-relative-price.ts'",
+    "update-weight-traders": "ts-node 'scripts/update-weight-traders.ts'"
   },
   "dependencies": {
     "@moonbeam-network/api-augment": "^0.1801.0",
-    "@polkadot/api": "^15.4.1",
-    "@types/yargs": "^17.0.0",
+    "@polkadot/api": "^16.2.2",
+    "@types/node": "^22.15.21",
+    "@types/yargs": "^17.0.33",
     "axios": "^1.7.9",
     "coingecko-api": "^1.0.10",
     "divide-bigint": "1.0.4",
@@ -35,9 +37,9 @@
     "load-json-file": "^6.2.0",
     "npm-watch": "^0.9.0",
     "rimraf": "^3.0.2",
-    "ts-node": "9.1",
-    "typescript": "^3.9.6",
-    "yargs": "^17.0.1"
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0",
+    "yargs": "17.7.2"
   },
   "overrides": {
     "@polkadot/api": "$@polkadot/api",

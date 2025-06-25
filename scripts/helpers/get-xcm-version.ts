@@ -1,6 +1,11 @@
 import { getTypeDef } from "@polkadot/types";
 
-export async function getXCMVersion(provider: any): Promise<[string, string[]]> {
+export async function getXCMVersion(
+  provider: any,
+  options: { silent?: boolean } = {}
+): Promise<[string, string[]]> {
+  const { silent = false } = options;
+
   // Find XCM Version with PolkadotXcm.send
   // The strategy is to check the Versions Available for PolkadotXcm.Send in Dest field
   const { type } =
@@ -25,10 +30,12 @@ export async function getXCMVersion(provider: any): Promise<[string, string[]]> 
     throw new Error("Can't find XCM version");
   }
 
-  console.log(`XCM Version is ${xcmVersion}`);
+  if (!silent) console.log(`XCM Version is ${xcmVersion}`);
 
   const xcmType = (() => {
-    if (xcmVersion === "V4") {
+    if (xcmVersion === "V5") {
+      return ["StagingXcmV5Location", "XcmV5MultiLocation"];
+    } else if (xcmVersion === "V4") {
       return ["StagingXcmV4Location", "XcmV4MultiLocation"];
     } else if (xcmVersion === "V3") {
       return ["StagingXcmV3MultiLocation", "XcmV3MultiLocation"];

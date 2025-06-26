@@ -54,7 +54,7 @@ The `track` field must be a JSON formatted representation of the `referenda.subm
 
 ## Update weight trader for assets
 
-Script that allows you to obtain a batch call to update the weight trader relative price for all assets under the `files` folder. We need to ensure the files are updated. For assets with no Coingecko API, we've set the prize to something very small to ensure we are overcharging by a lot.
+Script that allows you to obtain a batch call to update the weight trader relative price for all assets under the `files` folder. We need to ensure the files are updated. For assets with no Coingecko API, we've set the price to something very small to ensure we are overcharging by a lot.
 
 The script accepts the following input
 

@@ -33,6 +33,7 @@ if (args["network"] === "moonbeam") {
   coinID = "moonbeam";
 } else if (args["ws-provider"] && args["coingecko-id"]) {
   wsProvider = new WsProvider(args["ws-provider"]);
+  coinID = args["coingecko-id"];
 } else {
   console.error("Network not supported or no WebSocket provider and Coingecko ID specified");
   process.exit();

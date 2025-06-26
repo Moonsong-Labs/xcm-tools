@@ -7,6 +7,9 @@ import fs from "fs";
 import path, { relative } from "path";
 import { getXCMVersion } from "./helpers/get-xcm-version";
 
+// CONSTANT
+const RELATIVE_PRICE_CONSTANT = 0.0175; // Target $0.02 per XCM transfer
+
 const args = yargs.options({
   network: {
     type: "string",
@@ -104,7 +107,7 @@ async function main() {
         // Calculate the relative price
         const relativePrice = BigInt(
           Math.floor(
-            0.0175 *
+            RELATIVE_PRICE_CONSTANT *
               Math.pow(10, 18 - decimals) *
               (assetPrice / nativeTokenPrice) *
               Math.pow(10, 18)

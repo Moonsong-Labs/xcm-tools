@@ -6,6 +6,9 @@ const NETWORK_IDS = {
   MOVR: "moonriver",
 };
 
+// CONSTANT
+const RELATIVE_PRICE_CONSTANT = 0.0175; // Target $0.02 per XCM transfer
+
 async function calculateRelativePrice(
   assetPrice: number,
   assetDecimals: number,
@@ -23,7 +26,7 @@ async function calculateRelativePrice(
     // Formula: (assetPrice / nativeTokenPrice) * 10^18
     // This gives us how many units of the asset we need to equal 1 unit of native token
     const relativePrice = BigInt(
-      0.175 * Math.pow(10, 18 - assetDecimals) * (assetPrice / nativeTokenPrice) * Math.pow(10, 18)
+      RELATIVE_PRICE_CONSTANT * Math.pow(10, 18 - assetDecimals) * (assetPrice / nativeTokenPrice) * Math.pow(10, 18)
     );
 
     // Return as string to preserve precision

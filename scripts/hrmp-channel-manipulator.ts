@@ -88,7 +88,7 @@ async function main() {
 
   // If finalTx is not an Extrinsic, create the right type
   if (finalTx.method) {
-    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
+    finalTx = finalTx;
   }
 
   // Create account with manual nonce handling

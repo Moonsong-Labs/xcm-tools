@@ -8,6 +8,7 @@ import {
   sudoWrapper,
   preimageWrapper,
   democracyWrapper,
+  whitelistWrapper
 } from "./helpers/function-helpers";
 
 const args = yargs.options({
@@ -22,6 +23,7 @@ const args = yargs.options({
     default: "ethereum",
   },
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
+  whitelist: { type: "boolean", demandOption: false, alias: "wl", nargs: 0 },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
     choices: ["democracy", "v1", "council-external", "v2"],
@@ -68,11 +70,6 @@ async function main() {
   console.log("Fee of batch call");
   console.log(txFees.toHuman());
 
-  // If finalTx is not an Extrinsic, create the right type
-  if (finalTx.method) {
-    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
-  }
-
   // Set up Dispatcher
   if (args["dispatch-as"]) {
     finalTx = await api.tx.utility.dispatchAs(
@@ -91,6 +88,11 @@ async function main() {
   // Sudo Wrapper
   if (args["sudo"]) {
     finalTx = await sudoWrapper(api, finalTx, account);
+  }
+
+  // Whitelist Wrapper
+  if (args["whitelist"]) {
+    finalTx = await whitelistWrapper(api, finalTx);
   }
 
   console.log("Encoded Call Data for Tx is %s", finalTx.method.toHex());

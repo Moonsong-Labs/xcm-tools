@@ -86,11 +86,6 @@ async function main() {
   // Scheduler
   let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], batchCall) : batchCall;
 
-  // If finalTx is not an Extrinsic, create the right type
-  if (finalTx.method) {
-    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
-  }
-
   // Create account with manual nonce handling
   let account;
   let nonce;

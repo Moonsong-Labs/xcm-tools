@@ -20,8 +20,6 @@ const args = yargs.options({
   name: { type: "string", demandOption: true, alias: "n" },
   symbol: { type: "string", demandOption: true, alias: "sym" },
   decimals: { type: "string", demandOption: true, alias: "d" },
-  "existential-deposit": { type: "number", demandOption: false, alias: "ed" },
-  sufficient: { type: "boolean", demandOption: false, alias: "suf" },
   "account-priv-key": { type: "string", demandOption: false, alias: "account" },
   "account-type": {
     type: "string",
@@ -31,7 +29,6 @@ const args = yargs.options({
     default: "ethereum",
   },
   sudo: { type: "boolean", demandOption: false, alias: "x", nargs: 0 },
-  "revert-code": { type: "boolean", demandOption: false, alias: "revert" },
   "send-preimage-hash": { type: "boolean", demandOption: false, alias: "h" },
   "send-proposal-as": {
     choices: ["democracy", "v1", "council-external", "v2"],
@@ -103,11 +100,6 @@ async function main() {
 
   // Scheduler
   let finalTx = args["at-block"] ? schedulerWrapper(api, args["at-block"], batchCall) : batchCall;
-
-  // If finalTx is not an Extrinsic, create the right type
-  if (finalTx.method) {
-    finalTx = api.createType("GenericExtrinsicV4", finalTx) as any;
-  }
 
   // Create account with manual nonce handling
   let account;

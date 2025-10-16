@@ -25,9 +25,15 @@ async function calculateRelativePrice(
     // Calculate relative price with 18 decimal places
     // Formula: (assetPrice / nativeTokenPrice) * 10^18
     // This gives us how many units of the asset we need to equal 1 unit of native token
-    const relativePrice = BigInt(
-      RELATIVE_PRICE_CONSTANT * Math.pow(10, 18 - assetDecimals) * (assetPrice / nativeTokenPrice) * Math.pow(10, 18)
-    );
+    // Calculate float relative price
+    const floatRelativePrice =
+      RELATIVE_PRICE_CONSTANT *
+      Math.pow(10, 18 - assetDecimals) *
+      (assetPrice / nativeTokenPrice) *
+      Math.pow(10, 18);
+
+    // Convert to BigInt safely
+    const relativePrice = BigInt(Math.floor(floatRelativePrice));
 
     // Return as string to preserve precision
     return relativePrice;

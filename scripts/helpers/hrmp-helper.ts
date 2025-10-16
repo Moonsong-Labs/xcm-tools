@@ -94,33 +94,33 @@ export async function hrmpHelper(
     if (feeCurrency == null) {
       feeToken = {
         AsMultiLocation:
-          xcmVersion == "V4"
-            ? { V4: { parents: new BN(1), interior: "Here" } }
+          xcmVersion == "V5"
+            ? { V5: { parents: new BN(1), interior: "Here" } }
             : xcmVersion == "V4"
-            ? { V3: { parents: new BN(1), interior: "Here" } }
-            : { V2: { parents: new BN(1), interior: "Here" } },
+            ? { V4: { parents: new BN(1), interior: "Here" } }
+            : { V3: { parents: new BN(1), interior: "Here" } },
       };
     } else {
       // If Fee Token is provided as an input
       const asset: MultiLocation = api.createType(xcmType, JSON.parse(feeCurrency));
       feeToken = {
         AsMultiLocation:
-          xcmVersion == "V4"
+          xcmVersion == "V5"
+            ? {
+                V5: {
+                  parents: asset.parents,
+                  interior: asset.interior,
+                },
+              }
+            : xcmVersion == "V4"
             ? {
                 V4: {
                   parents: asset.parents,
                   interior: asset.interior,
                 },
               }
-            : xcmVersion == "V3"
-            ? {
-                V3: {
-                  parents: asset.parents,
-                  interior: asset.interior,
-                },
-              }
             : {
-                V2: {
+                V3: {
                   parents: asset.parents,
                   interior: asset.interior,
                 },
@@ -139,19 +139,13 @@ export async function hrmpHelper(
           currency: feeToken,
           feeAmount: feeAmount,
         },
-        // Account for Proof Size, which is hardcoded for now
-        xcmVersion === "V4" || xcmVersion === "V3"
-          ? {
-              transactRequiredWeightAtMost: {
-                refTime: new BN(1000000000),
-                proofSize: new BN(65536),
-              },
-              overallWeight: "Unlimited",
-            }
-          : {
-              transactRequiredWeightAtMost: new BN(1000000000),
-              overallWeight: "Unlimited",
-            }
+        {
+          transactRequiredWeightAtMost: {
+            refTime: new BN(1000000000),
+            proofSize: new BN(65536),
+          },
+          overallWeight: "Unlimited",
+        }
       );
     } catch (e) {
       xcmTransactorHrmpManageExtrinsic = await api.tx.xcmTransactor.hrmpManage(
@@ -160,19 +154,13 @@ export async function hrmpHelper(
           currency: feeToken,
           feeAmount: feeAmount,
         },
-        // Account for Proof Size, which is hardcoded for now
-        xcmVersion === "V4" || xcmVersion === "V3"
-          ? {
-              transactRequiredWeightAtMost: {
-                refTime: new BN(1000000000),
-                proofSize: new BN(65536),
-              },
-              overallWeight: { refTime: new BN(7000000000), proofSize: new BN(131072) },
-            }
-          : {
-              transactRequiredWeightAtMost: new BN(1000000000),
-              overallWeight: new BN(7000000000),
-            }
+        {
+          transactRequiredWeightAtMost: {
+            refTime: new BN(1000000000),
+            proofSize: new BN(65536),
+          },
+          overallWeight: { refTime: new BN(7000000000), proofSize: new BN(131072) },
+        }
       );
     }
 
@@ -228,13 +216,10 @@ export async function hrmpHelper(
       {
         Transact: {
           originType: "Native",
-          requireWeightAtMost:
-            xcmVersion === "V4" || xcmVersion === "V3"
-              ? {
-                  refTime: new BN(1000000000),
-                  proofSize: new BN(65536),
-                }
-              : new BN(1000000000),
+          requireWeightAtMost: {
+            refTime: new BN(1000000000),
+            proofSize: new BN(65536),
+          },
           call: {
             encoded: relayCall2,
           },
@@ -245,8 +230,8 @@ export async function hrmpHelper(
       },
     ];
 
-    // DepositAsset depends on XCM V4/V3 or V2
-    xcmVersion === "V4"
+    // DepositAsset depends on XCM V5-V4/V3
+    xcmVersion === "V5" || xcmVersion === "V4"
       ? xcmMessage.push({
           DepositAsset: {
             assets: { Wild: { AllCounted: 1 } },
@@ -256,8 +241,7 @@ export async function hrmpHelper(
             },
           },
         })
-      : xcmVersion === "V3"
-      ? xcmMessage.push({
+      : xcmMessage.push({
           DepositAsset: {
             assets: { Wild: { AllCounted: 1 } },
             beneficiary: {
@@ -265,25 +249,15 @@ export async function hrmpHelper(
               interior: { X1: { AccountId32: { network: null, id: para_address } } },
             },
           },
-        })
-      : xcmMessage.push({
-          DepositAsset: {
-            assets: { Wild: "All" },
-            max_assets: 1,
-            beneficiary: {
-              parents: new BN(0),
-              interior: { X1: { AccountId32: { network: "Any", id: para_address } } },
-            },
-          },
         });
 
     // XCM Send
     const batchCall = api.tx.polkadotXcm.send(
-      xcmVersion == "V4"
-        ? { V4: { parents: new BN(1), interior: "Here" } }
+      xcmVersion == "V5"
+        ? { V5: { parents: new BN(1), interior: "Here" } }
         : xcmVersion == "V4"
-        ? { V3: { parents: new BN(1), interior: "Here" } }
-        : { V2: { parents: new BN(1), interior: "Here" } },
+        ? { V4: { parents: new BN(1), interior: "Here" } }
+        : { V3: { parents: new BN(1), interior: "Here" } },
       {
         [xcmVersion]: xcmMessage,
       }

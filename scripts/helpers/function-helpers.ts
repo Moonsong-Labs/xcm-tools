@@ -23,7 +23,7 @@ export async function accountWrapper(api, privateKey, accountType) {
 }
 
 export async function sudoWrapper(api, tx, account) {
-  let sudoTx = await api.tx.sudo.sudo(tx.toHex());
+  let sudoTx = await api.tx.sudo.sudo(tx.method.toHex());
 
   console.log("-- Using SUDO --");
   if (account) {
@@ -166,5 +166,20 @@ export async function democracyWrapper(
     }
   } catch (e) {
     console.log(e.message);
+  }
+}
+
+// Whitelist Wrapper
+export async function whitelistWrapper(api, tx) {
+  try {
+    let whitelistTx = await api.tx.whitelist.dispatchWhitelistedCallWithPreimage(tx.method.toHex());
+
+    console.log("-- Dispatch Whitelisted Call With Preimage --");
+
+    console.log(`Inner Tx Call Hash: ${blake2AsHex(tx.method.toHex())}`);
+
+    return whitelistTx;
+  } catch (error) {
+    console.error("Error in whitelistWrapper:", error);
   }
 }

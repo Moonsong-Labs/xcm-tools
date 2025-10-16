@@ -19,8 +19,7 @@ if (args["network"].toLowerCase() === "moonbeam") {
 } else if (args["network"].toLowerCase() === "moonbase") {
   wsProvider = new WsProvider("wss://wss.api.moonbase.moonbeam.network");
 } else {
-  console.error("Network not supported");
-  process.exit();
+    wsProvider = new WsProvider(args["network"]);
 }
 
 const main = async () => {

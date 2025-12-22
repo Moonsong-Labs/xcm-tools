@@ -355,9 +355,10 @@ The script accepts these inputs fields:
 Script that allows to calculate the multilocation-derivative account for Moonbeam-based networks by providing some simple parameters. This account is calculated with the [following standard on Polkadot](https://github.com/paritytech/polkadot/pull/6662).
 
 The script accepts these inputs fields:
-- `--address or --a`, which specifies the origin chain address that sent the XCM message. It is expected that this is injected into the origin multilocation via a junction through `DescendOrigin`
-- `--para-id or --p`, (optional) which specifies the parachain ID of the origin chain of the XCM message. It is optional as the XCM message might come from the relay chain (no parachain ID). Or parachains can act as relay for other parachains
-- `--parents`, (option) which specifies if `parents = 1`
+- `--address or -a`, (optional) which specifies the origin chain address that sent the XCM message. It is expected that this is injected into the origin multilocation via a junction through `DescendOrigin`. Supports both AccountId32 (SS58) and AccountKey20 (Ethereum) addresses
+- `--para-id or -p`, (optional) which specifies the parachain ID of the origin chain of the XCM message. It is optional as the XCM message might come from the relay chain (no parachain ID). Or parachains can act as relay for other parachains
+- `--parents`, (required) which specifies the number of parent hops in the multilocation hierarchy. Must be `0`, `1`, or `2`
+- `--consensus or -c`, (optional) which specifies the consensus system when `parents = 2`. Must be either `Polkadot` or `Kusama`. Required when parents is 2
 
 
 ```
@@ -382,13 +383,37 @@ E.g.
    * hash(ChildPrefix, 100, AccountType, A) on R
 ```
 
-### Example
+### Examples
 
+**Sibling parachain account (parents=1):**
 ```
 yarn calculate-multilocation-derivative-account \
---a 0x0000000000000000000000000000000000000000000000000000000000000000 \
---p 100 \
---parents
+--address 0x0000000000000000000000000000000000000001 \
+--para-id 1000 \
+--parents 1
+```
+
+**Parent chain account (parents=1, no paraId):**
+```
+yarn calculate-multilocation-derivative-account \
+--address 5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM \
+--parents 1
+```
+
+**Global consensus account (parents=2):**
+```
+yarn calculate-multilocation-derivative-account \
+--address 0x0000000000000000000000000000000000000001 \
+--para-id 2023 \
+--parents 2 \
+--consensus Kusama
+```
+
+**ParaId to address conversion (no hashing):**
+```
+yarn calculate-multilocation-derivative-account \
+--para-id 1000 \
+--parents 1
 ```
 
 ## Calculate Relative Price
